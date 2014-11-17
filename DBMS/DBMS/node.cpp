@@ -1,7 +1,6 @@
 #include "node.h"
+#include "fileManage.h"
 #include <fstream>
-
-void writePageToFile(int pageid, char* data, char* filename){}
 
 FileBuffer::FileBuffer(int max){
 	header = new Node();
@@ -20,8 +19,8 @@ Node* FileBuffer::remove(){
 	Node* cur = trailor -> pre;
 	(cur -> pre) -> next = trailor;
 	trailor -> pre = cur -> pre;
-
-	if (cur -> dirty) writePageToFile(cur -> pageid, cur -> data, filename);
+	
+	if (cur -> dirty) FileManage::writePageToFile(cur -> pageid, cur -> data, filename);
 
 	bufmap.erase(cur -> pageid);
 	usepagenum --;
@@ -32,6 +31,8 @@ Node* FileBuffer::remove(){
 void FileBuffer::insert(Node* cur){
 	if (usepagenum == maxpagenum) {
 		cout << "buffer is full" << endl;
+		remove();
+		insert(cur);
 		return;
 	}
 
