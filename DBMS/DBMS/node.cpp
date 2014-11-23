@@ -20,7 +20,8 @@ Node* FileBuffer::remove(){
 	(cur -> pre) -> next = trailor;
 	trailor -> pre = cur -> pre;
 	
-	if (cur -> dirty) FileManage::writePageToFile(cur -> pageid, cur -> data, filename);
+	if (cur -> dirty) 
+		//FileManage::writePageToFile(cur -> pageid, cur -> data, filename);
 
 	bufmap.erase(cur -> pageid);
 	usepagenum --;
