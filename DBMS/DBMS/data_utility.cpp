@@ -17,11 +17,6 @@ float* dataUtility::char_to_float(char* data) {
 	return ori;
 }
 
-dbPage* dataUtility::char_to_dbPage(char* data) {
-	dbPage* pageinfo = (dbPage*) malloc(sizeof(dbPage));
-	memcpy(pageinfo, data, sizeof(dbPage));
-	return pageinfo;
-}
 //int main() {
 //	int a = 312786452;
 //	float b = 651.25;

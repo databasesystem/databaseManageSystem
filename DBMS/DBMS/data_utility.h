@@ -25,7 +25,13 @@ public:
 		static int* char_to_int(char* data);
 		static double* char_to_double(char* data);
 		static float* char_to_float(char* data);
-		static dbPage* char_to_dbPage(char* data);
+
+		template<typename T> 
+		static T* char_to_class(char* data) {
+			T* pageinfo = (T*) malloc(sizeof(T));
+			memcpy(pageinfo, data, sizeof(T));
+			return pageinfo;
+		}	
 };
 
 

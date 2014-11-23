@@ -51,7 +51,7 @@ void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	int status = fseek(filestream, pageid*sizeof(pageinfo), SEEK_SET);
 	if (status == 0) {
 		fread(data, PAGE_SIZE, 1, filestream);
-		*pageinfo = *dataUtility::char_to_dbPage(data);
+		*pageinfo = *dataUtility::char_to_class<dbPage>(data);
 	} else {
 		cout << "Read page to file errors." << endl;
 	}
