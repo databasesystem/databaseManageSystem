@@ -7,6 +7,8 @@
 
 using namespace std;
 const int PAGE_SIZE = 8192;
+typedef  unsigned int UINT;
+typedef unsigned char BYTE;
 class attr{
 public:
 		int num;

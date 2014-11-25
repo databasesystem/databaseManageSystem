@@ -5,30 +5,25 @@
 #include <stdlib.h>
 #include <string.h>
 using namespace std;
-void createTable(char* filename, char* databasename) {
+
+DBStorage::DBStorage(string dbname, UINT dbid, bool isCreate) {
+	this->dbname = dbname;
+	this->dbid = dbid;
+	if (isCreate)
+		createDataBase((char*)dbname.c_str());
+}
+
+DBStorage::~DBStorage() {
+}
+
+void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) {
 	/*
 	* for a simple example
 	* CREATE TABLE publisher (id int(10) NOT NULL,
 	* name varchar(100) NOT NULL,nation varchar(3),PRIMARY KEY  (id));
 	*/
-	attr tableAttr(3);
-	tableAttr.coltype[0] = 0;
-	tableAttr.coltype[1] = 5;
-	tableAttr.coltype[2] = 5;
 
-	tableAttr.collen[0] = 4;  //int(10) 10 is the max show length
-	tableAttr.collen[1] = 100;
-	tableAttr.collen[2] = 3;
-
-	tableAttr.colname[0] = "id";
-	tableAttr.colname[1] = "name";
-	tableAttr.colname[2] = "nation";
-
-	tableAttr.colIsNull[0] = false;
-	tableAttr.colIsNull[1] = false;
-	tableAttr.colIsNull[2] = true;
-
-	char* attrdata = dataUtility::data_to_char<attr>(tableAttr);
+	char* attrdata = dataUtility::data_to_char<attr>(tableinfo);
 	
 
 	char* path = (char*) malloc(strlen(filename) + strlen(databasename)+4);
@@ -46,11 +41,11 @@ void createTable(char* filename, char* databasename) {
 	dbPage test;
 	test.header.pageId = 0;
 	test.header.fileId = 0;
-	test.header.firstFreeOffset = sizeof(tableAttr)+1;
-	test.header.freeCount = 0;
+	test.header.firstFreeOffset = sizeof(tableinfo)+1;
+	test.header.freeCount = PAGE_SIZE-sizeof(tableinfo); //the size of page free 
 	test.header.rowCount =0;
 
-	memcpy(test.data, attrdata, sizeof(tableAttr));
+	memcpy(test.data, attrdata, sizeof(tableinfo));
 	test.data[PAGE_SIZE-1]='\0';
 	FileManage::writePageToFile(0, test, path);
 	dbPage* result = new dbPage();
@@ -61,6 +56,20 @@ void createTable(char* filename, char* databasename) {
 	cout << checkresult->colname[0] << endl;
 }
 
-void createDataBase(char* databasename) {
+void DBStorage::createDataBase(char* databasename) {
 	FileManage::createFileFolder(databasename);
+}
+
+void DBStorage::insertData(char* tablename, recordEntry record) {
+	/*
+	*INSERT INTO publisher VALUES 
+	*(100008,'Oxbow Books Limited','PRC');
+	*/
+	cout << "insertData:  " << record.item[0] << endl;
+	//char* data = record.getRecord();
+	char* data = dataUtility::data_to_char<int>(123);
+	char* testone = dataUtility::getbyte(data, 0, 4);
+	int* t = dataUtility::char_to_int(testone);
+	cout << *t<< endl;
+	cout << "ok" << endl;
 }
