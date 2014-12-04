@@ -22,9 +22,10 @@ struct recordEntry {
 			
 		}
 	}
-	char* getRecord(){
-		char* res = new char[length];
-		char* temp =dataUtility::data_to_char<bool>(isdeleted);
+	char* getRecord(recordEntry* record){
+		char* res = new char[record->length];
+		char* temp =dataUtility::data_to_char<bool>(record->isdeleted);
+		dataUtility::printChars(temp);
 		res = dataUtility::bytefillbyte(res, temp,0);
 		for (int i = 0; i < num; i++) {
 			char* temp =dataUtility::data_to_char<bool>(isNull[i]);
@@ -35,6 +36,7 @@ struct recordEntry {
 			res = dataUtility::bytefillbyte(res, item[i],index);
 			index+=itemlen[i];
 		}
+		dataUtility::printChars(res);
 		return res;
 	}
 };

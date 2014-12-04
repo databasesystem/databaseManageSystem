@@ -39,6 +39,15 @@ char* dataUtility::getbyte(char* src, int start, int length) {
 	res[length-1] ='\0';
 	return res;
 }
+
+void dataUtility::printChars(char* data) {
+	cout << "char* data: ";
+	for (int i = 0; i < strlen(data); i++)
+	{
+		cout << &(data[i]);
+	}
+	cout << endl;
+}
 //int main() {
 //	int a = 312786452;
 //	float b = 651.25;

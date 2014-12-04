@@ -36,6 +36,7 @@ int main()
 	tableAttr.colIsNull[1] = false;
 	tableAttr.colIsNull[2] = true;
 
+	tableAttr.primaryId = 0;
 	testdb.createTable("studentinfo", "studentManage", tableAttr);
 	
 	recordEntry onedata(3, tableAttr.collen);

@@ -41,6 +41,8 @@ public:
 
 		static char* bytefillbyte(char* src, char* dst, int start);
 		static char* getbyte(char* src, int start, int length);
+
+		static void printChars(char* data);
 };
 
 
