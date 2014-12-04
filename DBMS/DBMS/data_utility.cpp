@@ -17,6 +17,37 @@ float* dataUtility::char_to_float(char* data) {
 	return ori;
 }
 
+char* dataUtility::bytefillbyte(char* src, char* dst, int start) {
+	if (start > strlen(src))
+		return "";
+	char* res = new char[start+strlen(dst)];
+	for(int i = 0; i<start; i++) {
+		res[i] = src[i];
+	}
+	for(int i = 0; i<strlen(dst); i++) {
+		res[start+i] = dst[i];
+	}
+	return res;
+}
+char* dataUtility::getbyte(char* src, int start, int length) {
+	if (start+length > strlen(src))
+		return "";
+	char* res = new char[length+1];
+	for(int i = 0; i<length; i++) {
+		res[i] = src[start+i];
+	}
+	res[length-1] ='\0';
+	return res;
+}
+
+void dataUtility::printChars(char* data) {
+	cout << "char* data: ";
+	for (int i = 0; i < strlen(data); i++)
+	{
+		cout << &(data[i]);
+	}
+	cout << endl;
+}
 //int main() {
 //	int a = 312786452;
 //	float b = 651.25;

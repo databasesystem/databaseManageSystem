@@ -7,6 +7,17 @@
 
 using namespace std;
 const int PAGE_SIZE = 8192;
+typedef  unsigned int UINT;
+typedef unsigned char BYTE;
+
+#define INT_TYPE 0
+#define DOUBLE_TYPE 1
+#define FLOAT_TYPE 2
+#define CHAR_TYPE 3
+#define STRING_TYPE 4
+#define VARCHAR_TYPE 5
+#define BOOLEAN_TYPE 6
+
 class attr{
 public:
 		int num;
@@ -14,6 +25,7 @@ public:
 		int* coltype; //0-int 1-double 2-float 3-char 4-string 5-varchar 6-boolean
 		int* collen;
 		bool* colIsNull;
+		int primaryId;
 		attr(int num_v){
 			num = num_v;
 			colname = new string[num];

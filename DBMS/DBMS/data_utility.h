@@ -22,6 +22,12 @@ public:
 			memcpy(data, &ori, sizeof(T));
 			return data;
 		};
+		template<typename T> 
+		static char* data_to_char(T ori, int length){
+			char* data = (char*) malloc(length);
+			memcpy(data, &ori, length);
+			return data;
+		};
 		static int* char_to_int(char* data);
 		static double* char_to_double(char* data);
 		static float* char_to_float(char* data);
@@ -32,6 +38,11 @@ public:
 			memcpy(pageinfo, data, sizeof(T));
 			return pageinfo;
 		}	
+
+		static char* bytefillbyte(char* src, char* dst, int start);
+		static char* getbyte(char* src, int start, int length);
+
+		static void printChars(char* data);
 };
 
 
