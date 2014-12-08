@@ -9,34 +9,42 @@ struct recordEntry {
 	int length;
 	int num;
 	int* itemlen;
+	int offset;
 	recordEntry(int num_v, int* itemlen_v){
 		num = num_v;
 		isNull = new bool[num];
 		item = new char*[num];
 		itemlen = new int[num];
-		length = 1+num;
+		length = 1+num+4;
 		for (int i = 0; i < num; i++) {
 			itemlen[i] = itemlen_v[i]; 
 			item[i] = new char[itemlen[i]];
 			length += itemlen[i];
-			
 		}
+		offset = -1;
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length];
-		char* temp =dataUtility::data_to_char<bool>(record->isdeleted);
-		dataUtility::printChars(temp);
-		res = dataUtility::bytefillbyte(res, temp,0);
+		res[record->length] ='\0';
+		res[0] = dataUtility::bool_to_byte(record->isdeleted);
 		for (int i = 0; i < num; i++) {
-			char* temp =dataUtility::data_to_char<bool>(isNull[i]);
-			res = dataUtility::bytefillbyte(res, temp,1+i);
+			res[1+i]=dataUtility::bool_to_byte(record->isNull[i]);
 		}
+
 		int index = 1+num;
+
+		char* temp = dataUtility::data_to_char<int>(record->offset);
+
 		for (int i = 0; i < num; i++) {
-			res = dataUtility::bytefillbyte(res, item[i],index);
-			index+=itemlen[i];
+			
+			dataUtility::bytefillbyte(res, record->item[i],index);
+			index = index + record->itemlen[i];
 		}
-		dataUtility::printChars(res);
+		
+		dataUtility::bytefillbyte(res,temp, index);
+		char* test = dataUtility::getbyte(res,index, 4);
+		int res1 = dataUtility::char2int(test);
+		cout << res1 << endl;
 		return res;
 	}
 };

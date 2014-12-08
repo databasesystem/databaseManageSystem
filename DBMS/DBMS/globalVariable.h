@@ -8,7 +8,6 @@
 using namespace std;
 const int PAGE_SIZE = 8192;
 typedef  unsigned int UINT;
-typedef unsigned char BYTE;
 
 #define INT_TYPE 0
 #define DOUBLE_TYPE 1

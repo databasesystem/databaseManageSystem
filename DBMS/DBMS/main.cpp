@@ -44,7 +44,7 @@ int main()
 	onedata.isNull[0] = 0;
 	onedata.isNull[1] = 0;
 	onedata.isNull[2] = 0;
-	itoa(100008, onedata.item[0], 10);
+	onedata.item[0] = dataUtility::data_to_char<int>(100008);
 	onedata.item[1] = "Oxbow Books Limited\0";
 	onedata.item[2] = "PRC\0";
 	cout << onedata.item[0] << endl;

@@ -81,7 +81,7 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	cout << "************************Start Insert Data**********************" << endl;
 	cout << "insertData--record the first column data: " << record.item[0] << endl;
 	char* data = record.getRecord(&record);
-	dataUtility::printChars(data);
+	cout << data << endl;
 	/*char* data = dataUtility::data_to_char<int>(123);
 	char* testone = dataUtility::getbyte(data, 0, 4);
 	int* t = dataUtility::char_to_int(testone);
