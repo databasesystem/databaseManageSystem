@@ -6,6 +6,8 @@ int* dataUtility::char_to_int(char* data) {
 	return ori;
 }
 
+
+
 double* dataUtility::char_to_double(char* data) {
 	double* ori = (double*) malloc(sizeof(double));
 	memcpy(ori, data, sizeof(double));
@@ -17,27 +19,23 @@ float* dataUtility::char_to_float(char* data) {
 	return ori;
 }
 
-char* dataUtility::bytefillbyte(char* src, char* dst, int start) {
-	if (start > strlen(src))
-		return "";
-	char* res = new char[start+strlen(dst)];
-	for(int i = 0; i<start; i++) {
-		res[i] = src[i];
+void dataUtility::bytefillbyte(char* src, char* dst, int index) {
+	for (int i = 0; i < strlen(dst); i++)
+	{
+		src[index+i] = dst[i];
 	}
-	for(int i = 0; i<strlen(dst); i++) {
-		res[start+i] = dst[i];
-	}
-	return res;
 }
+
 char* dataUtility::getbyte(char* src, int start, int length) {
-	if (start+length > strlen(src))
-		return "";
-	char* res = new char[length+1];
-	for(int i = 0; i<length; i++) {
-		res[i] = src[start+i];
+	if (strlen(src) < start+length)
+		return "\0";
+	char* data = (char*) malloc(length);
+	for (int i = 0; i < length; i++)
+	{
+		data[i] = src[start+i];
 	}
-	res[length-1] ='\0';
-	return res;
+	data[length] = '\0';
+	return data;
 }
 
 void dataUtility::printChars(char* data) {
@@ -47,6 +45,38 @@ void dataUtility::printChars(char* data) {
 		cout << &(data[i]);
 	}
 	cout << endl;
+}
+
+char dataUtility::bool_to_byte(bool data) {
+	char res;
+	if (data)
+		res='1';
+	else
+		res='0';
+	return res;
+}
+
+char* dataUtility::int_to_char(int data) {
+	char* res = (char*)malloc(sizeof(int));
+	for (int i = 0; i <sizeof(int); i++) 
+		res[3-i] = (char)((data>>(3-i)*8)&0xff);
+	res[sizeof(int)] ='\0';
+	return res;
+}
+
+
+int dataUtility::char2int(char* data) {
+	if (strlen(data) > 4)
+	{
+		cout << "char array to int out of index" << endl;
+		return -1;
+	}
+	int t = 0;
+	for(int i = 0; i < strlen(data); i++){
+		t = t<<8;
+		t+=(int)data[i];
+	}
+	return t;
 }
 //int main() {
 //	int a = 312786452;

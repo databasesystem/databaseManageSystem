@@ -12,7 +12,7 @@
 #include <string.h>
 #include "pageManage.h"
 
-
+using namespace std;
  
 class dataUtility {
 public: 
@@ -20,15 +20,21 @@ public:
 		static char* data_to_char(T ori){
 			char* data = (char*) malloc(sizeof(T));
 			memcpy(data, &ori, sizeof(T));
+			cout << "size:  " << sizeof(T)  << "data size " << strlen(data)<< endl;
+			data[sizeof(T)] = '\0';
 			return data;
 		};
+
 		template<typename T> 
 		static char* data_to_char(T ori, int length){
 			char* data = (char*) malloc(length);
 			memcpy(data, &ori, length);
 			return data;
 		};
+
+		static char* int_to_char(int data);
 		static int* char_to_int(char* data);
+		static int char2int(char* data);
 		static double* char_to_double(char* data);
 		static float* char_to_float(char* data);
 
@@ -39,10 +45,12 @@ public:
 			return pageinfo;
 		}	
 
-		static char* bytefillbyte(char* src, char* dst, int start);
 		static char* getbyte(char* src, int start, int length);
 
 		static void printChars(char* data);
+
+		static void bytefillbyte(char* src, char* dst, int index);
+		static char bool_to_byte(bool data);
 };
 
 
