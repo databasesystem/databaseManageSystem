@@ -1,50 +1,45 @@
 #include "node.h"
-#include "fileManage.h"
-#include <fstream>
 
 FileBuffer::FileBuffer(int max){
-	header = new Node();
-	trailor = new Node();
-	header -> next = trailor;
-	trailor -> pre = header;
+	head = new Node();
+	pointer = new Node();
+	head -> next = pointer;
+	pointer -> pre = head;
 	
-	maxpagenum = max;
-	usepagenum = 0;
+	maxPage = max;
+	usedPage = 0;
 }
 
-
 Node* FileBuffer::remove(){
-	if (usepagenum <= 0) return NULL;
+	if (!usedPage) return NULL;
 
-	Node* cur = trailor -> pre;
-	(cur -> pre) -> next = trailor;
-	trailor -> pre = cur -> pre;
+	Node* cur = pointer -> pre;
+	(cur -> pre) -> next = pointer;
+	pointer -> pre = cur -> pre;
 	
-	if (cur -> dirty) 
+	if (cur -> dirty) {
 		//FileManage::writePageToFile(cur -> pageid, cur -> data, filename);
-
+	}
 	bufmap.erase(cur -> pageid);
-	usepagenum --;
-
+	usedPage--;
 	return cur;
 }
 
 void FileBuffer::insert(Node* cur){
-	if (usepagenum == maxpagenum) {
+	if ( usedPage == maxPage ) {
 		cout << "buffer is full" << endl;
 		remove();
 		insert(cur);
 		return;
 	}
 
-	cur -> next = header -> next;
-	cur -> pre = header;
-	header -> next = cur;
+	cur -> next = head -> next;
+	cur -> pre = head;
+	head -> next = cur;
 	(cur -> next) -> pre = cur;
 
 	bufmap.insert(map<int, Node*>::value_type(cur -> pageid, cur));
-
-	usepagenum ++;
+	usedPage++;
 }
 
 Node* FileBuffer::find(int pageid){

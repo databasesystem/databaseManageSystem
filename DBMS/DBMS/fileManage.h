@@ -1,7 +1,7 @@
 #ifndef _FILEMANAGE_H
 #define _FILEMANAGE_H
-#include "globalVariable.h"
 #include "pageManage.h"
+
 class FileManage {
 public:
 	static void writePageToFile(int pageid, dbPage pageinfo, char* filename);

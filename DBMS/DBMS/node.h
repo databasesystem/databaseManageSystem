@@ -1,8 +1,10 @@
 #ifndef __NODE__H__
 #define __NODE__H__
 
+#include "fileManage.h"
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <map>
 
 using namespace std;
@@ -31,10 +33,10 @@ struct Node{
 
 //针对每个文件一个缓存
 class FileBuffer{
-	Node *header, *trailor;
+	Node *head, *pointer;
 	char* filename;
-	int maxpagenum;
-	int usepagenum;
+	int maxPage;
+	int usedPage;
 	map<int, Node*> bufmap;		//能够根据pageid快速找到Node
 public:
 	FileBuffer(int max);

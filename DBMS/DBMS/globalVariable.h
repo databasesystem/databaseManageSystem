@@ -1,14 +1,11 @@
 #ifndef _GLOBALVARIABLE_H
 #define _GLOBALVARIABLE_H
 
-#include <iostream>
-#include <stdio.h>
-#include <string>
+typedef unsigned int UINT;
+typedef unsigned short USRT;
+typedef unsigned char BYTE;
 
-using namespace std;
-const int PAGE_SIZE = 8192;
-typedef  unsigned int UINT;
-
+#define PAGE_SIZE 8192-sizeof(pageHeader)
 #define INT_TYPE 0
 #define DOUBLE_TYPE 1
 #define FLOAT_TYPE 2
@@ -17,20 +14,4 @@ typedef  unsigned int UINT;
 #define VARCHAR_TYPE 5
 #define BOOLEAN_TYPE 6
 
-class attr{
-public:
-		int num;
-		string *colname;
-		int* coltype; //0-int 1-double 2-float 3-char 4-string 5-varchar 6-boolean
-		int* collen;
-		bool* colIsNull;
-		int primaryId;
-		attr(int num_v){
-			num = num_v;
-			colname = new string[num];
-			coltype = new int[num];
-			collen = new int[num];
-			colIsNull = new bool[num];
-		}
-};
 #endif

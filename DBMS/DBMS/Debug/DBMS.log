@@ -1,33 +1,14 @@
-﻿生成启动时间为 2014/12/29 20:31:35。
-     1>项目“D:\wq\four_grade\database\DBMS\DBMS\DBMS.vcxproj”在节点 2 上(Build 个目标)。
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt BPlusTree.cpp btree.cpp data_utility.cpp fileManage.cpp main.cpp node.cpp recordManage.cpp
-         recordManage.cpp
-     1>d:\wq\four_grade\database\dbms\dbms\recordmanage.cpp(33): warning C4018: “<”: 有符号/无符号不匹配
-     1>d:\wq\four_grade\database\dbms\dbms\recordmanage.cpp(36): warning C4018: “<”: 有符号/无符号不匹配
-         node.cpp
-         main.cpp
-         fileManage.cpp
-         data_utility.cpp
-     1>d:\wq\four_grade\database\dbms\dbms\data_utility.cpp(23): warning C4018: “<”: 有符号/无符号不匹配
-     1>d:\wq\four_grade\database\dbms\dbms\data_utility.cpp(49): warning C4018: “<”: 有符号/无符号不匹配
-     1>d:\wq\four_grade\database\dbms\dbms\data_utility.cpp(81): warning C4018: “<”: 有符号/无符号不匹配
-         btree.cpp
-         BPlusTree.cpp
-     1>d:\wq\four_grade\database\dbms\dbms\bplustree.h(11): warning C4091: “typedef ”: 没有声明变量时忽略“record”的左侧
-     1>d:\wq\four_grade\database\dbms\dbms\bplustree.h(20): warning C4091: “typedef ”: 没有声明变量时忽略“node”的左侧
-         正在生成代码...
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\wq\four_grade\database\DBMS\Debug\DBMS.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\wq\four_grade\database\DBMS\Debug\DBMS.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\wq\four_grade\database\DBMS\Debug\DBMS.lib" /MACHINE:X86 Debug\BPlusTree.obj
-         Debug\btree.obj
-         Debug\data_utility.obj
-         Debug\fileManage.obj
-         Debug\main.obj
-         Debug\node.obj
-         Debug\recordManage.obj
-         DBMS.vcxproj -> D:\wq\four_grade\database\DBMS\Debug\DBMS.exe
-     1>已完成生成项目“D:\wq\four_grade\database\DBMS\DBMS\DBMS.vcxproj”(Build 个目标)的操作。
-
-生成成功。
-
-已用时间 00:00:02.47
+﻿  recordManage.cpp
+d:\programme\github\databasemanagesystem\dbms\dbms\recordmanage.cpp(33): warning C4018: '<' : signed/unsigned mismatch
+d:\programme\github\databasemanagesystem\dbms\dbms\recordmanage.cpp(36): warning C4018: '<' : signed/unsigned mismatch
+  main.cpp
+  fileManage.cpp
+  data_utility.cpp
+d:\programme\github\databasemanagesystem\dbms\dbms\data_utility.cpp(31): warning C4018: '<' : signed/unsigned mismatch
+d:\programme\github\databasemanagesystem\dbms\dbms\data_utility.cpp(56): warning C4018: '<' : signed/unsigned mismatch
+d:\programme\github\databasemanagesystem\dbms\dbms\data_utility.cpp(88): warning C4018: '<' : signed/unsigned mismatch
+  Generating Code...
+fileManage.obj : error LNK2019: unresolved external symbol "public: static char * __cdecl dataUtility::data_to_char<class dbPage>(class dbPage)" (??$data_to_char@VdbPage@@@dataUtility@@SAPADVdbPage@@@Z) referenced in function "public: static void __cdecl FileManage::writePageToFile(int,class dbPage,char *)" (?writePageToFile@FileManage@@SAXHVdbPage@@PAD@Z)
+recordManage.obj : error LNK2019: unresolved external symbol "public: static char * __cdecl dataUtility::data_to_char<int>(int)" (??$data_to_char@H@dataUtility@@SAPADH@Z) referenced in function "public: char * __thiscall recordEntry::getRecord(struct recordEntry *)" (?getRecord@recordEntry@@QAEPADPAU1@@Z)
+recordManage.obj : error LNK2019: unresolved external symbol "public: static char * __cdecl dataUtility::data_to_char<class attr>(class attr)" (??$data_to_char@Vattr@@@dataUtility@@SAPADVattr@@@Z) referenced in function "public: void __thiscall DBStorage::createTable(char *,char *,class attr)" (?createTable@DBStorage@@QAEXPAD0Vattr@@@Z)
+D:\Programme\Github\databaseManageSystem\DBMS\Debug\DBMS.exe : fatal error LNK1120: 3 unresolved externals

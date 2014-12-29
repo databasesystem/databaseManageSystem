@@ -3,7 +3,7 @@
 #include "data_utility.h"
 #include <iostream>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 using namespace std;
 
 DBStorage::DBStorage(string dbname, UINT dbid, bool isCreate) {
@@ -51,9 +51,8 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	test.header.rowCount =0;
 
 	memcpy(test.data, attrdata, sizeof(tableinfo));
-	test.data[PAGE_SIZE-1]='\0';
 
-	FileManage::writePageToFile(0, test, path);
+	FileManage::writePageToFile(test.header.pageId, test, path);
 	this->filenum++;
 
 	dbPage* result = new dbPage();

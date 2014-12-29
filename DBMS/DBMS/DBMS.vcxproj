@@ -65,7 +65,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BPlusTree.cpp" />
     <ClCompile Include="btree.cpp" />
     <ClCompile Include="data_utility.cpp" />
     <ClCompile Include="fileManage.cpp" />
@@ -74,11 +73,11 @@
     <ClCompile Include="recordManage.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BPlusTree.h" />
     <ClInclude Include="btree.h" />
     <ClInclude Include="data_utility.h" />
     <ClInclude Include="fileManage.h" />
     <ClInclude Include="globalVariable.h" />
+    <ClInclude Include="databaseManage.h" />
     <ClInclude Include="node.h" />
     <ClInclude Include="pageManage.h" />
     <ClInclude Include="recordManage.h" />
