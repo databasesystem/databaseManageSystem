@@ -36,8 +36,6 @@ void dataUtility::bytefillbyte(char* src, char* dst, int index, int length) {
 	}
 }
 char* dataUtility::getbyte(char* src, int start, int length) {
-	if (strlen(src) < start+length)
-		return "\0";
 	char* data = (char*) malloc(length);
 	for (int i = 0; i < length; i++)
 	{

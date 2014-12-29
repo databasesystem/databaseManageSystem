@@ -18,5 +18,43 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="node.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="fileManage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="btree.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="recordManage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="data_utility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fileManage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="globalVariable.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="btree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pageManage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="recordManage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="data_utility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

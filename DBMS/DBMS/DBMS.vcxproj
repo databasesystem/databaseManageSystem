@@ -76,7 +76,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="btree.cpp" />
+    <ClCompile Include="data_utility.cpp" />
+    <ClCompile Include="fileManage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="node.cpp" />
+    <ClCompile Include="recordManage.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="btree.h" />
+    <ClInclude Include="data_utility.h" />
+    <ClInclude Include="fileManage.h" />
+    <ClInclude Include="globalVariable.h" />
+    <ClInclude Include="node.h" />
+    <ClInclude Include="pageManage.h" />
+    <ClInclude Include="recordManage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
