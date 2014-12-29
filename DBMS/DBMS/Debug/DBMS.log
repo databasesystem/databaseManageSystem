@@ -1,18 +1,26 @@
-﻿生成启动时间为 2014/10/31 20:47:06。
-     1>项目“Q:\databasesystem\DBMS\DBMS\DBMS.vcxproj”在节点 2 上(Build 个目标)。
-     1>InitializeBuildStatus:
-         正在创建“Debug\DBMS.unsuccessfulbuild”，因为已指定“AlwaysCreate”。
-       ClCompile:
-         B:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+﻿生成启动时间为 2014/12/29 19:22:33。
+     1>项目“D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\DBMS.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp recordManage.cpp
          main.cpp
+         正在生成代码...
+         正在编译...
+         recordManage.cpp
+     1>d:\wq\four_grade\database\gitfiles\databasemanagesystem\dbms\dbms\recordmanage.cpp(32): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\wq\four_grade\database\gitfiles\databasemanagesystem\dbms\dbms\recordmanage.cpp(35): warning C4018: “<”: 有符号/无符号不匹配
+     1>d:\wq\four_grade\database\gitfiles\databasemanagesystem\dbms\dbms\recordmanage.cpp(40): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+                 c:\program files (x86)\microsoft visual studio 11.0\vc\include\stdio.h(218) : 参见“fopen”的声明
+         正在生成代码...
        Link:
-         B:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"Q:\databasesystem\DBMS\Debug\DBMS.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"Q:\databasesystem\DBMS\Debug\DBMS.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"Q:\databasesystem\DBMS\Debug\DBMS.lib" /MACHINE:X86 Debug\main.obj
-         DBMS.vcxproj -> Q:\databasesystem\DBMS\Debug\DBMS.exe
-       FinalizeBuildStatus:
-         正在删除文件“Debug\DBMS.unsuccessfulbuild”。
-         正在对“Debug\DBMS.lastbuildstate”执行 Touch 任务。
-     1>已完成生成项目“Q:\databasesystem\DBMS\DBMS\DBMS.vcxproj”(Build 个目标)的操作。
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.lib" /MACHINE:X86 Debug\btree.obj
+         Debug\data_utility.obj
+         Debug\fileManage.obj
+         Debug\main.obj
+         Debug\node.obj
+         Debug\recordManage.obj
+         DBMS.vcxproj -> D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.exe
+     1>已完成生成项目“D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\DBMS.vcxproj”(Build 个目标)的操作。
 
 生成成功。
 
-已用时间 00:00:01.14
+已用时间 00:00:01.25

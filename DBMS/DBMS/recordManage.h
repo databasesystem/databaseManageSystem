@@ -25,7 +25,6 @@ struct recordEntry {
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length];
-		res[record->length] ='\0';
 		res[0] = dataUtility::bool_to_byte(record->isdeleted);
 		for (int i = 0; i < num; i++) {
 			res[1+i]=dataUtility::bool_to_byte(record->isNull[i]);
@@ -44,7 +43,8 @@ struct recordEntry {
 		}
 		
 		dataUtility::bytefillbyte(res,temp, index,4);
-		char* test = dataUtility::getbyte(res,index, 4);
+		char* test = new char[4];
+		test = dataUtility::getbyte(res,index, 4);
 		int* res1 = dataUtility::char_to_int(test);
 		cout << *res1 << endl;
 		return res;
