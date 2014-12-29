@@ -1,36 +1,18 @@
 #ifndef _GLOBALVARIABLE_H
 #define _GLOBALVARIABLE_H
+typedef unsigned int UINT;
+typedef unsigned char BYTE;
+typedef unsigned short int USRT;
 
-#include <iostream>
-#include <stdio.h>
-#include <string>
+#define DB_PGSIZE 8192
+#define DB_PGSIZE_USRT 8192/sizeof(short)
+#define DB_MAX_BUFFER_SIZE 1000
+#define DB_MAX_FILE_NUM	((1<<8*(sizeof (short)))-1)
+#define DB_DEFAULT_FILE_SIZE 1048576  //(1024*1024)
+#define DB_MAX_TABLE_NUM 1024
 
-using namespace std;
-const int PAGE_SIZE = 8192;
-typedef  unsigned int UINT;
 
 #define INT_TYPE 0
 #define DOUBLE_TYPE 1
-#define FLOAT_TYPE 2
-#define CHAR_TYPE 3
-#define STRING_TYPE 4
-#define VARCHAR_TYPE 5
-#define BOOLEAN_TYPE 6
-
-class attr{
-public:
-		int num;
-		string *colname;
-		int* coltype; //0-int 1-double 2-float 3-char 4-string 5-varchar 6-boolean
-		int* collen;
-		bool* colIsNull;
-		int primaryId;
-		attr(int num_v){
-			num = num_v;
-			colname = new string[num];
-			coltype = new int[num];
-			collen = new int[num];
-			colIsNull = new bool[num];
-		}
-};
+#define CHAR_TYPE 2
 #endif
