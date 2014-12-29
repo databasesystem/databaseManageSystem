@@ -5,16 +5,27 @@
 
 int main()
 {
-	// test buffer jjjjj
-	FileBuffer* fb = new FileBuffer(12);
-	Node *p1 = new Node("aaa", 1), *p2 = new Node("bbb", 2);
-	fb -> insert(p1);
-	fb -> insert(p2);
-	Node *p3 = fb -> find(1);
-	if (p3) cout << p3 -> data << endl;
+	// test buffer
+	FileBuffer* fb = new FileBuffer();
+	Node *p1 = new Node(new dbPage("Jason"))
+		, *p2 = new Node(new dbPage("Alexia"));
+	fb -> insert(rowID(0,1), p1);
+	fb -> insert(rowID(0,2), p2);
+	Node *p3 = fb -> find(rowID(0,1));
+	if (p3) cout << p3 -> page -> data << endl;
+	p3 = fb->find(rowID(0,2));
+	if (p3) cout << p3 -> page -> data;
 	fb -> remove();
-	p3 = fb -> find(1);
-	if (!p3) cout << "null" << endl;
+	if(p3 = fb->find(rowID(0,2)))
+		cout << p3->page->data << " still here" << endl;
+	else
+		cout << " is gone" << endl;
+	p3 = fb -> find(rowID(0,1));
+	if (p3) 
+		cout << p3->page->data << " still here" << endl;
+	else
+		cout << "Jason is gone" << endl;
+
 
 	// test file read or write by page
 	DBStorage testdb("studentManage", 0, 1);

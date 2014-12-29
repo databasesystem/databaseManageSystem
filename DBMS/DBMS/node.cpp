@@ -1,51 +1,39 @@
 #include "node.h"
 
-FileBuffer::FileBuffer(int max){
-	head = new Node();
-	pointer = new Node();
-	head -> next = pointer;
-	pointer -> pre = head;
-	
-	maxPage = max;
-	usedPage = 0;
+FileBuffer::FileBuffer(){
+	numPage = 0;
 }
 
 Node* FileBuffer::remove(){
-	if (!usedPage) return NULL;
+	if (!numPage) return NULL;
 
-	Node* cur = pointer -> pre;
-	(cur -> pre) -> next = pointer;
-	pointer -> pre = cur -> pre;
-	
-	if (cur -> dirty) {
-		//FileManage::writePageToFile(cur -> pageid, cur -> data, filename);
+	map<rowID, Node*>::iterator it = bufmap.end();
+	Node* bufPage = (--it)->second;
+
+	if ( bufPage->dirty ) {
+		//FileManage::writePageToFile(it->first.first, bufPage -> page
+		//	, bufPage->page->header.fileId );
 	}
-	bufmap.erase(cur -> pageid);
-	usedPage--;
-	return cur;
+
+	bufmap.erase(it);
+	numPage--;
+	return bufPage;
 }
 
-void FileBuffer::insert(Node* cur){
-	if ( usedPage == maxPage ) {
+void FileBuffer::insert(rowID id, Node* buffer){
+	if ( numPage == DB_MAX_BUFFER_SIZE ) {
 		cout << "buffer is full" << endl;
 		remove();
-		insert(cur);
-		return;
 	}
-
-	cur -> next = head -> next;
-	cur -> pre = head;
-	head -> next = cur;
-	(cur -> next) -> pre = cur;
-
-	bufmap.insert(map<int, Node*>::value_type(cur -> pageid, cur));
-	usedPage++;
+	bufmap[id] = buffer;
+	numPage++;
 }
 
-Node* FileBuffer::find(int pageid){
-	Node* cur = NULL;
-	map<int, Node*>::iterator it = bufmap.find(pageid);
-	if(it != bufmap.end())
-		cur = it ->second;
-	return cur;
+Node* FileBuffer::find(rowID id){
+	map<rowID, Node*>::iterator it = bufmap.find(id);
+	return (it==bufmap.end())?NULL:it->second;
+}
+
+Node* FileBuffer::find(UINT FileID, UINT PageID){
+	return find(pair<UINT,UINT>(FileID,PageID));
 }

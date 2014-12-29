@@ -21,7 +21,11 @@ public:
 	pageHeader header;
 	char data[PAGE_SIZE];
 	dbPage() {
-		memset(data, 0, PAGE_SIZE);
+		memset(data, '/0', PAGE_SIZE);
+	}
+	dbPage(char* src){
+		memset(data, '/0', PAGE_SIZE);
+		strcpy(data,src);
 	}
 };
 

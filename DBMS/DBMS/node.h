@@ -9,40 +9,33 @@
 
 using namespace std;
 
+typedef pair<UINT,UINT> rowID;
+
 class FileBuffer;
 struct Node{
-	char* data;
-	int pageid;
 	bool dirty;
-	Node* next;
-	Node* pre;
+	dbPage* page;
 	Node(){
-		data = NULL;
-		pageid = 0;
 		dirty = false;
-		next = NULL;
-		pre = NULL;
+		page = NULL;
 	}
-	Node(char* _data, int _pageid) : data(_data), pageid(_pageid){
+	Node(dbPage* _page) : page(_page){
 		dirty = false;
-		next = NULL;
-		pre = NULL;
 	}
 };
 
 
 //针对每个文件一个缓存
 class FileBuffer{
-	Node *head, *pointer;
-	char* filename;
-	int maxPage;
-	int usedPage;
-	map<int, Node*> bufmap;		//能够根据pageid快速找到Node
 public:
-	FileBuffer(int max);
+	FileBuffer();
 	Node* remove();				//从队列的尾部删掉，并从map中删掉，usepagenum --
-	void insert(Node* cur);		//插入队首，插入map，usepagenum ++
-	Node* find(int pageid);		//存在，返回节点；否则，返回NULL
+	void insert(rowID id, Node* buffer);		//插入队首，插入map，usepagenum ++
+	Node* find(rowID id);		//存在，返回节点；否则，返回NULL
+	Node* find(UINT FileID, UINT PageID);
+private:
+	int numPage;
+	map<rowID, Node*> bufmap;		//能够根据rowid快速找到Node
 };
 
 

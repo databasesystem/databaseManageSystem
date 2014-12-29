@@ -52,7 +52,7 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 
 	memcpy(test.data, attrdata, sizeof(tableinfo));
 
-	FileManage::writePageToFile(test.header.pageId, test, path);
+	FileManage::writePageToFile(test.header.pageId, &test, path);
 	this->filenum++;
 
 	dbPage* result = new dbPage();

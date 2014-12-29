@@ -1,10 +1,10 @@
 #include "fileManage.h"
 #include "data_utility.h"
 
-void FileManage::writePageToFile(int pageid, dbPage pagedata, char* filename){
+void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	FILE* originfilestream;
 	FILE* updatefilestream;
-	char* writedata = dataUtility::data_to_char<dbPage>(pagedata);
+	char* writedata = dataUtility::data_to_char<dbPage>(*pagedata);
 	const char* updatefilename = "newfile.txt";
 	originfilestream = fopen(filename,"r");
 	updatefilestream = fopen(updatefilename, "w+");
