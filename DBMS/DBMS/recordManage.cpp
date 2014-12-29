@@ -17,6 +17,7 @@ DBStorage::~DBStorage() {
 }
 
 void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) {
+
 	/*
 	* for a simple example
 	* CREATE TABLE publisher (id int(10) NOT NULL,
