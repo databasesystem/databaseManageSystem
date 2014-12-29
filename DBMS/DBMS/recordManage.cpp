@@ -51,16 +51,16 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	test.header.rowCount =0;
 
 	memcpy(test.data, attrdata, sizeof(tableinfo));
-	test.data[PAGE_SIZE-1]='\0';
 
-	FileManage::writePageToFile(0, test, path);
+	FileManage::writePageToFile(test.header.pageId, test, path);
 	this->filenum++;
 
 	dbPage* result = new dbPage();
 	FileManage::readPageFromFile(0, result, path);
-	cout<< result->data << endl;  //although appear tang, but read out is correct.  cout << char* << endl;
+	cout << "test page data " << result->header.fileId << endl;
+	//cout<< result->data << endl;  //although appear tang, but read out is correct.  cout << char* << endl;
 
-	dataUtility::printChars(result->data);
+	/*dataUtility::printChars(result->data);
 	attr* checkresult = dataUtility::char_to_class<attr>(result->data);
 	cout << checkresult->colname[0] << endl;
 	cout << checkresult->colname[1] << endl;
@@ -70,7 +70,7 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	cout << checkresult->coltype[1] << endl;
 	cout << checkresult->coltype[2] << endl;
 
-	cout << checkresult->primaryId << endl;
+	cout << checkresult->primaryId << endl;*/
 	
 	cout << "************************End Create Table**********************" << endl;
 }
@@ -95,16 +95,19 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	int fileid = pageInfo->header.fileId;
 	int pageid = 1;
 	FileManage::readPageFromFile(pageid, pageInfo, path);
-	while(true) {
+	cout << pageInfo->header.fileId << endl;
+	/*while(true) {
 		if (pageInfo->header.fileId == 0)
 		{
 			pageInfo->header.fileId = fileid;
 			pageInfo->header.firstFreeOffset = 0;
 			pageInfo->header.freeCount = PAGE_SIZE;
+			cout << "new page id: " << pageid << endl;
 			break;
 		} else {
 			if (pageInfo->header.freeCount >= record.length)
 			{
+				cout << "exist page id: " << pageid << endl;
 				break;
 			} else {
 				pageid++;
@@ -119,20 +122,19 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 		data = record.getRecord(&record);
 	} else {
 		data = record.getRecord(&record);
+		int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
 		for(int i = 0; i < 4; i++) {
 			data[record.length-4+i] = firstoffset[record.length-4+i];
 		}
+		pageInfo->header.firstFreeOffset = *temp;
 	}
-	pageInfo->header.freeCount-=record.length;
-
-	dataUtility::bytefillbyte(data, firstoffset,record.length-4, 4);
-	dataUtility::bytefillbyte(pageInfo->data, data, pageInfo->header.firstFreeOffset,record.length);
-	  
-	
-	/*char* data = dataUtility::data_to_char<int>(123);
-	char* testone = dataUtility::getbyte(data, 0, 4);
-	int* t = dataUtility::char_to_int(testone);
-	cout << *t<< endl;
-	cout << "ok" << endl;*/
+	pageInfo->header.freeCount -= record.length;
+	cout << "fileid " << pageInfo->header.fileId << endl;
+	dbPage test;
+	test.header.fileId = 2;
+	FileManage::writePageToFile(pageid, test, path);
+	dbPage* readtest = new dbPage();
+	FileManage::readPageFromFile(pageid, readtest, path);
+	cout << readtest->header.fileId << endl;*/
 	cout << "************************End Insert Data**********************" << endl;
 }
