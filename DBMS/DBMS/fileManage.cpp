@@ -48,7 +48,7 @@ void FileManage::writePageToFile(int pageid, dbPage pagedata, char* filename){
 }
 
 void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
-	cout << "pageid: " << pageid << endl;
+	//cout << "pageid: " << pageid << endl;
 	FILE* filestream;
 	char* data = new char[sizeof(dbPage)];
 	filestream = fopen(filename,"r");

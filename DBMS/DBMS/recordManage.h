@@ -34,7 +34,7 @@ struct recordEntry {
 
 		char* temp = dataUtility::data_to_char<int>(record->offset);
 		int* t = dataUtility::char_to_int(temp);
-		cout << "offset:" << *t << endl;
+		//cout << "offset:" << *t << endl;
 
 		for (int i = 0; i < num; i++) {
 			
@@ -46,7 +46,7 @@ struct recordEntry {
 		char* test = new char[4];
 		test = dataUtility::getbyte(res,index, 4);
 		int* res1 = dataUtility::char_to_int(test);
-		cout << *res1 << endl;
+		//cout << *res1 << endl;
 		return res;
 	}
 };

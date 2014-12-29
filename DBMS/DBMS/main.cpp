@@ -37,6 +37,7 @@ int main()
 	tableAttr.colIsNull[2] = true;
 
 	tableAttr.primaryId = 0;
+	tableAttr.pagenum = 1;
 	testdb.createTable("studentinfo", "studentManage", tableAttr);
 	
 	recordEntry onedata(3, tableAttr.collen);
@@ -52,7 +53,7 @@ int main()
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
-	for(int i = 0; i < 10; i++) {
+	for(int i = 0; i < 3; i++) {
 		cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " << i << " ^^^^^^^^^^^^^^^^^" << endl;
 		testdb.insertData("studentinfo", onedata);
 	}

@@ -25,12 +25,14 @@ public:
 		int* collen;
 		bool* colIsNull;
 		int primaryId;
+		int pagenum;
 		attr(int num_v){
 			num = num_v;
 			colname = new string[num];
 			coltype = new int[num];
 			collen = new int[num];
 			colIsNull = new bool[num];
+			pagenum = 0;  //first attr page is also a count
 		}
 };
 #endif
