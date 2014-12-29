@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BPlusTree.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="btree.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -38,9 +35,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BPlusTree.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="btree.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -60,6 +54,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="recordManage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="databaseManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
