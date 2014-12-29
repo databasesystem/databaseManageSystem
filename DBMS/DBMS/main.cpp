@@ -44,17 +44,17 @@ int main()
 	onedata.isNull[0] = 0;
 	onedata.isNull[1] = 0;
 	onedata.isNull[2] = 0;
-	onedata.item[0] = dataUtility::data_to_char<int>(100008);
+	onedata.item[0] = dataUtility::int_to_char(100008);
 	onedata.item[1] = "Oxbow Books Limited\0";
 	onedata.item[2] = "PRC\0";
-	cout << onedata.item[0] << endl;
+	int* t = dataUtility::char_to_int(onedata.item[0]);
+	cout << *t << endl;
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
 	testdb.insertData("studentinfo", onedata);
-	//100008,'Oxbow Books Limited','PRC'
-	
 
+	//100008,'Oxbow Books Limited','PRC'
 	////test B+ tree index
 	//int agedata[10];
 	//node * root;

@@ -26,6 +26,15 @@ void dataUtility::bytefillbyte(char* src, char* dst, int index) {
 	}
 }
 
+
+void dataUtility::bytefillbyte(char* src, char* dst, int index, int length) {
+	char* temp = new char[length];
+	memcpy(temp, dst, length);
+	for (int i = 0; i < length; i++) 
+	{
+		src[index+i] = temp[i];
+	}
+}
 char* dataUtility::getbyte(char* src, int start, int length) {
 	if (strlen(src) < start+length)
 		return "\0";
@@ -34,7 +43,6 @@ char* dataUtility::getbyte(char* src, int start, int length) {
 	{
 		data[i] = src[start+i];
 	}
-	data[length] = '\0';
 	return data;
 }
 

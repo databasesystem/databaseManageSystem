@@ -50,6 +50,7 @@ public:
 		static void printChars(char* data);
 
 		static void bytefillbyte(char* src, char* dst, int index);
+		static void bytefillbyte(char* src, char* dst, int start, int length);   //some characters in src are replaced by in dst.
 		static char bool_to_byte(bool data);
 };
 

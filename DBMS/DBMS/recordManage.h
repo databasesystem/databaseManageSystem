@@ -21,7 +21,7 @@ struct recordEntry {
 			item[i] = new char[itemlen[i]];
 			length += itemlen[i];
 		}
-		offset = -1;
+		offset = 100008;
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length];
@@ -34,6 +34,8 @@ struct recordEntry {
 		int index = 1+num;
 
 		char* temp = dataUtility::data_to_char<int>(record->offset);
+		int* t = dataUtility::char_to_int(temp);
+		cout << "offset:" << *t << endl;
 
 		for (int i = 0; i < num; i++) {
 			
@@ -41,10 +43,10 @@ struct recordEntry {
 			index = index + record->itemlen[i];
 		}
 		
-		dataUtility::bytefillbyte(res,temp, index);
+		dataUtility::bytefillbyte(res,temp, index,4);
 		char* test = dataUtility::getbyte(res,index, 4);
-		int res1 = dataUtility::char2int(test);
-		cout << res1 << endl;
+		int* res1 = dataUtility::char_to_int(test);
+		cout << *res1 << endl;
 		return res;
 	}
 };
