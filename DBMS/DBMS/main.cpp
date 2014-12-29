@@ -5,7 +5,7 @@
 
 int main()
 {
-	// test buffer 
+	// test buffer jjjjj
 	FileBuffer* fb = new FileBuffer(12);
 	Node *p1 = new Node("aaa", 1), *p2 = new Node("bbb", 2);
 	fb -> insert(p1);
