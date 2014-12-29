@@ -1,18 +1,10 @@
 #include "fileManage.h"
-#include "globalVariable.h"
 #include "data_utility.h"
-#include <iostream>
-#include <stdio.h>
-#include <direct.h>
-#include <stdlib.h>
-#include <string.h>
-using namespace std;
 
 void FileManage::writePageToFile(int pageid, dbPage pagedata, char* filename){
 	FILE* originfilestream;
 	FILE* updatefilestream;
 	char* writedata = dataUtility::data_to_char<dbPage>(pagedata);
-	writedata[sizeof(dbPage)-1]='\0';
 	const char* updatefilename = "newfile.txt";
 	originfilestream = fopen(filename,"r");
 	updatefilestream = fopen(updatefilename, "w+");
@@ -44,6 +36,7 @@ void FileManage::writePageToFile(int pageid, dbPage pagedata, char* filename){
 	remove(filename);
 	rename(updatefilename, filename);
 }
+
 void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	FILE* filestream;
 	char* data = new char[sizeof(dbPage)];
@@ -58,7 +51,6 @@ void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	fclose(filestream);
 }
 
-
 int FileManage::createFileFolder(char* filefoldername) {
 	int status = _mkdir(filefoldername);
 	if (status == 0) {
@@ -68,6 +60,7 @@ int FileManage::createFileFolder(char* filefoldername) {
 	}
 	return status;
 }
+
 int FileManage::deleteFileFolder(char* filefoldername) {
 	int status = _rmdir(filefoldername);
 	if (status == 0) {
