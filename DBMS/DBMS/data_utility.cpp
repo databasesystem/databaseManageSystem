@@ -27,12 +27,12 @@ void dataUtility::bytefillbyte(char* src, char* dst, int index) {
 }
 
 
-void dataUtility::bytefillbyte(char* src, char* dst, int index, int length) {
+void dataUtility::bytefillbyte(char* dst, char* src, int index, int length) {
 	char* temp = new char[length];
-	memcpy(temp, dst, length);
+	memcpy(temp, src, length);
 	for (int i = 0; i < length; i++) 
 	{
-		src[index+i] = temp[i];
+		dst[index+i] = temp[i];
 	}
 }
 char* dataUtility::getbyte(char* src, int start, int length) {
