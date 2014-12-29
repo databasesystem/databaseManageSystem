@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\BTREE.OBJ
 D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\DATA_UTILITY.OBJ
 D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\FILEMANAGE.OBJ
@@ -29,3 +30,36 @@ D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\vc110.pd
 D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.pdb
 D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.exe
 D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.ilk
+=======
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\BTREE.OBJ
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\DATA_UTILITY.OBJ
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\FILEMANAGE.OBJ
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\MAIN.OBJ
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\NODE.OBJ
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\RECORDMANAGE.OBJ
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DBMS\DEBUG\VC110.PDB
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DEBUG\DBMS.ILK
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DEBUG\DBMS.EXE
+D:\WQ\FOUR_GRADE\DATABASE\GITFILES\DATABASEMANAGESYSTEM\DBMS\DEBUG\DBMS.PDB
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\btree.obj
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\data_utility.obj
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\fileManage.obj
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\main.obj
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\node.obj
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\recordManage.obj
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\cl.command.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\CL.read.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\CL.write.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link-cvtres.read.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link-cvtres.write.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link-rc.read.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link-rc.write.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link.command.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link.read.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\link.write.1.tlog
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\vc110.idb
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\DBMS\Debug\vc110.pdb
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.pdb
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.exe
+D:\wq\four_grade\database\gitfiles\databaseManageSystem\DBMS\Debug\DBMS.ilk
+>>>>>>> origin/master
