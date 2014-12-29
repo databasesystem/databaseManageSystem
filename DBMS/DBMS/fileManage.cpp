@@ -1,4 +1,5 @@
 #include "fileManage.h"
+#include "globalVariable.h"
 #include "data_utility.h"
 #include <iostream>
 #include <stdio.h>

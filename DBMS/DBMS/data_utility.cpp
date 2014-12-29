@@ -1,26 +1,18 @@
 #include "data_utility.h"
 
-template<typename T> 
-char* dataUtility::data_to_char(T ori){
-	char* data = (char*) malloc(sizeof(T));
-	memcpy(data, &ori, sizeof(T));
-	cout << "size:  " << sizeof(T)  << "data size " << strlen(data)<< endl;
-	//data[sizeof(T)] = '\0';this function is for tranferring raw data to output, no need to add ending character
-	return data;
-}
-
 int* dataUtility::char_to_int(char* data) {
 	int* ori = (int*) malloc(sizeof(int));
 	memcpy(ori, data, sizeof(int));
 	return ori;
 }
 
+
+
 double* dataUtility::char_to_double(char* data) {
 	double* ori = (double*) malloc(sizeof(double));
 	memcpy(ori, data, sizeof(double));
 	return ori;
 }
-
 float* dataUtility::char_to_float(char* data) {
 	float* ori = (float*) malloc(sizeof(float));
 	memcpy(ori, data, sizeof(float));
@@ -33,6 +25,7 @@ void dataUtility::bytefillbyte(char* src, char* dst, int index) {
 		src[index+i] = dst[i];
 	}
 }
+
 
 void dataUtility::bytefillbyte(char* src, char* dst, int index, int length) {
 	char* temp = new char[length];

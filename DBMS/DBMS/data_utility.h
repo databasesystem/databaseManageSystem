@@ -7,15 +7,23 @@
 
 #ifndef DATA_UTILITY_H_
 #define DATA_UTILITY_H_
-#include <string>
-#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "pageManage.h"
 
 using namespace std;
  
 class dataUtility {
 public: 
 		template<typename T> 
-		static char* data_to_char(T ori);
+		static char* data_to_char(T ori){
+			char* data = (char*) malloc(sizeof(T));
+			memcpy(data, &ori, sizeof(T));
+			cout << "size:  " << sizeof(T)  << "data size " << strlen(data)<< endl;
+			data[sizeof(T)] = '\0';
+			return data;
+		};
 
 		template<typename T> 
 		static char* data_to_char(T ori, int length){

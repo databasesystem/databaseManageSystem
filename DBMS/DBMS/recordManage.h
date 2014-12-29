@@ -1,7 +1,6 @@
 #ifndef _RECORDMANAGE_H
 #define _RECORDMANAGE_H
 #include "data_utility.h"
-#include "databaseManage.h"
 
 struct recordEntry {
 	bool isdeleted;
