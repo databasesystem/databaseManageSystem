@@ -21,7 +21,7 @@ struct recordEntry {
 			item[i] = new char[itemlen[i]];
 			length += itemlen[i];
 		}
-		offset = 100008;
+		offset = -1;
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length];
@@ -56,7 +56,7 @@ class DBStorage{
 public:
 	string dbname;
 	UINT dbid;
-
+	UINT filenum;
 	DBStorage(string dbname, UINT dbid, bool isCreate);
 	~DBStorage();
 	void createTable(char* filename,char* databasename, attr tableinfo);
@@ -64,6 +64,8 @@ public:
 	void createDataBase(char* databasename);
 
 	void insertData(char* tablename, recordEntry reord);
+
+	char* getTablePath(char* tablename);
 };
 
 #endif
