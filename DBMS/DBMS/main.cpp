@@ -52,7 +52,11 @@ int main()
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
-	testdb.insertData("studentinfo", onedata);
+	for(int i = 0; i < 10; i++) {
+		cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " << i << " ^^^^^^^^^^^^^^^^^" << endl;
+		testdb.insertData("studentinfo", onedata);
+	}
+
 
 	//100008,'Oxbow Books Limited','PRC'
 	////test B+ tree index
