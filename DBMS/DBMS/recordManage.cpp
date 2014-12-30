@@ -18,18 +18,14 @@ DBStorage::~DBStorage() {
 }
 
 char* DBStorage::getTablePath(char* tablename) {
-	const char* databasename = dbname.c_str();
-	char* path = (char*) malloc(strlen(tablename) + strlen(databasename)+4);
-	path[0] = '.';
-	path[1] = '/';
-	for(int i = 0; i < strlen(databasename); i++)
-		path[2+i] = databasename[i];
-	path[2+strlen(databasename)]='/';
-	for(int i = 0; i < strlen(tablename); i++)
-		path[3+strlen(databasename)+i] = tablename[i];
-	path[3+strlen(databasename)+strlen(tablename)]='\0';
+	char* path = new char[strlen(tablename) + dbname.size() + 3];
+	strcpy(path,"./");
+	strcat(path,dbname.c_str());
+	strcat(path,"/");
+	strcat(path,tablename);
 	return path;
 }
+
 void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) {
 
 	/*
@@ -38,7 +34,6 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	* name varchar(100) NOT NULL,nation varchar(3),PRIMARY KEY  (id));
 	*/
 	cout << "************************Start Create Table**********************" << endl;
-	char* attrdata = dataUtility::data_to_char<attr>(tableinfo);
 	char* path = getTablePath(filename);
 	FILE* filestream;
 	filestream = fopen(path,"w");
@@ -46,11 +41,11 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	dbPage test;
 	test.header.pageId = 0;
 	test.header.fileId = filenum+1;
-	test.header.firstFreeOffset = sizeof(tableinfo)+1;   // the offset for the first free room.
-	test.header.freeCount = PAGE_SIZE-sizeof(tableinfo); //the size of page free 
+	test.header.firstFreeOffset = sizeof(attr)+1;   // the offset for the first free room.
+	test.header.freeCount = PAGE_SIZE-sizeof(attr); //the size of page free 
 	test.header.rowCount =0;
 
-	memcpy(test.data, attrdata, sizeof(attr));
+	memcpy(test.data, &tableinfo, sizeof(attr));
 
 	FileManage::writePageToFile(test.header.pageId, &test, path);
 	this->filenum++;
