@@ -56,8 +56,8 @@ int main()
 	onedata.isNull[1] = 0;
 	onedata.isNull[2] = 0;
 	onedata.item[0] = dataUtility::int_to_char(100008);
-	onedata.item[1] = "Oxbow Books Limited\0";
-	onedata.item[2] = "PRC\0";
+	onedata.item[1] = "Oxbow Books Limited";
+	onedata.item[2] = "PRC";
 	int* t = dataUtility::char_to_int(onedata.item[0]);
 	cout << *t << endl;
 	cout << onedata.item[1] << endl;
