@@ -6,13 +6,12 @@ int* dataUtility::char_to_int(char* data) {
 	return ori;
 }
 
-
-
 double* dataUtility::char_to_double(char* data) {
 	double* ori = (double*) malloc(sizeof(double));
 	memcpy(ori, data, sizeof(double));
 	return ori;
 }
+
 float* dataUtility::char_to_float(char* data) {
 	float* ori = (float*) malloc(sizeof(float));
 	memcpy(ori, data, sizeof(float));
