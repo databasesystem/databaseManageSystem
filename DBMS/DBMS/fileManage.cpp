@@ -40,8 +40,10 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 			fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
 			fwrite(pagedata,sizeof(char), sizeof(dbPage), updatefilestream);
 		}
+
 		fclose(originfilestream);
 		remove(filename);
+
 	}
 	fclose(updatefilestream);
 	rename(updatefilename, filename);
