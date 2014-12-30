@@ -70,6 +70,7 @@
     <ClCompile Include="data_utility.cpp" />
     <ClCompile Include="fileManage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="parser.cpp" />
     <ClCompile Include="recordManage.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +80,7 @@
     <ClInclude Include="fileManage.h" />
     <ClInclude Include="globalVariable.h" />
     <ClInclude Include="pageManage.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="recordManage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
