@@ -21,10 +21,10 @@ public:
 	pageHeader header;
 	char data[PAGE_SIZE];
 	dbPage() {
-		memset(data, '/0', PAGE_SIZE);
+		memset(data, 0, PAGE_SIZE);
 	}
 	dbPage(char* src){
-		memset(data, '/0', PAGE_SIZE);
+		memset(data, 0, PAGE_SIZE);
 		strcpy(data,src);
 	}
 };
@@ -37,12 +37,14 @@ public:
 		int* collen;
 		bool* colIsNull;
 		int primaryId;
+		int pagenum;
 		attr(int num_v){
 			num = num_v;
 			colname = new string[num];
 			coltype = new int[num];
 			collen = new int[num];
 			colIsNull = new bool[num];
-		}
+			pagenum = 0;  //first attr page is also a count
+		};
 };
 #endif

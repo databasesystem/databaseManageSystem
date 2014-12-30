@@ -1,5 +1,12 @@
 #include "fileManage.h"
+#include "globalVariable.h"
 #include "data_utility.h"
+#include <iostream>
+#include <stdio.h>
+#include <direct.h>
+#include <stdlib.h>
+#include <string.h>
+using namespace std;
 
 void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	FILE* originfilestream;
@@ -41,7 +48,11 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 }
 
 void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
+<<<<<<< HEAD
+	//cout << "pageid: " << pageid << endl;
+=======
 	cout << "pageid: " << pageid << endl;
+>>>>>>> 7c7512f5d8296b58c19eda3597a48b02fff09c79
 	FILE* filestream;
 	char* data = new char[sizeof(dbPage)];
 	filestream = fopen(filename,"r");
@@ -56,6 +67,7 @@ void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	fclose(filestream);
 }
 
+
 int FileManage::createFileFolder(char* filefoldername) {
 	int status = _mkdir(filefoldername);
 	if (status == 0) {
@@ -65,7 +77,6 @@ int FileManage::createFileFolder(char* filefoldername) {
 	}
 	return status;
 }
-
 int FileManage::deleteFileFolder(char* filefoldername) {
 	int status = _rmdir(filefoldername);
 	if (status == 0) {
