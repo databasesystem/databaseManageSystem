@@ -5,7 +5,14 @@ typedef unsigned int UINT;
 typedef unsigned short USRT;
 typedef unsigned char BYTE;
 
-#define PAGE_SIZE 8192-sizeof(pageHeader)
+#define DB_PGSIZE			8192 // size of page
+#define DB_PGSIZE_USRT		DB_PGSIZE/(sizeof (USRT)) // count in short
+#define DB_MAX_BUFFER_SIZE	1000 // the size of maximum buffer page
+#define DB_MAX_FILE_NUM		((1<<8*(sizeof (USRT)))-1)
+#define DB_DEFAULT_FILE_SIZE	1048576 //(1024*1024)
+#define DB_MAX_TABLE_NUM	1024
+
+#define PAGE_SIZE DB_PGSIZE-sizeof(pageHeader)
 #define INT_TYPE 0
 #define DOUBLE_TYPE 1
 #define FLOAT_TYPE 2
