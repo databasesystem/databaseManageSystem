@@ -1,5 +1,12 @@
 #include "fileManage.h"
+#include "globalVariable.h"
 #include "data_utility.h"
+#include <iostream>
+#include <stdio.h>
+#include <direct.h>
+#include <stdlib.h>
+#include <string.h>
+using namespace std;
 
 void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	FILE* originfilestream;
@@ -21,35 +28,41 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	while(fread(data, sizeof(char), sizeof(dbPage), originfilestream)) {
 		pageno = pageno + 1;
 		if (pageid == pageno)
-			fwrite(writedata,sizeof(dbPage), 1, updatefilestream);
-		else
+			fwrite(writedata,sizeof(char), sizeof(dbPage), updatefilestream);
+		else {
 			fwrite(data, sizeof(char), sizeof(dbPage), updatefilestream);
+			//cout << "copy origin file" << endl;
+		}
 		memset(data, '\0', sizeof(dbPage));
 	}
+	//cout <<  "pageno: " << pageno  << " pageid: " << pageid << endl; 
 	if (pageid > pageno) 
 	{
 		fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
-		fwrite(writedata,sizeof(dbPage), 1, updatefilestream);
+		fwrite(writedata,sizeof(char), sizeof(dbPage), updatefilestream);
+		fclose(updatefilestream);
+		fclose(originfilestream);
+		remove(filename);
+		rename(updatefilename, filename);
 	}
-	fclose(originfilestream);
-	fclose(updatefilestream);
-	remove(filename);
-	rename(updatefilename, filename);
 }
 
 void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
+	//cout << "pageid: " << pageid << endl;
 	FILE* filestream;
 	char* data = new char[sizeof(dbPage)];
 	filestream = fopen(filename,"r");
-	int status = fseek(filestream, pageid*sizeof(pageinfo), SEEK_SET);
+	int status = fseek(filestream, pageid*sizeof(dbPage), SEEK_SET);
 	if (status == 0) {
-		fread(data, PAGE_SIZE, 1, filestream);
+		fread(data, sizeof(dbPage), 1, filestream);
 		*pageinfo = *dataUtility::char_to_class<dbPage>(data);
 	} else {
 		cout << "Read page to file errors." << endl;
+		pageinfo->header.fileId = 0;
 	}
 	fclose(filestream);
 }
+
 
 int FileManage::createFileFolder(char* filefoldername) {
 	int status = _mkdir(filefoldername);
@@ -60,7 +73,6 @@ int FileManage::createFileFolder(char* filefoldername) {
 	}
 	return status;
 }
-
 int FileManage::deleteFileFolder(char* filefoldername) {
 	int status = _rmdir(filefoldername);
 	if (status == 0) {

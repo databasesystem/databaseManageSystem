@@ -1,6 +1,5 @@
-#include "node.h"
 #include "fileManage.h"
-#include "globalVariable.h"
+#include "bufferManage.h"
 #include "recordManage.h"
 
 int main()
@@ -17,7 +16,7 @@ int main()
 	if (p3) cout << p3 -> page -> data;
 	fb -> remove();
 	if(p3 = fb->find(rowID(0,2)))
-		cout << p3->page->data << " still here" << endl;
+		cout <<  " still here" << endl;
 	else
 		cout << " is gone" << endl;
 	p3 = fb -> find(rowID(0,1));
@@ -27,7 +26,7 @@ int main()
 		cout << "Jason is gone" << endl;
 
 
-	// test file read or write by page
+		// test file read or write by page
 	DBStorage testdb("studentManage", 0, 1);
 	attr tableAttr(3);
 
@@ -48,6 +47,7 @@ int main()
 	tableAttr.colIsNull[2] = true;
 
 	tableAttr.primaryId = 0;
+	tableAttr.pagenum = 1;
 	testdb.createTable("studentinfo", "studentManage", tableAttr);
 	
 	recordEntry onedata(3, tableAttr.collen);
@@ -63,7 +63,11 @@ int main()
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
-	testdb.insertData("studentinfo", onedata);
+	for(int i = 0; i < 3; i++) {
+		cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " << i << " ^^^^^^^^^^^^^^^^^" << endl;
+		testdb.insertData("studentinfo", onedata);
+	}
+
 
 	//100008,'Oxbow Books Limited','PRC'
 	////test B+ tree index

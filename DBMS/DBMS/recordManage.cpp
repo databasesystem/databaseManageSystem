@@ -1,9 +1,6 @@
 #include "recordManage.h"
 #include "fileManage.h"
 #include "data_utility.h"
-#include <iostream>
-#include <stdlib.h>
-#include <string>
 using namespace std;
 
 DBStorage::DBStorage(string dbname, UINT dbid, bool isCreate) {
@@ -57,19 +54,18 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 
 	dbPage* result = new dbPage();
 	FileManage::readPageFromFile(0, result, path);
-	cout<< result->data << endl;  //although appear tang, but read out is correct.  cout << char* << endl;
+	cout << "test page data " << result->header.fileId << endl;
+	//cout<< result->data << endl;  //although appear tang, but read out is correct.  cout << char* << endl;
 
-	dataUtility::printChars(result->data);
+	/*dataUtility::printChars(result->data);
 	attr* checkresult = dataUtility::char_to_class<attr>(result->data);
 	cout << checkresult->colname[0] << endl;
 	cout << checkresult->colname[1] << endl;
 	cout << checkresult->colname[2] << endl;
-
 	cout << checkresult->coltype[0] << endl;
 	cout << checkresult->coltype[1] << endl;
 	cout << checkresult->coltype[2] << endl;
-
-	cout << checkresult->primaryId << endl;
+	cout << checkresult->primaryId << endl;*/
 	
 	cout << "************************End Create Table**********************" << endl;
 }
@@ -86,24 +82,37 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 
 	cout << "************************Start Insert Data**********************" << endl;
 	cout << "insertData--record the first column data: " << record.item[0] << endl;
-	cout << "Data length" << record.length << endl;
+	//cout << "Data length" << record.length << endl;
 	
+	dbPage* attrPageInfo = new dbPage();
 	dbPage* pageInfo = new dbPage();
 	char* path = getTablePath(tablename);
-	FileManage::readPageFromFile(0, pageInfo, path);
-	int fileid = pageInfo->header.fileId;
+
+	FileManage::readPageFromFile(0, attrPageInfo, path);
+	int fileid = attrPageInfo->header.fileId;
+	attr* tableAttr = dataUtility::char_to_class<attr>(attrPageInfo->data);
 	int pageid = 1;
-	FileManage::readPageFromFile(pageid, pageInfo, path);
+	
 	while(true) {
-		if (pageInfo->header.fileId == 0)
+		cout << " 1page num: " << tableAttr->pagenum << endl;
+		if (tableAttr->pagenum <= pageid)
 		{
 			pageInfo->header.fileId = fileid;
 			pageInfo->header.firstFreeOffset = 0;
 			pageInfo->header.freeCount = PAGE_SIZE;
+			cout << "new page id: " << pageid << endl;
+
+			tableAttr->pagenum++;
+			cout << " 2page num: " << tableAttr->pagenum << endl;
+			memcpy(attrPageInfo->data, tableAttr, sizeof(tableAttr));
+			FileManage::writePageToFile(0, attrPageInfo, path);
+			cout << " 3pagenum: " + dataUtility::char_to_class<attr>(attrPageInfo->data)->pagenum << endl;
 			break;
 		} else {
+			FileManage::readPageFromFile(pageid, pageInfo, path);
 			if (pageInfo->header.freeCount >= record.length)
 			{
+				cout << "exist page id: " << pageid << endl;
 				break;
 			} else {
 				pageid++;
@@ -118,20 +127,19 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 		data = record.getRecord(&record);
 	} else {
 		data = record.getRecord(&record);
+		int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
 		for(int i = 0; i < 4; i++) {
 			data[record.length-4+i] = firstoffset[record.length-4+i];
 		}
+		pageInfo->header.firstFreeOffset = *temp;
 	}
-	pageInfo->header.freeCount-=record.length;
-
-	dataUtility::bytefillbyte(data, firstoffset,record.length-4, 4);
-	dataUtility::bytefillbyte(pageInfo->data, data, pageInfo->header.firstFreeOffset,record.length);
-	  
-	
-	/*char* data = dataUtility::data_to_char<int>(123);
-	char* testone = dataUtility::getbyte(data, 0, 4);
-	int* t = dataUtility::char_to_int(testone);
-	cout << *t<< endl;
-	cout << "ok" << endl;*/
+	pageInfo->header.freeCount -= record.length;
+	cout << "fileid " << pageInfo->header.fileId << endl;
+	dbPage test;
+	test.header.fileId = 2;
+	FileManage::writePageToFile(pageid, &test, path);
+	dbPage* readtest = new dbPage();
+	FileManage::readPageFromFile(pageid, readtest, path);
+	cout << readtest->header.fileId << endl;
 	cout << "************************End Insert Data**********************" << endl;
 }
