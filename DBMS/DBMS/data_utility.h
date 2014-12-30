@@ -1,10 +1,3 @@
-/*
- * data_utility.h
- *
- *  Created on: 23 Nov 2014
- *      Author: Jason Wong
- */
-
 #ifndef DATA_UTILITY_H_
 #define DATA_UTILITY_H_
 #include <stdio.h>
@@ -35,7 +28,7 @@ public:
 			T* pageinfo = (T*) malloc(sizeof(T));
 			memcpy(pageinfo, data, sizeof(T));
 			return pageinfo;
-		}	
+		};
 
 		static char* int_to_char(int data);
 		static int* char_to_int(char* data);
