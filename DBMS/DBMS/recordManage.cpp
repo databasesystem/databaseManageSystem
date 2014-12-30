@@ -123,24 +123,18 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	}
 	cout << pageInfo->header.firstFreeOffset << endl;
 	char* data  = new char[record.length];
+	data = record.getRecord(&record);
+	int updateoffset = 0;
 	if (pageInfo->header.freeCount == PAGE_SIZE) {
-		record.offset = record.length;
-		data = record.getRecord(&record);
-		pageInfo->header.firstFreeOffset = record.length;
+		updateoffset = 0;
 	} else {
-		char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
-		if (firstoffset[0] == '0') {
-			cout << "insert undeleted data" << endl;
-			record.offset = pageInfo->header.firstFreeOffset+record.length;
-			data = record.getRecord(&record);
-			pageInfo->header.firstFreeOffset += record.length;
+		if (pageInfo->header.freeCount >= record.length) {
+			updateoffset = pageInfo->header.freeCount;
 		} else {
-			cout << "insert deleted data" << endl;
-			data = record.getRecord(&record);
+			cout << "insert place is deleted data" << endl;
+			char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
 			int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
-			for(int i = 0; i < 4; i++) {
-				data[record.length-4+i] = firstoffset[record.length-4+i];
-			}
+			pageInfo->header.firstFreeOffset = *temp;
 		}
 	}
 	

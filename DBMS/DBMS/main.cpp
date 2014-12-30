@@ -64,9 +64,6 @@ int main()
 	cout << onedata.item[2] << endl;
 
 	for(int i = 0; i < 10; i++) {
-		cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " << i << " ^^^^^^^^^^^^^^^^^" << endl;
-		if (i > 5)
-			onedata.isdeleted = 1;
 		testdb.insertData("studentinfo", onedata);
 	}
 
