@@ -45,6 +45,7 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	}
 	if (pageid > pageno) 
 	{
+		cout << "write a new page pageid " << pageid << endl;
 		fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
 		fwrite(writedata,sizeof(char), sizeof(dbPage), updatefilestream);
 	}
