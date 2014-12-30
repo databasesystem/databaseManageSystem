@@ -50,7 +50,7 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	test.header.freeCount = PAGE_SIZE-sizeof(tableinfo); //the size of page free 
 	test.header.rowCount =0;
 
-	memcpy(test.data, attrdata, sizeof(tableinfo));
+	memcpy(test.data, attrdata, sizeof(attr));
 
 	FileManage::writePageToFile(test.header.pageId, &test, path);
 	this->filenum++;
@@ -107,9 +107,12 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 
 			tableAttr->pagenum++;
 			cout << " 2page num: " << tableAttr->pagenum << endl;
-			memcpy(attrPageInfo->data, tableAttr, sizeof(tableAttr));
+			
+			memcpy(attrPageInfo->data, tableAttr, sizeof(attr));
 			FileManage::writePageToFile(0, attrPageInfo, path);
-			cout << " 3pagenum: " + dataUtility::char_to_class<attr>(attrPageInfo->data)->pagenum << endl;
+			FileManage::readPageFromFile(0, attrPageInfo, path);
+			tableAttr = dataUtility::char_to_class<attr>(attrPageInfo->data);
+			cout << " 3pagenum: "  << tableAttr->pagenum << endl;
 			break;
 		} else {
 			FileManage::readPageFromFile(pageid, pageInfo, path);
@@ -118,6 +121,7 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 				cout << "exist page id: " << pageid << endl;
 				break;
 			} else {
+				cout << "into the next page" << endl;
 				pageid++;
 				FileManage::readPageFromFile(pageid, pageInfo, path);
 			}
