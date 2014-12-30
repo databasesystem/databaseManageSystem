@@ -22,7 +22,7 @@ struct recordEntry {
 			item[i] = new char[itemlen[i]];
 			length += itemlen[i];
 		}
-		offset = -1;
+		offset = 0;
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length];

@@ -123,29 +123,19 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	}
 	cout << pageInfo->header.firstFreeOffset << endl;
 	char* data  = new char[record.length];
-	if (pageInfo->header.freeCount == PAGE_SIZE) {
-		record.offset = record.length;
-		data = record.getRecord(&record);
-		pageInfo->header.firstFreeOffset = record.length;
-	} else {
-		char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
-		if (firstoffset[0] == '0') {
-			cout << "insert undeleted data" << endl;
-			record.offset = pageInfo->header.firstFreeOffset+record.length;
-			data = record.getRecord(&record);
-			pageInfo->header.firstFreeOffset += record.length;
-		} else {
-			cout << "insert deleted data" << endl;
-			data = record.getRecord(&record);
-			int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
-			for(int i = 0; i < 4; i++) {
-				data[record.length-4+i] = firstoffset[record.length-4+i];
-			}
-		}
-	}
+	data = record.getRecord(&record);
 	
+
+	char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
+	int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
+	if (*temp == 0) {
+		pageInfo->header.firstFreeOffset += record.length;
+	} else {
+		pageInfo->header.firstFreeOffset = *temp;
+	}
+	dataUtility::bytefillbyte(pageInfo->data, data, pageInfo->header.firstFreeOffset, record.length);
 	pageInfo->header.freeCount -= record.length;
-	//cout << "fileid " << pageInfo->header.fileId << endl;
+
 	FileManage::writePageToFile(pageid, pageInfo, path);
 	dbPage* readtest = new dbPage();
 	FileManage::readPageFromFile(pageid, readtest, path);
