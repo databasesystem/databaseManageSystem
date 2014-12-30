@@ -27,10 +27,10 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="node.cpp">
+    <ClCompile Include="recordManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="recordManage.cpp">
+    <ClCompile Include="bufferManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,16 +47,13 @@
     <ClInclude Include="globalVariable.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="node.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="pageManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="recordManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="databaseManage.h">
+    <ClInclude Include="bufferManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

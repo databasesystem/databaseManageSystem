@@ -52,7 +52,7 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 
 	memcpy(test.data, attrdata, sizeof(tableinfo));
 
-	FileManage::writePageToFile(test.header.pageId, test, path);
+	FileManage::writePageToFile(test.header.pageId, &test, path);
 	this->filenum++;
 
 	dbPage* result = new dbPage();
@@ -108,7 +108,7 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 			tableAttr->pagenum++;
 			cout << " 2page num: " << tableAttr->pagenum << endl;
 			memcpy(attrPageInfo->data, tableAttr, sizeof(tableAttr));
-			FileManage::writePageToFile(0, *attrPageInfo, path);
+			FileManage::writePageToFile(0, attrPageInfo, path);
 			cout << " 3pagenum: " + dataUtility::char_to_class<attr>(attrPageInfo->data)->pagenum << endl;
 			break;
 		} else {
@@ -140,7 +140,7 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	cout << "fileid " << pageInfo->header.fileId << endl;
 	dbPage test;
 	test.header.fileId = 2;
-	FileManage::writePageToFile(pageid, test, path);
+	FileManage::writePageToFile(pageid, &test, path);
 	dbPage* readtest = new dbPage();
 	FileManage::readPageFromFile(pageid, readtest, path);
 	cout << readtest->header.fileId << endl;
