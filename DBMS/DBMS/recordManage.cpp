@@ -65,6 +65,10 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	cout << checkresult->coltype[0] << endl;
 	cout << checkresult->coltype[1] << endl;
 	cout << checkresult->coltype[2] << endl;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7c7512f5d8296b58c19eda3597a48b02fff09c79
 	cout << checkresult->primaryId << endl;*/
 	
 	cout << "************************End Create Table**********************" << endl;
@@ -92,21 +96,31 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	int fileid = attrPageInfo->header.fileId;
 	attr* tableAttr = dataUtility::char_to_class<attr>(attrPageInfo->data);
 	int pageid = 1;
+<<<<<<< HEAD
 	
 	while(true) {
 		cout << " 1page num: " << tableAttr->pagenum << endl;
 		if (tableAttr->pagenum <= pageid)
+=======
+	FileManage::readPageFromFile(pageid, pageInfo, path);
+	cout << pageInfo->header.fileId << endl;
+	/*while(true) {
+		if (pageInfo->header.fileId == 0)
+>>>>>>> 7c7512f5d8296b58c19eda3597a48b02fff09c79
 		{
 			pageInfo->header.fileId = fileid;
 			pageInfo->header.firstFreeOffset = 0;
 			pageInfo->header.freeCount = PAGE_SIZE;
 			cout << "new page id: " << pageid << endl;
+<<<<<<< HEAD
 
 			tableAttr->pagenum++;
 			cout << " 2page num: " << tableAttr->pagenum << endl;
 			memcpy(attrPageInfo->data, tableAttr, sizeof(tableAttr));
 			FileManage::writePageToFile(0, attrPageInfo, path);
 			cout << " 3pagenum: " + dataUtility::char_to_class<attr>(attrPageInfo->data)->pagenum << endl;
+=======
+>>>>>>> 7c7512f5d8296b58c19eda3597a48b02fff09c79
 			break;
 		} else {
 			FileManage::readPageFromFile(pageid, pageInfo, path);
@@ -137,9 +151,16 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	cout << "fileid " << pageInfo->header.fileId << endl;
 	dbPage test;
 	test.header.fileId = 2;
+<<<<<<< HEAD
 	FileManage::writePageToFile(pageid, &test, path);
 	dbPage* readtest = new dbPage();
 	FileManage::readPageFromFile(pageid, readtest, path);
 	cout << readtest->header.fileId << endl;
+=======
+	FileManage::writePageToFile(pageid, test, path);
+	dbPage* readtest = new dbPage();
+	FileManage::readPageFromFile(pageid, readtest, path);
+	cout << readtest->header.fileId << endl;*/
+>>>>>>> 7c7512f5d8296b58c19eda3597a48b02fff09c79
 	cout << "************************End Insert Data**********************" << endl;
 }
