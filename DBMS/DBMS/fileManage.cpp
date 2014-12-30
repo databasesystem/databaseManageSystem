@@ -10,60 +10,52 @@ using namespace std;
 void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	FILE* originfilestream;
 	FILE* updatefilestream;
-	char* writedata = dataUtility::data_to_char<dbPage>(*pagedata);
-	char* updatefilename = new char[strlen(filename)];
+	char* updatefilename = new char[strlen(filename)+5];
 	strcpy(updatefilename, filename);
-	updatefilename[strlen(filename)-4] = '1';
-	for(int i = 0; i <4; i++)
-	{
-		updatefilename[strlen(filename)-3+i] = filename[strlen(filename)-4+i];
-	}
+	strcat(updatefilename, ".tmp");
 	
 	originfilestream = fopen(filename,"r");
 	updatefilestream = fopen(updatefilename, "w+");
 	if (originfilestream == NULL) {
 		fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
-		fwrite(writedata,sizeof(dbPage), 1, updatefilestream);
-		fclose(updatefilestream);
-		rename(updatefilename, filename);
-		return;
-	}
-	int pageno = -1;
-	char data[sizeof(dbPage)];
-	memset(data, '\0', sizeof(dbPage));
-	while(fread(data, sizeof(char), sizeof(dbPage), originfilestream)) {
-		pageno = pageno + 1;
-		if (pageid == pageno) {
-			fwrite(writedata,sizeof(dbPage),1, updatefilestream);
-			cout << "update the page pageno: "  << pageno << endl;
+		fwrite(pagedata,sizeof(dbPage), 1, updatefilestream);
+	} else {
+		int pageno = -1;
+		char data[sizeof(dbPage)];
+		memset(data, 0, sizeof(dbPage));
+		while(fread(data, sizeof(char), sizeof(dbPage), originfilestream)) {
+			pageno = pageno + 1;
+			if (pageid == pageno) {
+				fwrite(pagedata,sizeof(dbPage),1, updatefilestream);
+				cout << "update the page pageno: "  << pageno << endl;
+			}
+			else {
+				fwrite(data, sizeof(char), sizeof(dbPage), updatefilestream);
+				cout << "copy origin file pageno " << pageno << endl;
+			}
+			memset(data, 0, sizeof(dbPage));
 		}
-		else {
-			fwrite(data, sizeof(char), sizeof(dbPage), updatefilestream);
-			cout << "copy origin file pageno " << pageno << endl;
+		if (pageid > pageno) 
+		{
+			fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
+			fwrite(pagedata,sizeof(char), sizeof(dbPage), updatefilestream);
 		}
-		memset(data, '\0', sizeof(dbPage));
-	}
-	if (pageid > pageno) 
-	{
-		cout << "write a new page pageid " << pageid << endl;
-		fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
-		fwrite(writedata,sizeof(char), sizeof(dbPage), updatefilestream);
+
+		fclose(originfilestream);
+		remove(filename);
+
 	}
 	fclose(updatefilestream);
-	fclose(originfilestream);
-	remove(filename);
 	rename(updatefilename, filename);
+	delete[] updatefilename;
 }
 
 void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
-	//cout << "pageid: " << pageid << endl;
 	FILE* filestream;
-	char* data = new char[sizeof(dbPage)];
 	filestream = fopen(filename,"r");
 	int status = fseek(filestream, pageid*sizeof(dbPage), SEEK_SET);
 	if (status == 0) {
-		fread(data, sizeof(dbPage), 1, filestream);
-		*pageinfo = *dataUtility::char_to_class<dbPage>(data);
+		fread(pageinfo, sizeof(dbPage), 1, filestream);
 	} else {
 		cout << "Read page to file errors." << endl;
 		pageinfo->header.fileId = 0;
