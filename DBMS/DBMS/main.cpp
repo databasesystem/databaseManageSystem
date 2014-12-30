@@ -26,7 +26,7 @@ int main()
 		cout << "Jason is gone" << endl;
 
 
-		// test file read or write by page
+	// test file read or write by page
 	DBStorage testdb("studentManage", 0, 1);
 	attr tableAttr(3);
 
@@ -63,11 +63,7 @@ int main()
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
-<<<<<<< HEAD
 	for(int i = 0; i < 3; i++) {
-=======
-	for(int i = 0; i < 10; i++) {
->>>>>>> 7c7512f5d8296b58c19eda3597a48b02fff09c79
 		cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " << i << " ^^^^^^^^^^^^^^^^^" << endl;
 		testdb.insertData("studentinfo", onedata);
 	}
