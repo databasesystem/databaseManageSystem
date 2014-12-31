@@ -27,11 +27,11 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 			pageno = pageno + 1;
 			if (pageid == pageno) {
 				fwrite(pagedata,sizeof(dbPage),1, updatefilestream);
-				cout << "update the page pageno: "  << pageno << endl;
+				//cout << "update the page pageno: "  << pageno << endl;
 			}
 			else {
 				fwrite(data, sizeof(char), sizeof(dbPage), updatefilestream);
-				cout << "copy origin file pageno " << pageno << endl;
+				//cout << "copy origin file pageno " << pageno << endl;
 			}
 			memset(data, 0, sizeof(dbPage));
 		}

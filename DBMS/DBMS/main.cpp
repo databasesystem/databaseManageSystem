@@ -63,11 +63,19 @@ int main()
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
+	// test data   from insert to delete
 	for(int i = 0; i < 10; i++) {
+		cout << "first insert index data: " << i <<endl;
 		testdb.insertData("studentinfo", onedata);
 	}
-
-
+	for (int i = 0; i < 5; i++) {
+		cout << " delete index data: " << i << endl;
+		testdb.deleteData("studentinfo",1,115*i*2, 115);
+	}
+	for (int i = 0; i < 5; i++) {
+		cout << "second insert index data: " << i <<endl;
+		testdb.insertData("studentinfo", onedata);
+	}
 	//100008,'Oxbow Books Limited','PRC'
 	////test B+ tree index
 	//int agedata[10];

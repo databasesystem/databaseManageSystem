@@ -78,8 +78,8 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	*(100008,'Oxbow Books Limited','PRC');
 	*/
 
-	cout << "************************Start Insert Data**********************" << endl;
-	cout << "insertData--data length: " << record.length << endl;
+	//cout << "************************Start Insert Data**********************" << endl;
+	//cout << "insertData--data length: " << record.length << endl;
 	//cout << "Data length" << record.length << endl;
 	
 	dbPage* attrPageInfo = new dbPage();
@@ -92,30 +92,30 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	int pageid = 1;
 	
 	while(true) {
-		cout << " 1page num: " << tableAttr->pagenum << endl;
+		//cout << " 1page num: " << tableAttr->pagenum << endl;
 		if (tableAttr->pagenum <= pageid)
 		{
 			pageInfo->header.fileId = fileid;
 			pageInfo->header.firstFreeOffset = 0;
 			pageInfo->header.freeCount = PAGE_SIZE;
-			cout << "new page id: " << pageid << endl;
+			//cout << "new page id: " << pageid << endl;
 
 			tableAttr->pagenum++;
-			cout << " 2page num: " << tableAttr->pagenum << endl;
+			//cout << " 2page num: " << tableAttr->pagenum << endl;
 			
 			memcpy(attrPageInfo->data, tableAttr, sizeof(attr));
 			FileManage::writePageToFile(0, attrPageInfo, path);
 			tableAttr = dataUtility::char_to_class<attr>(attrPageInfo->data);
-			cout << " 3pagenum: "  << tableAttr->pagenum << endl;
+			//cout << " 3pagenum: "  << tableAttr->pagenum << endl;
 			break;
 		} else {
 			FileManage::readPageFromFile(pageid, pageInfo, path);
 			if (pageInfo->header.freeCount >= record.length)
 			{
-				cout << "exist page id: " << pageid  << " freecount: " << pageInfo->header.freeCount << endl;
+				//cout << "exist page id: " << pageid  << " freecount: " << pageInfo->header.freeCount << endl;
 				break;
 			} else {
-				cout << "into the next page" << endl;
+				//cout << "into the next page" << endl;
 				pageid++;
 				FileManage::readPageFromFile(pageid, pageInfo, path);
 			}
@@ -139,7 +139,8 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	FileManage::writePageToFile(pageid, pageInfo, path);
 	dbPage* readtest = new dbPage();
 	FileManage::readPageFromFile(pageid, readtest, path);
-	cout << "************************End Insert Data**********************" << endl;
+	cout << "write into page id: " << pageid << " after update firstoffset is " << pageInfo->header.firstFreeOffset << endl;
+	//cout << "************************End Insert Data**********************" << endl;
 }
 
 void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordlength) {
@@ -147,10 +148,22 @@ void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordle
 	dbPage* pageInfo = new dbPage();
 	FileManage::readPageFromFile(pageid, pageInfo, path);
 	pageInfo->data[offset] = '1';
-	dataUtility::bytefillbyte(pageInfo->data, dataUtility::int_to_char(pageInfo->header.firstFreeOffset), 
+	
+	//offset 的最后值是-1， firstoffset就是offset， offset的最后值不是-1， firstoffset
+	char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, recordlength);
+	int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,recordlength-4, 4));
+	if (*temp == -1) {
+		
+	} else {
+		dataUtility::bytefillbyte(pageInfo->data, dataUtility::int_to_char(pageInfo->header.firstFreeOffset), 
 		offset+recordlength-sizeof(int), sizeof(int)); 
-	pageInfo->header.firstFreeOffset = offset;
+		pageInfo->header.firstFreeOffset = offset;
+	}
+	
+	pageInfo->header.freeCount += recordlength;
+	cout << " after update firstoffset is : " << pageInfo->header.firstFreeOffset << endl;
 	FileManage::writePageToFile(pageid, pageInfo, path);
+	delete pageInfo;
 }
 
 
