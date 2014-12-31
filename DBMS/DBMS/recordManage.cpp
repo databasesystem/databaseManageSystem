@@ -122,18 +122,15 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 			}
 		}
 	}
-	char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
-	char* data  = new char[record.length];
-	if (firstoffset[0] == 0 || pageInfo->header.freeCount == PAGE_SIZE) {
-		record.offset = pageInfo->header.firstFreeOffset+record.length;
-		data = record.getRecord(&record);
+	char* firstOffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset+record.length-sizeof(int), sizeof(int));
+	int firstFreeOffset = *(int*)firstOffset;
+	delete firstOffset;
+	if (firstFreeOffset == 0) {
+		pageInfo->header.firstFreeOffset += record.length;
 	} else {
-		data = record.getRecord(&record);
-		int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
-		for(int i = 0; i < 4; i++) {
-			data[record.length-4+i] = firstoffset[record.length-4+i];
-		}
-		pageInfo->header.firstFreeOffset = *temp;
+		pageInfo->header.firstFreeOffset = firstFreeOffset;
+		char* secondOffset = dataUtility::getbyte(pageInfo->data, firstFreeOffset+record.length-sizeof(int), sizeof(int));
+		record.offset = *(int*)secondOffset;
 	}
 	pageInfo->header.freeCount -= record.length;
 	cout << "fileid " << pageInfo->header.fileId << endl;
@@ -145,3 +142,4 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	cout << readtest->header.fileId << endl;
 	cout << "************************End Insert Data**********************" << endl;
 }
+
