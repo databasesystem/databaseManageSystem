@@ -22,7 +22,7 @@ struct recordEntry {
 			item[i] = new char[itemlen[i]];
 			length += itemlen[i];
 		}
-		offset = 0;
+		offset = -1;
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length];
@@ -62,6 +62,7 @@ public:
 	void createTable(char* filename,char* databasename, attr tableinfo);
 	void createDataBase(char* databasename);
 	void insertData(char* tablename, recordEntry record);
+	void deleteData(char* tablename, int pageid, int offset, int recordlength);
 	char* getTablePath(char* tablename);
 };
 

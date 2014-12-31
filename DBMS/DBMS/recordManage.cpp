@@ -128,7 +128,7 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 
 	char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
 	int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
-	if (*temp == 0) {
+	if (*temp == -1) {
 		pageInfo->header.firstFreeOffset += record.length;
 	} else {
 		pageInfo->header.firstFreeOffset = *temp;
@@ -140,4 +140,14 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	dbPage* readtest = new dbPage();
 	FileManage::readPageFromFile(pageid, readtest, path);
 	cout << "************************End Insert Data**********************" << endl;
+}
+
+void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordlength) {
+	char* path = getTablePath(tablename);
+	dbPage* pageInfo = new dbPage();
+	FileManage::readPageFromFile(pageid, pageInfo, path);
+	pageInfo->data[offset] = '1';
+	dataUtility::bytefillbyte(pageInfo->data, dataUtility::int_to_char(pageInfo->header.firstFreeOffset), offset+recordlength-sizeof(int), sizeof(int)); 
+	pageInfo->header.firstFreeOffset = offset;
+	FileManage::writePageToFile(pageid, pageInfo, path);
 }
