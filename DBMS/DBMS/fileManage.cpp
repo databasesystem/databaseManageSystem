@@ -57,12 +57,11 @@ void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	if (status == 0) {
 		fread(pageinfo, sizeof(dbPage), 1, filestream);
 	} else {
-		cout << "Read page to file errors." << endl;
+		cout << "Read page from file error: " << pageid << " filename: " << filename << endl;
 		pageinfo->header.fileId = 0;
 	}
 	fclose(filestream);
 }
-
 
 int FileManage::createFileFolder(char* filefoldername) {
 	int status = _mkdir(filefoldername);

@@ -20,6 +20,20 @@ Node* FileBuffer::remove(){
 	return bufPage;
 }
 
+Node* FileBuffer::readPage(int pageId, char* path){
+	//add find rowID after finishing fileid mapping
+	dbPage* newPage = new dbPage();
+	FileManage::readPageFromFile(pageId, newPage, path);
+	pageHeader* header = &(newPage->header);
+	if(header->fileId == 0){
+		delete newPage;
+		return NULL;
+	}
+	Node* newNode = new Node(newPage);
+	insert(pair<UINT,UINT>(header->fileId,header->pageId),newNode);
+	return newNode;
+}
+
 void FileBuffer::insert(rowID id, Node* buffer){
 	if ( numPage == DB_MAX_BUFFER_SIZE ) {
 		cout << "buffer is full" << endl;
