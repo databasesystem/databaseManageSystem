@@ -132,7 +132,20 @@ void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordle
 	dbPage* pageInfo = new dbPage();
 	FileManage::readPageFromFile(pageid, pageInfo, path);
 	pageInfo->data[offset] = '1';
-	dataUtility::bytefillbyte(pageInfo->data, dataUtility::int_to_char(pageInfo->header.firstFreeOffset), offset+recordlength-sizeof(int), sizeof(int)); 
+	dataUtility::bytefillbyte(pageInfo->data, dataUtility::int_to_char(pageInfo->header.firstFreeOffset), 
+		offset+recordlength-sizeof(int), sizeof(int)); 
 	pageInfo->header.firstFreeOffset = offset;
 	FileManage::writePageToFile(pageid, pageInfo, path);
+}
+
+
+void DBStorage::updateData(char* tablename, int pageid, int offset, recordEntry record) {
+	char* path = getTablePath(tablename);
+	dbPage* pageInfo = new dbPage();
+	FileManage::readPageFromFile(pageid, pageInfo, path);
+	dataUtility::bytefillbyte(pageInfo->data, record.getRecord(&record), offset, record.length);
+	FileManage::writePageToFile(pageid, pageInfo, path);
+}
+
+void DBStorage::searchData(char* tablename) {
 }
