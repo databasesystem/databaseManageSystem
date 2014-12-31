@@ -34,17 +34,14 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 	* name varchar(100) NOT NULL,nation varchar(3),PRIMARY KEY  (id));
 	*/
 	cout << "************************Start Create Table**********************" << endl;
-	char* path = getTablePath(filename);
-	FILE* filestream;
-	filestream = fopen(path,"w");
-	fclose(filestream);
 	dbPage test;
 	test.header.pageId = 0;
 	test.header.fileId = filenum+1;
 	test.header.firstFreeOffset = sizeof(attr)+1;   // the offset for the first free room.
 	test.header.freeCount = PAGE_SIZE-sizeof(attr); //the size of page free 
 	test.header.rowCount =0;
-
+	
+	char* path = getTablePath(filename);
 	memcpy(test.data, &tableinfo, sizeof(attr));
 
 	FileManage::writePageToFile(test.header.pageId, &test, path);
@@ -52,18 +49,6 @@ void DBStorage::createTable(char* filename, char* databasename, attr tableinfo) 
 
 	dbPage* result = new dbPage();
 	FileManage::readPageFromFile(0, result, path);
-	cout << "test page data " << result->header.fileId << endl;
-	//cout<< result->data << endl;  //although appear tang, but read out is correct.  cout << char* << endl;
-
-	/*dataUtility::printChars(result->data);
-	attr* checkresult = dataUtility::char_to_class<attr>(result->data);
-	cout << checkresult->colname[0] << endl;
-	cout << checkresult->colname[1] << endl;
-	cout << checkresult->colname[2] << endl;
-	cout << checkresult->coltype[0] << endl;
-	cout << checkresult->coltype[1] << endl;
-	cout << checkresult->coltype[2] << endl;
-	cout << checkresult->primaryId << endl;*/
 	
 	cout << "************************End Create Table**********************" << endl;
 }
