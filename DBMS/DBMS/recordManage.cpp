@@ -113,14 +113,16 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 
 	char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, record.length);
 	int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,record.length-4, 4));
+	dataUtility::bytefillbyte(pageInfo->data, data, pageInfo->header.firstFreeOffset, record.length);
+	cout << "firstoffset next list node: " << *temp << endl; 
 	if (*temp == -1) {
 		pageInfo->header.firstFreeOffset += record.length;
 	} else {
 		pageInfo->header.firstFreeOffset = *temp;
 	}
-	dataUtility::bytefillbyte(pageInfo->data, data, pageInfo->header.firstFreeOffset, record.length);
 	pageInfo->header.freeCount -= record.length;
-
+	if (pageInfo->header.freeCount < record.length)
+		pageInfo->header.firstFreeOffset = -1;
 	FileManage::writePageToFile(pageid, pageInfo, path);
 	dbPage* readtest = new dbPage();
 	FileManage::readPageFromFile(pageid, readtest, path);
@@ -129,25 +131,26 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 }
 
 void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordlength) {
+	if (offset > PAGE_SIZE)
+		return;
 	char* path = getTablePath(tablename);
 	dbPage* pageInfo = new dbPage();
 	FileManage::readPageFromFile(pageid, pageInfo, path);
-	pageInfo->data[offset] = '1';
 	
-	//offset 的最后值是-1， firstoffset就是offset， offset的最后值不是-1， firstoffset
-	char* firstoffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset, recordlength);
-	int* temp = dataUtility::char_to_int(dataUtility::getbyte(firstoffset,recordlength-4, 4));
-	if (*temp == -1) {
-		
-	} else {
+	
+	//最后的从来没有写过数据的offset一定在offset链表的最后，因为每次insert都会先插deleted=1的地方
+	if (!dataUtility::char_to_bool(pageInfo->data[offset])) {
+		pageInfo->data[offset] = '1';
 		dataUtility::bytefillbyte(pageInfo->data, dataUtility::int_to_char(pageInfo->header.firstFreeOffset), 
 		offset+recordlength-sizeof(int), sizeof(int)); 
 		pageInfo->header.firstFreeOffset = offset;
+		cout << "delete data " << endl;
+		pageInfo->header.freeCount += recordlength;
+		FileManage::writePageToFile(pageid, pageInfo, path);
+		printFreeList(tablename, pageid, recordlength);
 	}
 	
-	pageInfo->header.freeCount += recordlength;
 	cout << " after update firstoffset is : " << pageInfo->header.firstFreeOffset << endl;
-	FileManage::writePageToFile(pageid, pageInfo, path);
 	delete pageInfo;
 }
 
@@ -161,4 +164,18 @@ void DBStorage::updateData(char* tablename, int pageid, int offset, recordEntry 
 }
 
 void DBStorage::searchData(char* tablename) {
+}
+
+void DBStorage::printFreeList(char* tablename, int pageid, int recordlength) {
+	char* path = getTablePath(tablename);
+	dbPage* pageInfo = new dbPage();
+	FileManage::readPageFromFile(pageid, pageInfo, path);
+	int offset = pageInfo->header.firstFreeOffset;
+	while(offset != -1) {
+		cout << " " << offset << "--->";
+		char* offsetValue = dataUtility::getbyte(pageInfo->data, offset + recordlength-sizeof(int), sizeof(int));
+		int* temp = dataUtility::char_to_int(offsetValue);
+		offset = *temp;
+	}
+	cout << endl;
 }

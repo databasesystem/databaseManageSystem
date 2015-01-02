@@ -18,6 +18,12 @@ float* dataUtility::char_to_float(char* data) {
 	return ori;
 }
 
+bool dataUtility::char_to_bool(char c) {
+	if (c=='1')
+		return true;
+	else
+		return false;
+}
 void dataUtility::bytefillbyte(char* src, char* dst, int index) {
 	for (int i = 0; i < strlen(dst); i++)
 	{

@@ -64,6 +64,7 @@ public:
 	void insertData(char* tablename, recordEntry record);
 	void deleteData(char* tablename, int pageid, int offset, int recordlength);
 	void updateData(char* tablename, int pageid, int offset, recordEntry record);
+	void printFreeList(char* tablename, int pageid, int recordlength);
 	void searchData(char* tablename);
 	char* getTablePath(char* tablename);
 };
