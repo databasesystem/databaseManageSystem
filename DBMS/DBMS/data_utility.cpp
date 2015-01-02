@@ -77,18 +77,9 @@ char* dataUtility::int_to_char(int data) {
 
 
 int dataUtility::char2int(char* data) {
-	if (strlen(data) > 4)
-	{
-		cout << "char array to int out of index" << endl;
-		return -1;
-	}
-	int t = 0;
-	for(int i = 0; i < strlen(data); i++){
-		t = t<<8;
-		t+=(int)data[i];
-	}
-	return t;
+	return *((int*) data);
 }
+
 //int main() {
 //	int a = 312786452;
 //	float b = 651.25;
