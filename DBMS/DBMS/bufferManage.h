@@ -29,6 +29,8 @@ struct Node{
 class FileBuffer{
 public:
 	FileBuffer();
+	~FileBuffer();
+	Node* readPage(int pageId, char* path);
 	Node* remove();				//从队列的尾部删掉，并从map中删掉，usepagenum --
 	void insert(rowID id, Node* buffer);		//插入队首，插入map，usepagenum ++
 	Node* find(rowID id);		//存在，返回节点；否则，返回NULL

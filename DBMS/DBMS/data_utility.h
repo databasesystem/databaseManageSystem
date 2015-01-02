@@ -34,12 +34,13 @@ public:
 		static int* char_to_int(char* data);
 		static int char2int(char* data);
 		static double* char_to_double(char* data);
+		static bool char_to_bool(char c);
 		static float* char_to_float(char* data);
 
 		static char* getbyte(char* src, int start, int length);
 		static void printChars(char* data);
 		static void bytefillbyte(char* src, char* dst, int index);
-		static void bytefillbyte(char* src, char* dst, int start, int length);   //some characters in src are replaced by in dst.
+		static void bytefillbyte(char* dst, char* src, int start, int length);   //some characters in src are replaced by in dst.
 		static char bool_to_byte(bool data);
 };
 #endif /* DATA_UTILITY_H_ */

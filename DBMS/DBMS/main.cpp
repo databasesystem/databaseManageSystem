@@ -56,19 +56,28 @@ int main()
 	onedata.isNull[1] = 0;
 	onedata.isNull[2] = 0;
 	onedata.item[0] = dataUtility::int_to_char(100008);
-	onedata.item[1] = "Oxbow Books Limited\0";
-	onedata.item[2] = "PRC\0";
+	onedata.item[1] = "Oxbow Books Limited";
+	onedata.item[2] = "PRC";
 	int* t = dataUtility::char_to_int(onedata.item[0]);
 	cout << *t << endl;
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
 
-	for(int i = 0; i < 3; i++) {
-		cout << "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ " << i << " ^^^^^^^^^^^^^^^^^" << endl;
+	// test data   from insert to delete
+	for(int i = 0; i < 80; i++) {
+		cout << "first insert index data: " << i <<endl;
 		testdb.insertData("studentinfo", onedata);
 	}
-
-
+	testdb.printFreeList("studentinfo", 1, 115);
+	for (int i = 0; i < 30; i++) {
+		cout << " delete index data: " << i << endl;
+		testdb.deleteData("studentinfo",1,115*i*2, 115);
+	}
+	testdb.printFreeList("studentinfo", 1, 115);
+	/*for (int i = 0; i < 40; i++) {
+		cout << "second insert index data: " << i <<endl;
+		testdb.insertData("studentinfo", onedata);
+	}*/
 	//100008,'Oxbow Books Limited','PRC'
 	////test B+ tree index
 	//int agedata[10];

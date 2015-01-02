@@ -27,11 +27,11 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 			pageno = pageno + 1;
 			if (pageid == pageno) {
 				fwrite(pagedata,sizeof(dbPage),1, updatefilestream);
-				cout << "update the page pageno: "  << pageno << endl;
+				//cout << "update the page pageno: "  << pageno << endl;
 			}
 			else {
 				fwrite(data, sizeof(char), sizeof(dbPage), updatefilestream);
-				cout << "copy origin file pageno " << pageno << endl;
+				//cout << "copy origin file pageno " << pageno << endl;
 			}
 			memset(data, 0, sizeof(dbPage));
 		}
@@ -40,8 +40,10 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 			fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
 			fwrite(pagedata,sizeof(char), sizeof(dbPage), updatefilestream);
 		}
+
 		fclose(originfilestream);
 		remove(filename);
+
 	}
 	fclose(updatefilestream);
 	rename(updatefilename, filename);
@@ -55,12 +57,11 @@ void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	if (status == 0) {
 		fread(pageinfo, sizeof(dbPage), 1, filestream);
 	} else {
-		cout << "Read page to file errors." << endl;
+		cout << "Read page from file error: " << pageid << " filename: " << filename << endl;
 		pageinfo->header.fileId = 0;
 	}
 	fclose(filestream);
 }
-
 
 int FileManage::createFileFolder(char* filefoldername) {
 	int status = _mkdir(filefoldername);
