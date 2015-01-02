@@ -106,6 +106,17 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 			}
 		}
 	}
+<<<<<<< HEAD
+	char* firstOffset = dataUtility::getbyte(pageInfo->data, pageInfo->header.firstFreeOffset+record.length-sizeof(int), sizeof(int));
+	int firstFreeOffset = *(int*)firstOffset;
+	delete firstOffset;
+	if (firstFreeOffset == 0) {
+		pageInfo->header.firstFreeOffset += record.length;
+	} else {
+		pageInfo->header.firstFreeOffset = firstFreeOffset;
+		char* secondOffset = dataUtility::getbyte(pageInfo->data, firstFreeOffset+record.length-sizeof(int), sizeof(int));
+		record.offset = *(int*)secondOffset;
+=======
 	cout << pageInfo->header.firstFreeOffset << endl;
 	char* data  = new char[record.length];
 	data = record.getRecord(&record);
@@ -119,6 +130,7 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 		pageInfo->header.firstFreeOffset += record.length;
 	} else {
 		pageInfo->header.firstFreeOffset = *temp;
+>>>>>>> 92f1cb5c80bd9f38cbe7aac3327994734240182a
 	}
 	pageInfo->header.freeCount -= record.length;
 	if (pageInfo->header.freeCount < record.length)
@@ -130,6 +142,8 @@ void DBStorage::insertData(char* tablename, recordEntry record) {
 	//cout << "************************End Insert Data**********************" << endl;
 }
 
+<<<<<<< HEAD
+=======
 void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordlength) {
 	if (offset > PAGE_SIZE)
 		return;
@@ -179,3 +193,4 @@ void DBStorage::printFreeList(char* tablename, int pageid, int recordlength) {
 	}
 	cout << endl;
 }
+>>>>>>> 92f1cb5c80bd9f38cbe7aac3327994734240182a
