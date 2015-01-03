@@ -10,16 +10,17 @@ class dataUtility {
 public: 
 		template<typename T> 
 		static char* data_to_char(T ori){
-			char* data = (char*) malloc(sizeof(T));
+			char* data = (char*) malloc(sizeof(T)+1);
 			memcpy(data, &ori, sizeof(T));
-			cout << "size:  " << sizeof(T)  << " data size " << strlen(data)<< endl;
+			data[sizeof(T)] = 0;
 			return data;
 		};
 
 		template<typename T> 
 		static char* data_to_char(T ori, int length){
-			char* data = (char*) malloc(length);
+			char* data = (char*) malloc(length+1);
 			memcpy(data, &ori, length);
+			data[length] = 0;
 			return data;
 		};
 

@@ -17,28 +17,28 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	originfilestream = fopen(filename,"rb");
 	updatefilestream = fopen(updatefilename, "wb+");
 	if (originfilestream == NULL) {
-		fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
-		fwrite(pagedata,sizeof(dbPage), 1, updatefilestream);
+		fseek(updatefilestream, pageid*DB_PGSIZE, SEEK_SET);
+		fwrite(pagedata, DB_PGSIZE, 1, updatefilestream);
 	} else {
 		int pageno = -1;
-		char data[sizeof(dbPage)];
-		memset(data, 0, sizeof(dbPage));
-		while(fread(data, sizeof(char), sizeof(dbPage), originfilestream)) {
+		char data[DB_PGSIZE];
+		memset(data, 0, DB_PGSIZE);
+		while(fread(data, sizeof(char), DB_PGSIZE, originfilestream)) {
 			pageno = pageno + 1;
 			if (pageid == pageno) {
-				fwrite(pagedata,sizeof(dbPage),1, updatefilestream);
+				fwrite(pagedata, DB_PGSIZE, 1, updatefilestream);
 				//cout << "update the page pageno: "  << pageno << endl;
 			}
 			else {
-				fwrite(data, sizeof(char), sizeof(dbPage), updatefilestream);
+				fwrite(data, sizeof(char), DB_PGSIZE, updatefilestream);
 				//cout << "copy origin file pageno " << pageno << endl;
 			}
-			memset(data, 0, sizeof(dbPage));
+			memset(data, 0, DB_PGSIZE);
 		}
 		if (pageid > pageno) 
 		{
-			fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
-			fwrite(pagedata,sizeof(char), sizeof(dbPage), updatefilestream);
+			fseek(updatefilestream, pageid*DB_PGSIZE, SEEK_SET);
+			fwrite(pagedata, sizeof(char), DB_PGSIZE, updatefilestream);
 		}
 
 		fclose(originfilestream);

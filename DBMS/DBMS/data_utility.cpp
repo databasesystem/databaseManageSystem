@@ -41,11 +41,12 @@ void dataUtility::bytefillbyte(char* dst, char* src, int index, int length) {
 	}
 }
 char* dataUtility::getbyte(char* src, int start, int length) {
-	char* data = (char*) malloc(length);
+	char* data = (char*) malloc(length+1);
 	for (int i = 0; i < length; i++)
 	{
 		data[i] = src[start+i];
 	}
+	data[length] = 0;
 	return data;
 }
 

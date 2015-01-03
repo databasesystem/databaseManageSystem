@@ -5,28 +5,7 @@
 int main()
 {
 	// test buffer
-	FileBuffer* fb = new FileBuffer();
-	Node *p1 = new Node(new dbPage("Jason"))
-		, *p2 = new Node(new dbPage("Alexia"));
-	fb -> insert(rowID(0,1), p1);
-	fb -> insert(rowID(0,2), p2);
-	Node *p3 = fb -> find(rowID(0,1));
-	if (p3) cout << p3 -> page -> data << endl;
-	p3 = fb->find(rowID(0,2));
-	if (p3) cout << p3 -> page -> data;
-	fb -> remove();
-	if(p3 = fb->find(rowID(0,2)))
-		cout <<  " still here" << endl;
-	else
-		cout << " is gone" << endl;
-	p3 = fb -> find(rowID(0,1));
-	if (p3) 
-		cout << p3->page->data << " still here" << endl;
-	else
-		cout << "Jason is gone" << endl;
-
-
-	// test file read or write by page
+	FileBuffer fb;
 	DBStorage testdb("studentManage", 0, 1);
 	attr tableAttr(3);
 
@@ -64,23 +43,17 @@ int main()
 	cout << onedata.item[2] << endl;
 
 	// test data   from insert to delete
-	for(int i = 0; i < 80; i++) {
+	for(int i = 0; i < 50; i++) {
 		cout << "first insert index data: " << i <<endl;
-		testdb.insertData("studentinfo", onedata);
+		fb.insertData("studentinfo", onedata);
 	}
-	//testdb.printFreeList("studentinfo", 1, 115);
-	for (int i = 0; i < 30; i++) {
-		cout << " delete index data: " << i << endl;
-		testdb.deleteData("studentinfo",1,115*i*2, 115);
-	}
+	fb.refresh();
 	testdb.printFreeList("studentinfo", 1, 115);
-
-	for (int i = 0; i < 30; i++) {
+	for (int i = 0; i < 20; i++) {
 		cout << " delete index data: " << i << endl;
-		testdb.deleteData("studentinfo",1,115*i*2, 115);
+		testdb.deleteData("studentinfo", 1, 115*i*2, 115);
 	}
-	dbPage* pageInfo = new dbPage();
-	FileManage::readPageFromFile(1,pageInfo, testdb.getTablePath("studentinfo"));
+	fb.refresh();
 	testdb.printFreeList("studentinfo", 1, 115);
 	/*for (int i = 0; i < 40; i++) {
 		cout << "second insert index data: " << i <<endl;
