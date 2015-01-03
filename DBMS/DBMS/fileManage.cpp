@@ -14,8 +14,8 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	strcpy(updatefilename, filename);
 	strcat(updatefilename, ".tmp");
 	
-	originfilestream = fopen(filename,"r");
-	updatefilestream = fopen(updatefilename, "w+");
+	originfilestream = fopen(filename,"rb");
+	updatefilestream = fopen(updatefilename, "wb+");
 	if (originfilestream == NULL) {
 		fseek(updatefilestream, pageid*sizeof(dbPage), SEEK_SET);
 		fwrite(pagedata,sizeof(dbPage), 1, updatefilestream);
@@ -52,10 +52,10 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 
 void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
 	FILE* filestream;
-	filestream = fopen(filename,"r");
-	int status = fseek(filestream, pageid*sizeof(dbPage), SEEK_SET);
+	filestream = fopen(filename,"rb");
+	int status = fseek(filestream, pageid*DB_PGSIZE, SEEK_SET);
 	if (status == 0) {
-		fread(pageinfo, sizeof(dbPage), 1, filestream);
+		fread(pageinfo, DB_PGSIZE, 1, filestream);
 	} else {
 		cout << "Read page from file error: " << pageid << " filename: " << filename << endl;
 		pageinfo->header.fileId = 0;
