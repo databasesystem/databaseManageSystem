@@ -141,7 +141,10 @@ void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordle
 	char* path = getTablePath(tablename);
 	dbPage* pageInfo = new dbPage();
 	FileManage::readPageFromFile(pageid, pageInfo, path);
-
+	
+	if(dataUtility::char_to_bool(pageInfo->data[offset])) //have deleted
+		return;
+	pageInfo->data[offset] = dataUtility::bool_to_byte(true);
 	int firstOffset = pageInfo->header.firstFreeOffset;
 	if( firstOffset == -1 ){			//Full page
 		pageInfo->header.firstFreeOffset = offset;

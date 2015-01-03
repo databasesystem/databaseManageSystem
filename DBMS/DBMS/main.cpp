@@ -68,11 +68,19 @@ int main()
 		cout << "first insert index data: " << i <<endl;
 		testdb.insertData("studentinfo", onedata);
 	}
-	testdb.printFreeList("studentinfo", 1, 115);
+	//testdb.printFreeList("studentinfo", 1, 115);
 	for (int i = 0; i < 30; i++) {
 		cout << " delete index data: " << i << endl;
 		testdb.deleteData("studentinfo",1,115*i*2, 115);
 	}
+	testdb.printFreeList("studentinfo", 1, 115);
+
+	for (int i = 0; i < 30; i++) {
+		cout << " delete index data: " << i << endl;
+		testdb.deleteData("studentinfo",1,115*i*2, 115);
+	}
+	dbPage* pageInfo = new dbPage();
+	FileManage::readPageFromFile(1,pageInfo, testdb.getTablePath("studentinfo"));
 	testdb.printFreeList("studentinfo", 1, 115);
 	/*for (int i = 0; i < 40; i++) {
 		cout << "second insert index data: " << i <<endl;
