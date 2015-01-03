@@ -1,10 +1,4 @@
 #include "recordManage.h"
-#include "fileManage.h"
-#include "data_utility.h"
-#include <iostream>
-#include <stdlib.h>
-#include <string.h>
-using namespace std;
 
 DBStorage::DBStorage(string dbname, UINT dbid, bool isCreate) {
 	this->dbname = dbname;
@@ -141,10 +135,7 @@ void DBStorage::deleteData(char* tablename, int pageid, int offset, int recordle
 	char* path = getTablePath(tablename);
 	dbPage* pageInfo = new dbPage();
 	FileManage::readPageFromFile(pageid, pageInfo, path);
-	
-	if(dataUtility::char_to_bool(pageInfo->data[offset])) //have deleted
-		return;
-	pageInfo->data[offset] = dataUtility::bool_to_byte(true);
+
 	int firstOffset = pageInfo->header.firstFreeOffset;
 	if( firstOffset == -1 ){			//Full page
 		pageInfo->header.firstFreeOffset = offset;
