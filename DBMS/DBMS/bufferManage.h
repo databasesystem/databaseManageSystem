@@ -69,7 +69,6 @@ struct Node{
 	}
 };
 
-//针对每个文件一个缓存
 class FileBuffer{
 public:
 	FileBuffer();
@@ -77,7 +76,7 @@ public:
 	void pop();
 	void push(rowID id, Node* buffer);
 	void push(int FileID, int PageID, Node* buffer);
-	void refresh();
+	void flush();
 	Node* find(rowID id);
 	Node* find(int FileID, int PageID);
 	Node* readPage(int pageId, char* path);

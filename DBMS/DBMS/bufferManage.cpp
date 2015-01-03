@@ -17,6 +17,7 @@ void FileBuffer::pop(){
 	Node* bufPage = it->second;
 
 	if ( bufPage->dirty ) {
+		//need amendments after finishing SysObject (linking fileID and file name)
 		//FileManage::writePageToFile(it->first.first, bufPage -> page, bufPage->page->header.fileId );
 		FileManage::writePageToFile(it->first.first, bufPage -> page, TESTTABLEPATH );
 	}
@@ -37,7 +38,7 @@ void FileBuffer::push(int FileID, int PageID, Node* buffer){
 	push(pair<int, int>(FileID, PageID), buffer);
 }
 
-void FileBuffer::refresh(){
+void FileBuffer::flush(){
 	while(numPage > 0){
 		pop();
 	}
@@ -81,7 +82,7 @@ void FileBuffer::insertData(char* tablename, recordEntry record) {
 	//cout << "insertData--data length: " << record.length << endl;
 	//cout << "Data length" << record.length << endl;
 	
-	//char* path = getTablePath(tablename);
+	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char* path = TESTTABLEPATH;
 	Node* attrPage = readPage(0,path), *dataPage;
 	int fileid = attrPage->page->header.fileId;
@@ -135,7 +136,7 @@ void FileBuffer::insertData(char* tablename, recordEntry record) {
 void FileBuffer::deleteData(char* tablename, int pageid, int offset, int recordlength) {
 	if (offset > PAGE_SIZE)
 		return;
-	//char* path = getTablePath(tablename);
+	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char* path = TESTTABLEPATH;
 	Node* dataPage = readPage(pageid, path);
 	int firstOffset = dataPage->page->header.firstFreeOffset;
@@ -167,10 +168,8 @@ void FileBuffer::deleteData(char* tablename, int pageid, int offset, int recordl
 
 
 void FileBuffer::updateData(char* tablename, int pageid, int offset, recordEntry record) {
-	//char* path = getTablePath(tablename);
+	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char*path = TESTTABLEPATH;
-	dbPage* pageInfo = new dbPage();
-	FileManage::readPageFromFile(pageid, pageInfo, path);
-	dataUtility::bytefillbyte(pageInfo->data, record.getRecord(&record), offset, record.length);
-	FileManage::writePageToFile(pageid, pageInfo, path);
+	Node* dataPage = readPage(pageid, path);
+	dataUtility::bytefillbyte(dataPage->page->data, record.getRecord(&record), offset, record.length);
 }

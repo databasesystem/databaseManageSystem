@@ -47,13 +47,13 @@ int main()
 		cout << "first insert index data: " << i <<endl;
 		fb.insertData("studentinfo", onedata);
 	}
-	fb.refresh();
+	fb.flush();
 	testdb.printFreeList("studentinfo", 1, 115);
 	for (int i = 0; i < 20; i++) {
 		cout << " delete index data: " << i << endl;
 		testdb.deleteData("studentinfo", 1, 115*i*2, 115);
 	}
-	fb.refresh();
+	fb.flush();
 	testdb.printFreeList("studentinfo", 1, 115);
 	/*for (int i = 0; i < 40; i++) {
 		cout << "second insert index data: " << i <<endl;
