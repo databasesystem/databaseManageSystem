@@ -32,19 +32,19 @@ public:
 class attr{
 public:
 		int num;
+		int primaryId;
+		int pagenum;
 		string *colname;
 		int* coltype; //0-int 1-double 2-float 3-char 4-string 5-varchar 6-boolean
 		int* collen;
 		bool* colIsNull;
-		int primaryId;
-		int pagenum;
 		attr(int num_v){
 			num = num_v;
+			pagenum = 0;  //first attr page is also a count
 			colname = new string[num];
 			coltype = new int[num];
 			collen = new int[num];
 			colIsNull = new bool[num];
-			pagenum = 0;  //first attr page is also a count
 		};
 };
 #endif
