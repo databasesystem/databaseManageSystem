@@ -7,29 +7,29 @@ int main()
 	// test buffer
 	FileBuffer fb;
 	DBStorage testdb("studentManage", 0, 1);
-	attr tableAttr(3);
+	tableAttr tableAttribute(3);
 
-	tableAttr.coltype[0] = 0;
-	tableAttr.coltype[1] = 5;
-	tableAttr.coltype[2] = 5;
+	tableAttribute.coltype[0] = 0;
+	tableAttribute.coltype[1] = 5;
+	tableAttribute.coltype[2] = 5;
 
-	tableAttr.collen[0] = 4;  //int(10) 10 is the max show length
-	tableAttr.collen[1] = 100;
-	tableAttr.collen[2] = 3;
+	tableAttribute.collen[0] = 4;  //int(10) 10 is the max show length
+	tableAttribute.collen[1] = 100;
+	tableAttribute.collen[2] = 3;
 
-	tableAttr.colname[0] = "id";
-	tableAttr.colname[1] = "name";
-	tableAttr.colname[2] = "nation";
+	tableAttribute.colname[0] = "id";
+	tableAttribute.colname[1] = "name";
+	tableAttribute.colname[2] = "nation";
 
-	tableAttr.colIsNull[0] = false;
-	tableAttr.colIsNull[1] = false;
-	tableAttr.colIsNull[2] = true;
+	tableAttribute.colIsNull[0] = false;
+	tableAttribute.colIsNull[1] = false;
+	tableAttribute.colIsNull[2] = true;
 
-	tableAttr.primaryId = 0;
-	tableAttr.pagenum = 1;
-	testdb.createTable("studentinfo", "studentManage", tableAttr);
+	tableAttribute.primaryId = 0;
+	tableAttribute.pagenum = 1;
+	testdb.createTable("studentinfo", "studentManage", tableAttribute);
 	
-	recordEntry onedata(3, tableAttr.collen);
+	recordEntry onedata(3, tableAttribute.collen);
 	onedata.isdeleted = 0;
 	onedata.isNull[0] = 0;
 	onedata.isNull[1] = 0;
@@ -43,15 +43,15 @@ int main()
 	cout << onedata.item[2] << endl;
 
 	// test data   from insert to delete
-	for(int i = 0; i < 50; i++) {
+	for(int i = 0; i < 80; i++) {
 		cout << "first insert index data: " << i <<endl;
 		fb.insertData("studentinfo", onedata);
 	}
 	fb.flush();
 	testdb.printFreeList("studentinfo", 1, 115);
-	for (int i = 0; i < 20; i++) {
+	for (int i = 0; i < 30 ; i++) {
 		cout << " delete index data: " << i << endl;
-		testdb.deleteData("studentinfo", 1, 115*i*2, 115);
+		fb.deleteData("studentinfo", 1, 115*i*2, 115);
 	}
 	fb.flush();
 	testdb.printFreeList("studentinfo", 1, 115);
