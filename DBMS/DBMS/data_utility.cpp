@@ -50,15 +50,6 @@ char* dataUtility::getbyte(char* src, int start, int length) {
 	return data;
 }
 
-void dataUtility::printChars(char* data) {
-	cout << "char* data: ";
-	for (int i = 0; i < strlen(data); i++)
-	{
-		cout << &(data[i]);
-	}
-	cout << endl;
-}
-
 char dataUtility::bool_to_byte(bool data) {
 	char res;
 	if (data)
@@ -72,13 +63,13 @@ char* dataUtility::int_to_char(int data) {
 	char* res = (char*)malloc(sizeof(int));
 	for (int i = 0; i <sizeof(int); i++) 
 		res[3-i] = (char)((data>>(3-i)*8)&0xff);
-	res[sizeof(int)] ='\0';
+	res[sizeof(int)] = 0;
 	return res;
 }
 
 
-int dataUtility::char2int(char* data) {
-	return *((int*) data);
+int dataUtility::char2short(char* data) {
+	return *((unsigned short*) data);
 }
 
 //int main() {

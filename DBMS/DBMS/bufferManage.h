@@ -11,9 +11,11 @@
 #define TESTTABLEPATH "./studentManage/studentinfo"
 #define TESTFILEID 1
 
+#define ATTR_PAGE_NUM 0
+
 using namespace std;
 
-typedef pair<int,int> rowID;
+typedef pair<TYPE_ID,TYPE_ID> rowID;	//<FileID, PageID>
 
 struct recordEntry {
 	bool isdeleted;
@@ -22,19 +24,19 @@ struct recordEntry {
 	int length;
 	int num;
 	int* itemlen;
-	int offset;
+	TYPE_OFFSET offset;
 	recordEntry(int num_v, int* itemlen_v){
 		num = num_v;
 		isNull = new bool[num];
 		item = new char*[num];
 		itemlen = new int[num];
-		length = 1+num+4;
+		length = 1+num+2;
 		for (int i = 0; i < num; i++) {
 			itemlen[i] = itemlen_v[i]; 
 			item[i] = new char[itemlen[i]];
 			length += itemlen[i];
 		}
-		offset = -1;
+		offset = EXIST_INDEX;
 	}
 	char* getRecord(recordEntry* record){
 		char* res = new char[record->length+1];
@@ -49,8 +51,8 @@ struct recordEntry {
 			index = index + record->itemlen[i];
 		}
 		
-		char* freeOffset = dataUtility::data_to_char<int>(record->offset);
-		dataUtility::bytefillbyte(res, freeOffset, index, 4);
+		char* freeOffset = dataUtility::data_to_char<TYPE_OFFSET>(record->offset);
+		dataUtility::bytefillbyte(res, freeOffset, index, SIZE_OFFSET);
 		res[record->length] = 0;
 		delete[] freeOffset;
 		return res;
@@ -73,20 +75,18 @@ class FileBuffer{
 public:
 	FileBuffer();
 	~FileBuffer();
-	int size();
 	void pop();
 	void push(rowID id, Node* buffer);
-	void push(int FileID, int PageID, Node* buffer);
+	void push(TYPE_ID FileID, TYPE_ID PageID, Node* buffer);
 	void flush();
 	Node* findPage(rowID id);
-	Node* findPage(int FileID, int PageID);
-	Node* readPage(int pageId, char* path);
+	Node* findPage(TYPE_ID FileID, TYPE_ID PageID);
+	Node* readPage(TYPE_ID pageId, char* path);
 	void insertData(char* tablename, recordEntry record);
-	void deleteData(char* tablename, int pageid, int offset, int recordlength);
-	void updateData(char* tablename, int pageid, int offset, recordEntry record);
+	void deleteData(char* tablename, TYPE_ID pageid, TYPE_OFFSET offset, int recordlength);
+	void updateData(char* tablename, TYPE_ID pageid, TYPE_OFFSET offset, recordEntry record);
 	void searchData(char* tablename);
 private:
-	int numPage;
 	map<rowID, Node*> bufmap;
 };
 

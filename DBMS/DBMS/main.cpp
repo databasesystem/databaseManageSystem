@@ -41,20 +41,33 @@ int main()
 	cout << *t << endl;
 	cout << onedata.item[1] << endl;
 	cout << onedata.item[2] << endl;
+	cout << "DATA SIZE = " << onedata.length << endl;
 
 	// test data   from insert to delete
-	for(int i = 0; i < 80; i++) {
+	for(int i = 0; i < 800; i++) {
 		cout << "first insert index data: " << i <<endl;
 		fb.insertData("studentinfo", onedata);
 	}
 	fb.flush();
-	testdb.printFreeList("studentinfo", 1, 115);
+	testdb.printFreeList("studentinfo", 1, onedata.length);
 	for (int i = 0; i < 30 ; i++) {
 		cout << " delete index data: " << i << endl;
-		fb.deleteData("studentinfo", 1, 115*i*2, 115);
+		fb.deleteData("studentinfo", 1, onedata.length*i*2, onedata.length);
 	}
 	fb.flush();
-	testdb.printFreeList("studentinfo", 1, 115);
+	testdb.printFreeList("studentinfo", 1, onedata.length);
+	for (int i = 0; i < 20 ; i++) {
+		cout << " delete index data: " << i << endl;
+		fb.deleteData("studentinfo", 2, onedata.length*i*3, onedata.length);
+	}
+	fb.flush();
+	testdb.printFreeList("studentinfo", 2, onedata.length);
+	for (int i = 0; i < 15 ; i++) {
+		cout << " delete index data: " << i << endl;
+		fb.deleteData("studentinfo", 3, onedata.length*i*4, onedata.length);
+	}
+	fb.flush();
+	testdb.printFreeList("studentinfo", 3, onedata.length);
 	/*for (int i = 0; i < 40; i++) {
 		cout << "second insert index data: " << i <<endl;
 		testdb.insertData("studentinfo", onedata);

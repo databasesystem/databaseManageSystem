@@ -33,7 +33,7 @@ public:
 
 		static char* int_to_char(int data);
 		static int* char_to_int(char* data);
-		static int char2int(char* data);
+		static int char2short(char* data);
 		static double* char_to_double(char* data);
 		static bool char_to_bool(char c);
 		static float* char_to_float(char* data);

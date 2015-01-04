@@ -2,7 +2,6 @@
 #define _RECORDMANAGE_H
 #include "data_utility.h"
 #include "fileManage.h"
-#include "bufferManage.h"
 class DBStorage{
 public:
 	string dbname;

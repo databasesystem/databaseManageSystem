@@ -28,10 +28,10 @@ public:
 
 class pageHeader {
 public:
-	int pageId;
-	int fileId;
+	TYPE_ID pageId;
+	TYPE_ID fileId;
 	int rowCount;
-	int firstFreeOffset;
+	TYPE_OFFSET firstFreeOffset;
 	int freeCount;
 };
 
@@ -40,10 +40,10 @@ public:
 	pageHeader header;
 	char data[PAGE_SIZE];
 	dbPage() {
-		memset(data, -1, PAGE_SIZE);
+		memset(data, MEMSET_NUM, PAGE_SIZE);
 	}
 	dbPage(char* src){
-		memset(data, -1, PAGE_SIZE);
+		memset(data, MEMSET_NUM, PAGE_SIZE);
 		strcpy(data,src);
 	}
 };

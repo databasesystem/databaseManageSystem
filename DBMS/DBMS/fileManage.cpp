@@ -1,15 +1,8 @@
 #include "fileManage.h"
-#include "data_utility.h"
-#include <iostream>
-#include <stdio.h>
-#include <direct.h>
-#include <stdlib.h>
-#include <string.h>
 using namespace std;
 
-void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
-	FILE* originfilestream;
-	FILE* updatefilestream;
+void FileManage::writePageToFile(TYPE_ID pageid, dbPage* pagedata, char* filename){
+	FILE* originfilestream,* updatefilestream;
 	char* updatefilename = new char[strlen(filename)+5];
 	strcpy(updatefilename, filename);
 	strcat(updatefilename, ".tmp");
@@ -20,22 +13,20 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 		fseek(updatefilestream, pageid*DB_PGSIZE, SEEK_SET);
 		fwrite(pagedata, DB_PGSIZE, 1, updatefilestream);
 	} else {
-		int pageno = -1;
+		TYPE_ID pageno = 0;
 		char data[DB_PGSIZE];
-		memset(data, 0, DB_PGSIZE);
+		memset(data, 255, DB_PGSIZE);
 		while(fread(data, sizeof(char), DB_PGSIZE, originfilestream)) {
-			pageno = pageno + 1;
 			if (pageid == pageno) {
-				fwrite(pagedata, DB_PGSIZE, 1, updatefilestream);
-				//cout << "update the page pageno: "  << pageno << endl;
+				fwrite(pagedata, DB_PGSIZE, sizeof(char), updatefilestream);
 			}
 			else {
 				fwrite(data, sizeof(char), DB_PGSIZE, updatefilestream);
-				//cout << "copy origin file pageno " << pageno << endl;
 			}
-			memset(data, 0, DB_PGSIZE);
+			memset(data, 255, DB_PGSIZE);
+			pageno++;
 		}
-		if (pageid > pageno) 
+		if (pageid == pageno) 
 		{
 			fseek(updatefilestream, pageid*DB_PGSIZE, SEEK_SET);
 			fwrite(pagedata, sizeof(char), DB_PGSIZE, updatefilestream);
@@ -50,12 +41,12 @@ void FileManage::writePageToFile(int pageid, dbPage* pagedata, char* filename){
 	delete[] updatefilename;
 }
 
-void FileManage::readPageFromFile(int pageid, dbPage* pageinfo, char* filename){
+void FileManage::readPageFromFile(TYPE_ID pageid, dbPage* pageinfo, char* filename){
 	FILE* filestream;
 	filestream = fopen(filename,"rb");
 	int status = fseek(filestream, pageid*DB_PGSIZE, SEEK_SET);
 	if (status == 0) {
-		fread(pageinfo, DB_PGSIZE, 1, filestream);
+		fread(pageinfo, DB_PGSIZE, sizeof(char), filestream);
 	} else {
 		cout << "Read page from file error: " << pageid << " filename: " << filename << endl;
 		pageinfo->header.fileId = 0;

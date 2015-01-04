@@ -1,4 +1,5 @@
 #include "recordManage.h"
+#include "bufferManage.h"
 #include <iostream> 
 #include <cstdio>
 #include <memory>

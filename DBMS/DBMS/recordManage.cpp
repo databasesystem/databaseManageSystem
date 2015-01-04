@@ -34,7 +34,7 @@ void DBStorage::createTable(char* filename, char* databasename, tableAttr tablei
 	test.header.fileId = filenum+1;
 	test.header.firstFreeOffset = sizeof(tableAttr);   // the offset for the first free room (no need to +1). 
 	test.header.freeCount = PAGE_SIZE-sizeof(tableAttr); //the size of page free 
-	test.header.rowCount =0;
+	test.header.rowCount = 0;
 	
 	char* path = getTablePath(filename);
 	memcpy(test.data, &tableinfo, sizeof(tableAttr));
@@ -53,12 +53,11 @@ void DBStorage::printFreeList(char* tablename, int pageid, int recordlength) {
 	char* path = getTablePath(tablename);
 	dbPage* pageInfo = new dbPage();
 	FileManage::readPageFromFile(pageid, pageInfo, path);
-	int offset = pageInfo->header.firstFreeOffset;
-	while(offset != -1) {
+	TYPE_ID offset = pageInfo->header.firstFreeOffset;
+	while(offset != EXIST_INDEX) {
 		cout << " " << offset << "--->";
-		char* offsetValue = dataUtility::getbyte(pageInfo->data, offset + recordlength-sizeof(int), sizeof(int));
-		int* temp = dataUtility::char_to_int(offsetValue);
-		offset = *temp;
+		char* offsetValue = dataUtility::getbyte(pageInfo->data, offset + recordlength-SIZE_OFFSET, SIZE_OFFSET);
+		offset = dataUtility::char2short(offsetValue);
 	}
 	cout << endl;
 	delete pageInfo;
