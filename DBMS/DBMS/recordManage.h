@@ -10,13 +10,9 @@ public:
 	UINT filenum;
 	DBStorage(string dbname, UINT dbid, bool isCreate);
 	~DBStorage();
-	void createTable(char* filename,char* databasename, attr tableinfo);
+	void createTable(char* filename,char* databasename, tableAttr tableinfo);
 	void createDataBase(char* databasename);
-	void insertData(char* tablename, recordEntry record);
-	void deleteData(char* tablename, int pageid, int offset, int recordlength);
-	void updateData(char* tablename, int pageid, int offset, recordEntry record);
 	void printFreeList(char* tablename, int pageid, int recordlength);
-	void searchData(char* tablename);
 	char* getTablePath(char* tablename);
 };
 
