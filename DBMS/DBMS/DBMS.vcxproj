@@ -66,22 +66,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="btree.cpp" />
-    <ClCompile Include="bufferManage.cpp" />
     <ClCompile Include="data_utility.cpp" />
-    <ClCompile Include="fileManage.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="pageManage.cpp" />
     <ClCompile Include="parser.cpp" />
-    <ClCompile Include="recordManage.cpp" />
+    <ClCompile Include="dbManage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="btree.h" />
-    <ClInclude Include="bufferManage.h" />
     <ClInclude Include="data_utility.h" />
-    <ClInclude Include="fileManage.h" />
     <ClInclude Include="globalVariable.h" />
     <ClInclude Include="pageManage.h" />
     <ClInclude Include="parser.h" />
-    <ClInclude Include="recordManage.h" />
+    <ClInclude Include="dbManage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
