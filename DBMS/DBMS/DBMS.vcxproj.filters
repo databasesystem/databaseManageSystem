@@ -21,19 +21,16 @@
     <ClCompile Include="data_utility.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="fileManage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="recordManage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="bufferManage.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="parser.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pageManage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dbManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -44,22 +41,16 @@
     <ClInclude Include="data_utility.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="fileManage.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="globalVariable.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="pageManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="recordManage.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="bufferManage.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="parser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dbManage.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
