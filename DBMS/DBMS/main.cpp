@@ -1,5 +1,5 @@
 #include "dbManage.h"
-
+#include "wq_parser.h"
 int main()
 {
 	// test buffer
@@ -56,6 +56,8 @@ int main()
 	fb.flush();
 	testdb.printFreeList("studentinfo", 3, onedata.length);
 	
+	parser testParser;
+	testParser.testParse();
 	system("pause");
 	return 0;
 }
