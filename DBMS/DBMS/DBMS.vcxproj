@@ -71,6 +71,7 @@
     <ClCompile Include="pageManage.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="dbManage.cpp" />
+    <ClCompile Include="wq_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="btree.h" />
@@ -79,6 +80,7 @@
     <ClInclude Include="pageManage.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="dbManage.h" />
+    <ClInclude Include="wq_parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
