@@ -71,11 +71,13 @@
     <ClCompile Include="pageManage.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="dbManage.cpp" />
+    <ClCompile Include="systemManage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="btree.h" />
     <ClInclude Include="data_utility.h" />
     <ClInclude Include="globalVariable.h" />
+    <ClInclude Include="systemManage.h" />
     <ClInclude Include="pageManage.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="dbManage.h" />

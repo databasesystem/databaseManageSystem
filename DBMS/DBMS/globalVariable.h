@@ -11,14 +11,18 @@ typedef unsigned char	BYTE;
 #define SIZE_OFFSET sizeof(USRT)
 
 #define DB_PGSIZE				8192 // size of page
-#define DB_PGSIZE_USRT			DB_PGSIZE/(sizeof (USRT)) // count in short
+#define DB_PGSIZE_USRT			4096 //DB_PGSIZE/(sizeof (USRT))
 #define DB_MAX_BUFFER_SIZE		1000 // the size of maximum buffer page
-#define DB_MAX_FILE_NUM			((1<<8*(sizeof (USRT)))-1)
+#define DB_MAX_FILE_NUM			255  //((1<<8*(sizeof (USRT)))-1)
 #define DB_DEFAULT_FILE_SIZE	1048576 //(1024*1024)
 #define DB_MAX_TABLE_NUM		1024
+#define TABLE_NUM_SCALE			100
+#define COLUMN_NUM_SCALE		10000
+#define ID_NUM_SCALE			10200 //(COLUMN_NUM_SCALE+2*TABLE_NUM_SCALE)
+
 
 #define PAGE_SIZE	 DB_PGSIZE-sizeof(pageHeader)
-#define ATTR_PAGE_NUM 0
+#define INDEX_SYSCOL 0
 #define MEMSET_NUM	 255
 #define EXIST_INDEX  65535
 

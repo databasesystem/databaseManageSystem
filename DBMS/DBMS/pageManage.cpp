@@ -4,10 +4,10 @@ FileBuffer::FileBuffer(){
 }
 
 FileBuffer::~FileBuffer(){
-	flush();
+	//flush();
 }
 
-void FileBuffer::flush(){
+/*void FileBuffer::flush(){
 	while(bufmap.size() > 0)
 		pop();
 }
@@ -15,7 +15,7 @@ void FileBuffer::flush(){
 void FileBuffer::pop(){
 	if (bufmap.empty()) return;
 
-	map<rowID, Node*>::iterator it = bufmap.begin();
+	auto it = bufmap.begin();
 	Node* bufPage = it->second;
 
 	if ( bufPage->dirty ) {
@@ -35,28 +35,29 @@ void FileBuffer::push(TYPE_ID FileID, TYPE_ID PageID, Node* buffer){
 }
 
 Node* FileBuffer::findPage(TYPE_ID FileID, TYPE_ID PageID){
-	map<rowID, Node*>::iterator it = bufmap.find(pair<TYPE_ID,TYPE_ID>(FileID,PageID));
+	auto it = bufmap.find(pair<TYPE_ID,TYPE_ID>(FileID,PageID));
 	return (it==bufmap.end())?NULL:it->second;
 }
 
-Node* FileBuffer::readPage(TYPE_ID pageId, char* path){
+Node* FileBuffer::readPage(TYPE_ID pageId, const char* path){
 	//need amendments after finishing SysObject (linking fileID and file name)
 	Node* pageNode = findPage(TESTFILEID, pageId);
 	if( pageNode )
 		return pageNode;
 
-	dbPage* newPage = new dbPage();
+	Page* newPage = new Page();
 	if(!FileBuffer::readPageFromFile(pageId, newPage, path)){
 		delete newPage;
 		return NULL;
 	}
 
 	Node* newNode = new Node(newPage);
-	push(((pageHeader*) newPage)->fileId,((pageHeader*) newPage)->pageId,newNode);
+	//need amendments after finishing SysObject (linking fileID and file name)
+	push(((pageHeader*) newPage)->fileId,pageId,newNode);
 	return newNode;
 }
 
-void FileBuffer::insertData(char* tablename, recordEntry record) {
+void FileBuffer::insertData(string tablename, RecordEntry &record) {
 	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char* path = TESTTABLEPATH;
 	Node* attrPage = readPage( ATTR_PAGE_NUM, path ), *dataPage;
@@ -65,10 +66,10 @@ void FileBuffer::insertData(char* tablename, recordEntry record) {
 	TYPE_ID pageid = ATTR_PAGE_NUM + 1;
 	
 	while(true) {
-		if (tableAttribute->pageNum <= pageid){
+		if (tableAttribute->numPage <= pageid){
 			dataPage = new Node(fileid, pageid);
 			push(fileid, pageid, dataPage);
-			tableAttribute->pageNum++;
+			tableAttribute->numPage++;
 			attrPage->dirty = true;
 			cout << "*****Opening a new page " << pageid << " *****" << endl;
 			break;
@@ -84,21 +85,22 @@ void FileBuffer::insertData(char* tablename, recordEntry record) {
 	}
 	char* data = new char[record.length+1];
 	data = record.getRecord();
-	int firstoffset = dataUtility::char2short(dataPage->page->data+dataPage->page->header.firstFreeOffset+record.length-SIZE_OFFSET);
-	dataUtility::bytefillbyte(dataPage->page->data, data, dataPage->page->header.firstFreeOffset, record.length);
-	dataPage->page->header.freeCount -= record.length;
+	Page* des = dataPage->page;
+	int firstoffset = dataUtility::char2short(des->data+des->header.firstFreeOffset+record.length-SIZE_OFFSET);
+	dataUtility::bytefillbyte(des->data, data, des->header.firstFreeOffset, record.length);
+	des->header.freeCount -= record.length;
 	if (firstoffset == EXIST_INDEX) {
-		if (dataPage->page->header.freeCount < record.length)
-			dataPage->page->header.firstFreeOffset = EXIST_INDEX;
+		if (des->header.freeCount < record.length)
+			des->header.firstFreeOffset = EXIST_INDEX;
 		else
-			dataPage->page->header.firstFreeOffset = PAGE_SIZE - dataPage->page->header.freeCount;
+			des->header.firstFreeOffset = PAGE_SIZE - des->header.freeCount;
 	} else {
-		dataPage->page->header.firstFreeOffset = firstoffset;
+		des->header.firstFreeOffset = firstoffset;
 	}
 	delete[] data;
 }
 
-void FileBuffer::deleteData(char* tablename, TYPE_ID pageid, TYPE_OFFSET offset, int recordlength) {
+void FileBuffer::deleteData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset, int recordlength) {
 	if (offset > PAGE_SIZE)
 		return;
 	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
@@ -108,35 +110,36 @@ void FileBuffer::deleteData(char* tablename, TYPE_ID pageid, TYPE_OFFSET offset,
 		cout << "************Error in reading page with pageID: " << pageid << " and Action aborted**************" << endl;
 		return;
 	}
-	TYPE_OFFSET firstOffset = dataPage->page->header.firstFreeOffset;
+	Page* des = dataPage->page;
+	TYPE_OFFSET firstOffset = des->header.firstFreeOffset;
 	if( firstOffset == EXIST_INDEX ){			//Full page
-		dataPage->page->header.firstFreeOffset = offset;
+		des->header.firstFreeOffset = offset;
 	} else {
 		if( firstOffset < offset ){		//Handle linked list sequence
 			TYPE_OFFSET linkedOffset;
 			while ( firstOffset < offset && firstOffset != EXIST_INDEX ){
 				linkedOffset = firstOffset;
-				firstOffset = dataUtility::char2short(dataPage->page->data+firstOffset+recordlength-SIZE_OFFSET);
+				firstOffset = dataUtility::char2short(des->data+firstOffset+recordlength-SIZE_OFFSET);
 			};
 			char *offsetChar = dataUtility::data_to_char<TYPE_OFFSET>(offset);
-			dataUtility::bytefillbyte(dataPage->page->data, offsetChar, linkedOffset+recordlength-SIZE_OFFSET, SIZE_OFFSET);
+			dataUtility::bytefillbyte(des->data, offsetChar, linkedOffset+recordlength-SIZE_OFFSET, SIZE_OFFSET);
 			delete[] offsetChar;
 		} else {						//Removed data become first free slot
-			dataPage->page->header.firstFreeOffset = offset;
-			if( firstOffset == PAGE_SIZE - dataPage->page->header.freeCount ){
+			des->header.firstFreeOffset = offset;
+			if( firstOffset == PAGE_SIZE - des->header.freeCount ){
 				firstOffset = EXIST_INDEX;
 			}
 		}
 		char *offsetChar = dataUtility::data_to_char<TYPE_OFFSET>(firstOffset);
-		dataUtility::bytefillbyte(dataPage->page->data, offsetChar, offset+recordlength-SIZE_OFFSET, SIZE_OFFSET);
+		dataUtility::bytefillbyte(des->data, offsetChar, offset+recordlength-SIZE_OFFSET, SIZE_OFFSET);
 		delete[] offsetChar;
 	}
-	dataPage->page->header.freeCount += recordlength;
+	des->header.freeCount += recordlength;
 	dataPage->dirty = true;
 	//cout << " after update firstoffset is : " << dataPage->page->header.firstFreeOffset << endl;
 }
 
-void FileBuffer::updateData(char* tablename, TYPE_ID pageid, TYPE_OFFSET offset, recordEntry record) {
+void FileBuffer::updateData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset, RecordEntry record) {
 	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char*path = TESTTABLEPATH;
 	Node* dataPage = readPage(pageid, path);
@@ -144,7 +147,7 @@ void FileBuffer::updateData(char* tablename, TYPE_ID pageid, TYPE_OFFSET offset,
 	dataPage->dirty = true;
 }
 
-void FileBuffer::writePageToFile(TYPE_ID pageid, dbPage* pagedata, char* filename){
+void FileBuffer::writePageToFile(TYPE_ID pageid, Page* pagedata, const char* filename){
 	FILE* fileStream;
 	fileStream = fopen(filename,"rb+");
 	if (fileStream) {
@@ -156,7 +159,7 @@ void FileBuffer::writePageToFile(TYPE_ID pageid, dbPage* pagedata, char* filenam
 	fclose(fileStream);
 }
 
-int FileBuffer::readPageFromFile(TYPE_ID pageid, dbPage* pageinfo, char* filename){
+int FileBuffer::readPageFromFile(TYPE_ID pageid, Page* pageinfo, const char* filename){
 	FILE* fileStream;
 	fileStream = fopen(filename,"rb");
 	if (fseek(fileStream, pageid*DB_PGSIZE, SEEK_SET)) {
@@ -168,4 +171,4 @@ int FileBuffer::readPageFromFile(TYPE_ID pageid, dbPage* pageinfo, char* filenam
 		fclose(fileStream);
 		return 1;
 	}
-}
+}*/
