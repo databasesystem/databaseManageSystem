@@ -1,4 +1,5 @@
 #include "wq_parser.h"
+#include "pageManage.h"
 
 void parser::testParse(){
 	char filename[100];
@@ -90,16 +91,128 @@ bool parser::parserCreate(vector<string> commands) {
 		cout << "***********start parse create table************" << endl;
 		if (!checkNameAvaliable(commands[2]))  //tablename
 			return false;
+		
 		if (commands.size() < 5)
 			return false;
-		if (strcmp(commands[3].c_str(), "(") != 0 ||  strcmp(commands[commands.size()-1].c_str(), ")") != 0)
+		
+		if (strcmp(commands[3].c_str(), "(") != 0) 
 			return false;
-		int index = 4;
-		/*while (strcmp(commands[4].c_str(), ",") != 0) {
+		if ( strcmp(commands[commands.size()-1].c_str(), ")") != 0)
+			return false;
 
-		}*/
+		commands.erase(commands.begin()+3);
+		commands.erase(commands.end()-1);
+		if (commands.size() == 3)  //without column
+		{
+			//create a table without column
+			return true;
+		}
+		vector<string> columnInfos;
+		int index = 3;
+		tableColumn colInfos;
+		while(index < commands.size()) {
+			if (commands[index].at(commands[index].length()-1) == ',') {
+				commands[index].erase(commands[index].length()-1);
+				columnInfos.push_back(commands[index]);
+				parserCreateColumn(columnInfos, &colInfos);
+				columnInfos.clear();
+			} else 
+			columnInfos.push_back(commands[index]);
+			index++;
+		}
+		if (columnInfos.size() !=0)
+			parserCreateColumn(columnInfos, &colInfos);
+		for (int i = 0; i < (colInfos).colNum; i++)
+		{
+			(colInfos).colInfo[i].printColumn();
+		}
 	}
 	return true;
+}
+
+
+bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos) {
+	cout << "start parse create column*****************" << endl;
+	//for (int i = 0 ; i < columnInfo.size(); i++ )
+	//	cout << columnInfo[i].c_str() << endl;
+
+	int tempIndex;
+	if (columnInfo.size() < 2 )
+		return false;
+	if (strcmp(columnInfo[0].c_str(), "PRIMARY") == 0) {
+		if (columnInfo.size() < 3 || columnInfo.size() > 5)
+			return false;
+		if (strcmp(columnInfo[1].c_str(), "KEY") == 0)
+		{
+			if (columnInfo.size() == 3) {
+				if (columnInfo[2].at(0) != '(' || columnInfo[2].at(columnInfo[2].length()-1) != ')')
+					return false;
+				
+				columnInfo[2].erase(columnInfo[2].begin());
+				columnInfo[2].erase(columnInfo[2].end()-1);
+			} else if (columnInfo.size() == 4) {
+				if (columnInfo[2].compare("(") && columnInfo[3].at(columnInfo[3].length()-1)==')') {
+					columnInfo[2] = columnInfo[3].erase(columnInfo[3].length()-1);
+				} else if (columnInfo[3].compare(")") && columnInfo[2].at(0)=='(') {
+					columnInfo[2].erase(columnInfo[2].begin());
+				} else
+					return false;
+			} else if (columnInfo.size() == 5) {
+				if (!(columnInfo[2].compare("(") && columnInfo[4].compare(")")))
+					return false;
+			} else
+				return false;
+			cout << columnInfo[2].c_str() << endl;
+			tempIndex = (*colInfos).checkColName(columnInfo[2]);
+			if ( tempIndex != -1)
+				(*colInfos).colInfo[tempIndex].primaryKey = 1;
+			else
+				return false;
+		} else 
+			return false;
+	} else {
+		column newColumn;
+		if (!checkNameAvaliable(columnInfo[0]) || columnInfo.size() < 2 || columnInfo.size() > 4)
+			return false;
+		newColumn.name = columnInfo[0];
+		int length; 
+		string typeString = "";
+		string lengthString = "";
+		tempIndex = 0;
+		while (tempIndex < columnInfo[1].size() && columnInfo[1].at(tempIndex) != '(') {
+			typeString+=columnInfo[1].at(tempIndex);
+			tempIndex++;
+			if (columnInfo[1].at(tempIndex) == '(' || tempIndex >= columnInfo[1].size() )
+				break;
+		}
+		newColumn.type = getType(typeString);
+
+		if (tempIndex < columnInfo[1].size() && columnInfo[1].at(tempIndex) == '(') {
+			//get length
+			tempIndex++;
+			while (tempIndex < columnInfo[1].size() && columnInfo[1].at(tempIndex) != ')') {
+				lengthString+=columnInfo[1].at(tempIndex);
+				tempIndex++;
+			if (columnInfo[1].at(tempIndex) == ')' || tempIndex >= columnInfo[1].size() )
+				break;
+			}
+		}
+		newColumn.length = atoi(lengthString.c_str());
+		if (columnInfo.size() == 4) {
+			if (columnInfo[2].compare("NOT") == 0 && columnInfo[3].compare("NULL") == 0)
+				newColumn.null = 0;
+			else
+				return false;
+		}
+		tableColumn* newTableColumn = new tableColumn((*colInfos).colNum+1);
+		for (int i = 0; i < (*colInfos).colNum; i++)
+		{
+			(*newTableColumn).colInfo[i] = (*colInfos).colInfo[i];
+		}
+		(*newTableColumn).colInfo[(*colInfos).colNum] = newColumn;
+		(*colInfos) = (*newTableColumn);
+		delete[] newTableColumn;
+	}
 }
 
 bool parser::parserUse(vector<string> commands) {
@@ -114,6 +227,9 @@ bool parser::parserUse(vector<string> commands) {
 }
 
 bool parser::checkNameAvaliable(string s){
+	//? should not be key words
+	if (s.length() == 0)
+		return false;
 	for (int i = 0; i < s.length(); i++) {
 		if (!(isDig(s.at(i)) || isEnglishAlphabet(s.at(i)) || s.at(i)=='_'))
 			return false;
@@ -129,4 +245,21 @@ bool parser::isEnglishAlphabet(char k) {
 }
 bool parser::isDig(char k) {
 	return '0' <= k && k <= '9';
+}
+
+int parser::getType(string s) {
+	for (int i = 0; i < s.length(); i++) {
+		if (!isEnglishAlphabet(s.at(i)))
+			return -1;
+		if (s.at(i) >= 'A' && s.at(i) <= 'Z') {
+			s.at(i) = s.at(i) +32;
+		} 
+	}
+
+	if (s.compare("int") == 0)
+		return INT;
+	if (s.compare("varchar") == 0)
+		return VARCHAR;
+	return -1;
+
 }
