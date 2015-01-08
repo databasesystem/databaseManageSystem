@@ -1,4 +1,5 @@
 #include "dbManage.h"
+#include "wq_parser.h"
 
 int main()
 {

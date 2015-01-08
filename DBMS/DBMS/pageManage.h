@@ -1,6 +1,8 @@
 #ifndef _PAGEMANAGE_H
 #define _PAGEMANAGE_H
 
+#include "systemManage.h"
+
 typedef pair<TYPE_ID,TYPE_ID> rowID;	//<FileID, PageID>
 
 struct pageHeader {
