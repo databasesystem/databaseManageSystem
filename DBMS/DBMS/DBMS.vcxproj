@@ -68,9 +68,9 @@
     <ClCompile Include="btree.cpp" />
     <ClCompile Include="data_utility.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="pageManage.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="dbManage.cpp" />
+    <ClCompile Include="systemManage.cpp" />
     <ClCompile Include="wq_parser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +78,7 @@
     <ClInclude Include="data_utility.h" />
     <ClInclude Include="globalVariable.h" />
     <ClInclude Include="pageManage.h" />
+    <ClInclude Include="systemManage.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="dbManage.h" />
     <ClInclude Include="wq_parser.h" />

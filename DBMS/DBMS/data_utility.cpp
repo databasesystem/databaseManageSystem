@@ -1,22 +1,19 @@
 #include "data_utility.h"
 
-int dataUtility::char2short(char* data) {
-	return *((unsigned short*) data);
-}
-
-void dataUtility::bytefillbyte(char* src, char* dst, int index) {
-	for (int i = 0; i < strlen(dst); i++)
-	{
-		src[index+i] = dst[i];
+void dataUtility::string_fill_char(char* dst, string ori, int index, int size){
+	char* data = new char[size];
+	memset(data, 0, size);
+	memcpy(data, ori.c_str(), ori.size());
+	for (int i = 0; i < size; i++){
+		dst[index+i] = data[i];
 	}
+	delete data;
 }
 
-void dataUtility::bytefillbyte(char* dst, char* src, int index, int length) {
-	char* temp = new char[length];
-	memcpy(temp, src, length);
+void dataUtility::bytefillbyte(char* dst, BYTE* src, int index, BYTE length) {
 	for (int i = 0; i < length; i++) 
 	{
-		dst[index+i] = temp[i];
+		dst[index+i] = src[i];
 	}
 }
 
@@ -28,13 +25,4 @@ char* dataUtility::getbyte(char* src, int start, int length) {
 	}
 	data[length] = 0;
 	return data;
-}
-
-char dataUtility::bool_to_byte(bool data) {
-	char res;
-	if (data)
-		res='1';
-	else
-		res='0';
-	return res;
 }
