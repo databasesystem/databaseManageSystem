@@ -1,52 +1,49 @@
 #include "pageManage.h"
 
-FileBuffer::FileBuffer(){
+BufManager::BufManager(){
 }
 
-FileBuffer::~FileBuffer(){
+BufManager::~BufManager(){
 	//flush();
 }
-
-/*void FileBuffer::flush(){
+/*
+void BufManager::flush(){
 	while(bufmap.size() > 0)
 		pop();
 }
 
-void FileBuffer::pop(){
+void BufManager::pop(){
 	if (bufmap.empty()) return;
-
 	auto it = bufmap.begin();
 	Node* bufPage = it->second;
-
 	if ( bufPage->dirty ) {
-		//need amendments after finishing SysObject (linking fileID and file name)
-		//FileBuffer::writePageToFile(it->first.second, bufPage -> page, bufPage->page->header.fileId );
-		FileBuffer::writePageToFile(it->first.second, bufPage->page, TESTTABLEPATH );
+		//BufManager::writePageToFile(it->first.second, bufPage -> page, bufPage->page->header.fileId );
+		string tableName = SysManager::findTableName(bufPage->page->header.fileId);
+		BufManager::writePageToFile(it->first.second, bufPage->page, TESTTABLEPATH );
 	}
-
 	delete bufPage;
 	bufmap.erase(it);
 }
 
-void FileBuffer::push(TYPE_ID FileID, TYPE_ID PageID, Node* buffer){
+void BufManager::push(TYPE_ID FileID, TYPE_ID PageID, Node* buffer){
 	if ( bufmap.size() == DB_MAX_BUFFER_SIZE ) 
 		pop();
 	bufmap[pair<TYPE_ID, TYPE_ID>(FileID, PageID)] = buffer;
 }
 
-Node* FileBuffer::findPage(TYPE_ID FileID, TYPE_ID PageID){
+Node* BufManager::findPage(TYPE_ID FileID, TYPE_ID PageID){
 	auto it = bufmap.find(pair<TYPE_ID,TYPE_ID>(FileID,PageID));
 	return (it==bufmap.end())?NULL:it->second;
 }
 
-Node* FileBuffer::readPage(TYPE_ID pageId, const char* path){
+Node* BufManager::readPage(TYPE_ID pageId, const char* path){
 	//need amendments after finishing SysObject (linking fileID and file name)
 	Node* pageNode = findPage(TESTFILEID, pageId);
 	if( pageNode )
 		return pageNode;
 
 	Page* newPage = new Page();
-	if(!FileBuffer::readPageFromFile(pageId, newPage, path)){
+	if(!BufManager::readPageFromFile(pageId, newPage, path)){
 		delete newPage;
 		return NULL;
 	}
@@ -57,7 +54,7 @@ Node* FileBuffer::readPage(TYPE_ID pageId, const char* path){
 	return newNode;
 }
 
-void FileBuffer::insertData(string tablename, RecordEntry &record) {
+void BufManager::insertData(string tablename, RecordEntry &record) {
 	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char* path = TESTTABLEPATH;
 	Node* attrPage = readPage( ATTR_PAGE_NUM, path ), *dataPage;
@@ -100,7 +97,7 @@ void FileBuffer::insertData(string tablename, RecordEntry &record) {
 	delete[] data;
 }
 
-void FileBuffer::deleteData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset, int recordlength) {
+void BufManager::deleteData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset, int recordlength) {
 	if (offset > PAGE_SIZE)
 		return;
 	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
@@ -139,7 +136,7 @@ void FileBuffer::deleteData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset
 	//cout << " after update firstoffset is : " << dataPage->page->header.firstFreeOffset << endl;
 }
 
-void FileBuffer::updateData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset, RecordEntry record) {
+void BufManager::updateData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset, RecordEntry record) {
 	//char* path = getTablePath(tablename);  need amendments after finishing SysObject (linking fileID and file name)
 	char*path = TESTTABLEPATH;
 	Node* dataPage = readPage(pageid, path);
@@ -147,7 +144,7 @@ void FileBuffer::updateData(string tablename, TYPE_ID pageid, TYPE_OFFSET offset
 	dataPage->dirty = true;
 }
 
-void FileBuffer::writePageToFile(TYPE_ID pageid, Page* pagedata, const char* filename){
+void BufManager::writePageToFile(TYPE_ID pageid, Page* pagedata, const char* filename){
 	FILE* fileStream;
 	fileStream = fopen(filename,"rb+");
 	if (fileStream) {
@@ -157,9 +154,9 @@ void FileBuffer::writePageToFile(TYPE_ID pageid, Page* pagedata, const char* fil
 	}
 	fwrite(pagedata, DB_PGSIZE, sizeof(char), fileStream);
 	fclose(fileStream);
-}
+}*/
 
-int FileBuffer::readPageFromFile(TYPE_ID pageid, Page* pageinfo, const char* filename){
+int BufManager::readPageFromFile(TYPE_ID pageid, Page* pageinfo, const char* filename){
 	FILE* fileStream;
 	fileStream = fopen(filename,"rb");
 	if (fseek(fileStream, pageid*DB_PGSIZE, SEEK_SET)) {
@@ -171,4 +168,4 @@ int FileBuffer::readPageFromFile(TYPE_ID pageid, Page* pageinfo, const char* fil
 		fclose(fileStream);
 		return 1;
 	}
-}*/
+}

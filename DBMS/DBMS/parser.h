@@ -92,7 +92,7 @@ int getColumn(cName *column,unsigned char *type, unsigned int *len,bool *nullabl
 //执行insert命令时插入一条记录
 int getValues(RecordEntry *values);
 //对数据库文件进行操作，执行解析出来的查询语句
-int getData(char *fileName, DBStorage &testDB);
+int getData(char *fileName, DBManager &testDB);
 
 int dealCommand( table * srcTable,	//进行操作的原始表格 
 				 table * desTable, //得到的结果
@@ -105,5 +105,5 @@ int dealCommand( table * srcTable,	//进行操作的原始表格
 int dealSelect( table * fromTable, table *fromTable2,
 			   cName *operand,
 			   unsigned char *op,
-			   unsigned char *len, DBStorage &testDB);
+			   unsigned char *len, DBManager &testDB);
 #endif

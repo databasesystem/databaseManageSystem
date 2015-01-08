@@ -1,13 +1,9 @@
 #ifndef _PAGEMANAGE_H
 #define _PAGEMANAGE_H
 
-#include "globalVariable.h"
-#include "data_utility.h"
-#include <iostream>
+#include "systemManage.h"
 #include <fstream>
 #include <direct.h>
-#include <string>
-#include <map>
 using namespace std;
 
 typedef pair<TYPE_ID,TYPE_ID> rowID;	//<FileID, PageID>
@@ -30,11 +26,6 @@ struct Page {
 	Page() {
 		memset(data, MEMSET_NUM, PAGE_SIZE);
 	}
-	Page(TYPE_ID fileID){		//sysColumn page
-		header.fileId = fileID;
-		header.pageId = INDEX_SYSCOL;
-		memset(data, MEMSET_NUM, PAGE_SIZE);
-	}
 };
 
 struct Node{
@@ -54,10 +45,10 @@ struct Node{
 	}
 };
 
-class FileBuffer{
+class BufManager{
 public:
-	FileBuffer();
-	~FileBuffer();
+	BufManager();
+	~BufManager();
 	void pop();
 	void push(TYPE_ID FileID, TYPE_ID PageID, Node* buffer);
 	void flush();

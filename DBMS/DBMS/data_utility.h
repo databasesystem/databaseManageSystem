@@ -1,37 +1,31 @@
 #ifndef DATA_UTILITY_H_
 #define DATA_UTILITY_H_
-#include <stdio.h>
+#include "globalVariable.h"
 #include <iostream>
-#include <stdlib.h>
+#include <string>
 
 using namespace std;
  
 class dataUtility {
 public: 
 		template<typename T> 
-		static char* data_to_char(T ori){
-			char* data = (char*) malloc(sizeof(T)+1);
-			memcpy(data, &ori, sizeof(T));
-			data[sizeof(T)] = 0;
-			return data;
-		};
-
-		template<typename T> 
-		static T* char_to_class(char* data) {
-			T* pageinfo = (T*) malloc(sizeof(T));
-			memcpy(pageinfo, data, sizeof(T));
-			return pageinfo;
+		static void data_fill_char(char* dst, T ori, int index, int size){
+			char* data = new char[size];
+			memcpy(data, &ori, size);
+			for (int i = 0; i < size; i++){
+				dst[index+i] = data[i];
+			}
+			delete data;
 		};
 
 		template<typename T>
-		static T char_to_class_reference(char* data){
+		static T char_to_class(char* data){
 			return *((T*)data);
 		}
 
-		static int char2short(char* data);
+		static void string_fill_char(char* dst, string ori, int index, int size);
 		static char* getbyte(char* src, int start, int length);
 		static void bytefillbyte(char* src, char* dst, int index);
 		static void bytefillbyte(char* dst, char* src, int start, int length);   //some characters in src are replaced by in dst.
-		static char bool_to_byte(bool data);
 };
 #endif /* DATA_UTILITY_H_ */

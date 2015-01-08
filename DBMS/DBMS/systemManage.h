@@ -1,9 +1,8 @@
-#ifndef _DBSTORAGE_H_
-#define _DBSTORAGE_H_
+#ifndef _DBManager_H_
+#define _DBManager_H_
 
 #include "globalVariable.h"
-#include <iostream>
-#include <string>
+#include "data_utility.h"
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -17,19 +16,18 @@ typedef pair<NameIndexPair,TYPE_ID> TableIndexPair;
 
 class SysObject{
 public:
-	SysObject(TYPE_ID id,string name,BYTE xtype=0):id(id),name(name),xtype(xtype){}
+	SysObject(TYPE_ID id,string name):id(id),name(name){}
 	~SysObject(){}
 	TYPE_ID id;		// table id
 	string name;	// table name
-	BYTE xtype;
 	vector<TYPE_ID> vecCols;
 };
 
 class SysColumn{
 public:
-	SysColumn(TYPE_ID id,TYPE_ID colid,string name,BYTE xtype,TYPE_OFFSET length,
-		bool n,TYPE_OFFSET index):id(id),colid(colid),name(name),xtype(xtype),
-		length(length),nullable(n),index(index){}
+	SysColumn(TYPE_ID id,TYPE_ID colid,string name,	bool n, BYTE xtype,
+		TYPE_OFFSET length,TYPE_OFFSET index):id(id),colid(colid),name(name),
+		xtype(xtype),length(length),nullable(n),index(index){}
 	TYPE_ID id;		// table id
 	TYPE_ID colid;		// column id
 	string name;	// column name
@@ -54,21 +52,25 @@ public:
 	UINT FirstIAM;	// location of the first IAM page
 };*/
 
-class SystemManager
+class SysManager
 {
 public:
-	SystemManager();
-	~SystemManager();
+	SysManager();
+	~SysManager();
+	void loadSysfile();
 
 	bool createTable(string name);
-	SysObject* findTable(string name);
+	SysObject *findTable(string name);
+	string findTableName(TYPE_ID tableID);
 	bool dropTable(string name);
 
 	bool insertColumn(string name,string tableName,BYTE xtype,TYPE_OFFSET length,bool nullable,TYPE_OFFSET index);
-	SysColumn* findColumn(string name,string tablename);
+	SysColumn *findColumn(string name,string tablename);
+	SysColumn *findColumn(TYPE_ID colID);
 
 	//bool createIndex(string name,UINT indid);
 	//SysIndex* findIndex(string name);
+	void setName(string dbName);
 	void print();
 	void flush();
 
@@ -77,9 +79,10 @@ public:
 	SysColumn *m_pSyscolumns[COLUMN_NUM_SCALE];
 
 private:
+	string path;
 	bool idPool[ID_NUM_SCALE];
 	UINT m_nSysobjects,m_nSysindexes,m_nSyscolumns;
-	map<string,TYPE_ID> sysobjMap,sysindexMap;
+	map<string,TYPE_ID> sysobjMap;//,sysindexMap;
 	map<NameIndexPair,TYPE_ID> syscolMap;
 	TYPE_ID getNewID();
 };

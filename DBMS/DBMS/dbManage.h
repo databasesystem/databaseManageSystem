@@ -1,7 +1,6 @@
 #ifndef _RECORDMANAGE_H
 #define _RECORDMANAGE_H
 #include "pageManage.h"
-#include "systemManage.h"
 #include <vector>
 using namespace std;
 
@@ -9,10 +8,10 @@ using namespace std;
 #define INDEX_SYSINDEX	1
 #define INDEX_SYSCOLUMN 2
 
-class DBStorage{
+class DBManager{
 public:
-	DBStorage(string dbname);
-	~DBStorage();
+	DBManager(string dbname);
+	~DBManager();
 	void createDataBase(string databaseName);
 	void switchDataBase(string databaseName);
 	void dropDataBase(string databaseName);
@@ -34,26 +33,23 @@ public:
 		BYTE offset,BYTE colnum);
 	void flushBuffer();
 	void print();
+	const char* getTablePath(string tablename);
 	
 private:
 	string dbName;
-	FileBuffer bufferManager;
-	SystemManager systemManager;
-	const char* getTablePath(string tablename);
+	BufManager bufManager;
+	SysManager sysManager;
 	BYTE *makeRecord(RecordEntry* input,string colName[],string tableName,UINT &totalLength);
 	RecordEntry *getRecord(BYTE *data,string tableName);
 	void findInPage(string tname,Page *page,BYTE **Value,BYTE *len,string *colName,BYTE *type,
 		vector<RecordEntry*> &q,BYTE *op,BYTE condCnt);
-
 	void delInPage(string tname,Page *page,BYTE **Value,BYTE *len,string *colName,BYTE *type,
 		BYTE *op,BYTE condCnt);
 
-	BYTE *getKeyValue(string tableName,string colName,BYTE *data,USRT &length);
-
+	//BYTE *getKeyValue(string tableName,string colName,BYTE *data,USRT &length);
 	// any key value is compared in their byte order
-	bool compare(BYTE **data1,BYTE **data2,BYTE *len,BYTE *op,BYTE *type,BYTE colNum);
-
+	//bool compare(BYTE **data1,BYTE **data2,BYTE *len,BYTE *op,BYTE *type,BYTE colNum);
 	// compare single data
-	BYTE compareSingle(BYTE *data1,BYTE *data2,BYTE len);
+	//BYTE compareSingle(BYTE *data1,BYTE *data2,BYTE len);
 };
 #endif

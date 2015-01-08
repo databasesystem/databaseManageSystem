@@ -7,8 +7,10 @@ typedef unsigned char	BYTE;
 
 #define TYPE_ID		USRT
 #define TYPE_OFFSET USRT
+#define TYPE_NAME	char*
 #define SIZE_ID		sizeof(USRT)
 #define SIZE_OFFSET sizeof(USRT)
+#define SIZE_NAME	30
 
 #define DB_PGSIZE				8192 // size of page
 #define DB_PGSIZE_USRT			4096 //DB_PGSIZE/(sizeof (USRT))
@@ -22,8 +24,8 @@ typedef unsigned char	BYTE;
 
 
 #define PAGE_SIZE	 DB_PGSIZE-sizeof(pageHeader)
-#define INDEX_SYSCOL 0
 #define MEMSET_NUM	 255
+#define SYSFILE_MAX_SIZE 383401
 #define EXIST_INDEX  65535
 
 #define INT_TYPE	 0
