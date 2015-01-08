@@ -1,5 +1,4 @@
 #include "wq_parser.h"
-#include "pageManage.h"
 
 void parser::testParse(){
 	char filename[100];
@@ -25,15 +24,18 @@ void parser::BatchSqlInFile(char* filename) {
 	while(!feof(fin)) {
 		fgets(command, 1000,fin);
 		splitStr(command, &res);
-		//semicolon has deleted
-			if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
+		if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
 			//This is one command;
 			res[res.size()-1].erase(res[res.size()-1].length()-1);
+			for (int i = 0; i < res.size(); i++)
+				cout << res[i].c_str() << " ";
+			cout << endl;
 			if (!parserOneCommand(res))
 				cout << "This command is wrong." << endl;
 			res.clear();
 		}
 	}
+	
 }
 
 
@@ -47,18 +49,9 @@ void parser::splitStr(char* str, vector<string>* res){
 		if (index >= strlen(str) || str[index] == '\n')
 			return;
 	}
-	//from the first index is not ' ', all examples is '
 	while (str[index] != ' ') {
 		temp += str[index];
 		index++;
-		if (str[index] == '\'') {
-			temp += str[index];
-			index++;
-			while (index < strlen(str) && str[index] != '\'') {
-				temp += str[index];
-				index++;
-			}
-		}
 		if (str[index] == ' ' && temp.length()!=0) {
 			(*res).push_back(temp);
 			temp ="";
@@ -67,13 +60,11 @@ void parser::splitStr(char* str, vector<string>* res){
 		if (index >= strlen(str) || str[index] == '\n')
 			break;
 	}
-	if (temp.length() !=0 )
-		(*res).push_back(temp);
+	(*res).push_back(temp);
 }
 
 bool parser::parserOneCommand(vector<string> commands) {
 	// if return false, prove this command is wrong.
-
 	if (commands.size() == 0)
 		return false;
 	if (strcmp(commands[0].c_str(), "CREATE") == 0) {
@@ -82,72 +73,9 @@ bool parser::parserOneCommand(vector<string> commands) {
 	else if (strcmp(commands[0].c_str(), "USE") == 0) {
 		return parserUse(commands);
 	}
-	else if (strcmp(commands[0].c_str(), "INSERT") == 0) {
-		return parserInsert(commands);
-	}
 	return true;
 }
 
-bool parser::parserInsert(vector<string> commands) {
-	cout << "***********start parse insert data************" << endl;
-	vector<vector<string>> datas;
-	if (commands.size() <= 4)
-		return false;
-	if (strcmp(commands[1].c_str(), "INTO") == 0 && strcmp(commands[3].c_str(), "VALUES") == 0) {
-		if (!checkNameAvaliable(commands[2]))
-			return false;
-		string tablename = commands[2];
-		//according to the tablename,find the table column info
-		tableColumn test(3);
-		test.colNum = 3;
-		test.colInfo[0].name = "id";
-		test.colInfo[0].type = INT;
-		test.colInfo[0].length = 10;
-		test.colInfo[0].null = 0;
-		test.colInfo[0].primaryKey = 1;
-
-		test.colInfo[1].name = "name";
-		test.colInfo[1].type = VARCHAR;
-		test.colInfo[1].length = 100;
-		test.colInfo[1].null = 0;
-		test.colInfo[1].primaryKey = 0;
-
-		test.colInfo[2].name = "nation";
-		test.colInfo[2].type = VARCHAR;
-		test.colInfo[2].length = 3;
-		test.colInfo[2].null = 1;
-		test.colInfo[2].primaryKey = 0;
-		
-
-		int index = 4;
-		vector<string> temp;
-		string s = "";
-		commands[commands.size()-1]+=',';
-		while (index < commands.size()) {
-			temp.clear();
-			for (int i = 0; i < commands[index].size(); i++) {
-				if (commands[index][i] == '(' || commands[index][i] == ')') {
-					commands[index].erase(commands[index].begin() +i);
-					i--;
-				}
-				else if (commands[index][i] == ',') {
-					temp.push_back(s);
-					s="";
-				} else
-					s+=commands[index][i];
-			}
-			index++;
-			datas.push_back(temp);
-		}
-		for (int i = 0; i < datas.size(); i++) {
-			for (int j = 0; j < datas[i].size(); j++)
-				cout << datas[i][j].c_str() << " ";
-			cout << endl;
-		}
-		
-	} else
-		return false;
-}
 bool parser::parserCreate(vector<string> commands) {
 	if (commands.size() < 3 )
 		return false;

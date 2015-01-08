@@ -1,10 +1,7 @@
 #ifndef WQPARSER_H
 #define WQPARSER_H
-#include "pageManage.h"
+#include "dbManage.h"
 #include <fstream>
-#include <string.h>
-#include <vector>
-#include <iostream>
 
 using namespace std;
 
@@ -62,7 +59,6 @@ public:
 	bool parserCreate(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
-	bool parserInsert(vector<string> commands);
 	bool checkNameAvaliable(string s);
 	bool isCmp(char c);
 	bool isEnglishAlphabet(char c);

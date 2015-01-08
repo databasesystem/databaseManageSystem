@@ -1,3 +1,6 @@
+#ifndef _PARSER_H_
+#define _PARSER_H_
+
 #include "dbManage.h"
 #include <iostream> 
 #include <cstdio>
@@ -87,9 +90,9 @@ int getSetColumn(cName *setColumn, unsigned char *len);
 //执行create table命令时创建一个列，参数依次为：列名，列的值的类型，该类型的长度（varchar类型需要指出），能否为空
 int getColumn(cName *column,unsigned char *type, unsigned int *len,bool *nullable);
 //执行insert命令时插入一条记录
-int getValues(recordEntry *values);
+int getValues(RecordEntry *values);
 //对数据库文件进行操作，执行解析出来的查询语句
-int getData(char *fileName, DBStorage &testDB);
+int getData(char *fileName, DBManager &testDB);
 
 int dealCommand( table * srcTable,	//进行操作的原始表格 
 				 table * desTable, //得到的结果
@@ -102,4 +105,5 @@ int dealCommand( table * srcTable,	//进行操作的原始表格
 int dealSelect( table * fromTable, table *fromTable2,
 			   cName *operand,
 			   unsigned char *op,
-			   unsigned char *len, DBStorage &testDB);
+			   unsigned char *len, DBManager &testDB);
+#endif

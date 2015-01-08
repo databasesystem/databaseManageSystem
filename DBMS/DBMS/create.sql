@@ -4,8 +4,3 @@ CREATE TABLE publisher (
   nation varchar(3),
   PRIMARY KEY  (id)
 );
-
-INSERT INTO publisher VALUES 
- (100008,'Oxbow Books Limited','PRC'),
- (100010,'Aardwolf Publishing','PRC'),
- (100012,'Miguel Angel Porrua','PRC');
