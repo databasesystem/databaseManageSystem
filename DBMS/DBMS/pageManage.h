@@ -10,12 +10,54 @@
 #include <direct.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cstring>
 using namespace std;
 
 #define TESTTABLEPATH "./studentManage/studentinfo"
 #define TESTFILEID 1
 typedef pair<USRT,USRT> rowID;	//<FileID, PageID>
 
+
+struct column {
+	string name;
+	int type;
+	int length;
+	bool null;    //1 : is null 0: not null
+	bool primaryKey; // 1: is primary key ; 0 :not
+
+	void printColumn() {
+		cout << "name: " << name.c_str() << endl;
+		cout << "type: " << type << endl;
+		cout << "length: " << length << endl;
+		cout << "null: " << null << endl;
+		cout << "primary key: " << primaryKey << endl;
+	}
+	column(){
+		name = "";
+		type = -1;
+		length = 0;
+		null = 1;
+		primaryKey = 0;
+	}
+};
+struct tableColumn {
+	USRT colNum;
+	column* colInfo;
+	tableColumn(USRT num) {
+		colNum = num;
+		colInfo = new column[num];
+	}
+	tableColumn() {
+		colNum = 0;
+	}
+	int checkColName(string checkname) {
+		for (int i = 0; i < colNum; i++) {
+			if (colInfo[i].name.compare(checkname) == 0)
+				return i;
+		}
+		return -1;
+	}
+};
 struct tableAttr{
 	TYPE_ID pageNum;	//Number of page in table
 	USRT colNum;		//Number of columns

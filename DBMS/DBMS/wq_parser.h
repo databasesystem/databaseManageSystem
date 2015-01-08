@@ -1,5 +1,6 @@
 #ifndef WQPARSER_H
 #define WQPARSER_H
+#include "pageManage.h"
 #include <fstream>
 #include <string.h>
 #include <vector>
@@ -42,6 +43,11 @@ using namespace std;
 #define ISTINTO 26
 #define VALUES 27
 #define SELECT_STAR 28
+
+
+#define INT 30;
+#define VARCHAR 31;
+
 /*
 #define LESSEQUAL 28
 #define MOREEQUAL 29
@@ -54,10 +60,12 @@ public:
 	void splitStr(char* str, vector<string>* res);
 	bool parserOneCommand(vector<string> commands);
 	bool parserCreate(vector<string> commands);
+	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
 	bool checkNameAvaliable(string s);
 	bool isCmp(char c);
 	bool isEnglishAlphabet(char c);
 	bool isDig(char c);
+	int getType(string s);
 };
 #endif
