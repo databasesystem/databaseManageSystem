@@ -35,6 +35,7 @@ public:
 	void printDatabase();
 	void printTable(string tableName);
 	void printTables();
+	vector<SysColumn*> getTableAttr(string tableName);
 	
 private:
 	string dbName;
