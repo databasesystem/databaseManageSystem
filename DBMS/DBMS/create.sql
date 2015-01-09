@@ -9,6 +9,7 @@ CREATE TABLE publisher (
   PRIMARY KEY  (id)
 );
 
+DESC publisher;
 CREATE TABLE book (
   id int(10) NOT NULL,
   title varchar(100) NOT NULL,
@@ -30,3 +31,6 @@ CREATE TABLE orders (
   book_id int(10) NOT NULL,
   quantity int(10) NOT NULL
 );
+DESC orders;
+INSERT INTO publisher VALUES 
+(100053,'AG Press Publishing','PRC');

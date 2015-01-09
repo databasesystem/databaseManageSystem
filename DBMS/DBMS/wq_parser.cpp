@@ -123,6 +123,7 @@ bool parser::parserDesc(vector<string> commands) {
 		return false;
 	cout << "desc table info " << endl;
 	//desc table , if without the table, return false
+	currentDb->printTable(commands[1]);
 	return true;
 
 }
@@ -133,6 +134,7 @@ bool parser::parserShowTable(vector<string> commands) {
 		return false;
 	//?show tables
 	cout << "show tables" << endl;
+	currentDb->printTables();
 	return true;
 }
 bool parser::parserDrop(vector<string> commands) {
@@ -153,83 +155,124 @@ bool parser::parserDrop(vector<string> commands) {
 }
 bool parser::parserInsert(vector<string> commands) {
 	cout << "***********start parse insert data************" << endl;
-	vector<vector<string*>> datas;
+	vector<vector<string>> datas;
 	if (commands.size() <= 4)
 		return false;
 	if (checkKeyWord(commands[1], ISINTO) && checkKeyWord(commands[3], VALUES)) {
-		if (!checkNameAvaliable(commands[2]))
+		if (!checkNameAvaliable(commands[2])) {
+			cout << "table name is unableuse" << endl;
 			return false;
+		}
 		string tablename = commands[2];
 		//according to the tablename,find the table column info
 		
 		int index = 4;
-		vector<string*> temp;
+		vector<string> temp;
 		string s = "";
 		commands[commands.size()-1]+=',';
 		while (index < commands.size()) {
 			temp.clear();
+			//cout << commands[index].c_str() << endl;
 			for (int i = 0; i < commands[index].size(); i++) {
 				if (commands[index][i] == '(' || commands[index][i] == ')') {
 					commands[index].erase(commands[index].begin() +i);
 					i--;
 				}
 				else if (commands[index][i] == ',') {
-					temp.push_back(&s);
+					if (s.length() != 0)
+						temp.push_back(s);
 					s="";
+					if (i+1 < commands[index].size() && commands[index][i+1] == '\'') {
+						i++;
+						while (i < commands[index].size() && commands[index][i] != '\'') {
+							s += commands[index][i];
+							i++;
+						}
+						s+='\'';
+						if (s.length() != 0)
+						temp.push_back(s);
+						s="";
+					}
 				} else
 					s+=commands[index][i];
 			}
+			if (s.length() != 0)
+				temp.push_back(s);
 			index++;
 			datas.push_back(temp);
 		}
 		vector<SysColumn*> sysColumn = (*currentDb).getTableAttr(commands[2]);
 		string* name = new string[sysColumn.size()];
+		RecordEntry tempRecord;
+		tempRecord.length  =  new BYTE[sysColumn.size()];
+		tempRecord.item = new BYTE*[sysColumn.size()];
 
+		for (int i = 0; i < sysColumn.size(); i++) {
+			name[i] = sysColumn[i]->name;
+		}
 		for (int i = 0; i < datas.size(); i++) {
-			if (!checkColumnsValue(sysColumn, (datas[i])))
+			/*for (int k = 0; k < datas[i].size(); k++)
+				cout << datas[i][k] << "|";
+			cout <<endl;*/
+			if (datas[i].size() != sysColumn.size()) {
 				return false;
-			RecordEntry tempRecord;
+			}
+			for (int j = 0; j < datas[i].size(); j++) {
+				if (sysColumn[j]->xtype == VARCHAR) {
+					if (datas[i][j].length() > 0 && datas[i][j].at(0)=='\'')
+						datas[i][j].erase(datas[i][j].begin());
+					if (datas[i][j].length() > 0 && datas[i][j].at(datas[i][j].length()-1)=='\'')
+						datas[i][j].erase(datas[i][j].end()-1);
+				}
+			}
+			if (!checkColumnsValue(sysColumn, datas[i])) {
+				cout << "column error----------------------" << i<< endl;
+				return false;
+			}
 			for(int j = 0; j < datas[i].size(); j++) {
-				name[j] = sysColumn[j]->name;
-				if ((*sysColumn[j]).xtype == INT)
-				tempRecord.length[j] = 4;
-				else if ((*sysColumn[j]).xtype == VARCHAR)
-					tempRecord.length[j] = (*(datas[i][j])).length();
-				dataUtility::string_fill_char((char*)tempRecord.item[j], (*(datas[i][j])), 0, sysColumn[j]->length);
+				if ((*sysColumn[j]).xtype == INT) {
+					tempRecord.length[j] = 4;
+					tempRecord.item[j] = new BYTE[tempRecord.length[j]];
+					tempRecord.item[j] =(BYTE*) dataUtility::data_to_char<int>(atoi(datas[i][j].c_str()));
+				}
+				else if ((*sysColumn[j]).xtype == VARCHAR) {
+					tempRecord.length[j] = datas[i][j].length();
+					tempRecord.item[j] = new BYTE[tempRecord.length[j]];
+					dataUtility::string_to_char((char*)tempRecord.item[j], datas[i][j], 0, datas[i][j].length(),sysColumn[j]->length );
+
+				}
 			}
 			currentDb->insertRecord(&tempRecord, name, commands[2]);
 		}
-		
 	} else
 		return false;
 }
 
-bool parser::checkColumnsValue(vector<SysColumn*> sysColumns, vector<string*> datas) {
+bool parser::checkColumnsValue(vector<SysColumn*> sysColumns, vector<string> datas) {
 	if (datas.size() != sysColumns.size())
 		return false;
 	for (int i = 0; i < datas.size(); i++) {
-		if (!checkOneColumnValue((*sysColumns[i]), datas[i]))
+		if (!checkOneColumnValue((*sysColumns[i]), datas[i])) {
 			return false;
+		}
 	}
 	return true;
 }
-bool parser::checkOneColumnValue(SysColumn syscolumn, string* data) {
+
+
+bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 	//? null
 	//BYTE xtype;		// data type
 	//TYPE_OFFSET length;	// the max length of this type
-	if (syscolumn.xtype == VARCHAR) {
-		if ((*data).length() > 0 && (*data).at(0)=='\'')
-			(*data).erase((*data).begin());
-		if ((*data).length() > 0 && (*data).at((*data).length()-1)=='\'')
-			(*data).erase((*data).end()-1);
-	}
-	if ((*data).length() > syscolumn.length)
-		return false;
+	
 	if (syscolumn.xtype == INT) {
-		for (int i = 0; i < (*data).length(); i++) {
-			if (!isDig((*data)[i]))
+		for (int i = 0; i < data.length(); i++) {
+			if (!isDig(data[i]))
 				return false;
 		}
+	} else if (syscolumn.xtype == VARCHAR) {
+		if (data.length() > syscolumn.length)
+		return false;
 	}
 	return true;
 }
@@ -432,7 +475,6 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 				break;
 		}
 		newColumn.type = getType(typeString);
-		cout << "tegdsjkagdk" << endl;
 		if (tempIndex < columnInfo[1].size() && columnInfo[1].at(tempIndex) == '(') {
 			//get length
 			tempIndex++;
@@ -443,8 +485,10 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 				break;
 			}
 		}
-		
-		newColumn.length = atoi(lengthString.c_str());
+		if (newColumn.type == INT)
+			newColumn.length = 4;
+		else
+			newColumn.length = atoi(lengthString.c_str());
 		if (columnInfo.size() == 4) {
 			if (checkKeyWord(columnInfo[2], IS_NOT) && checkKeyWord(columnInfo[3], ISNULL))
 				newColumn.null = 0;
@@ -498,7 +542,6 @@ bool parser::isDig(char k) {
 }
 
 int parser::getType(string s) {
-	cout << "get type" << endl;
 	for (int i = 0; i < s.length(); i++) {
 		if (!isEnglishAlphabet(s.at(i)))
 			return -1;
