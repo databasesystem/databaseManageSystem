@@ -67,12 +67,15 @@ public:
 	bool insertColumn(string name,string tableName,BYTE xtype,TYPE_OFFSET length,bool nullable,TYPE_OFFSET index);
 	SysColumn *findColumn(string name,string tablename);
 	SysColumn *findColumn(TYPE_ID colID);
+	TYPE_OFFSET getRecordLength(string tableName);
 
 	//bool createIndex(string name,UINT indid);
 	//SysIndex* findIndex(string name);
 	void setName(string dbName);
 	vector<string> getAllTable();
 	void print();
+	void printTable(string tableName);
+	void printTables(string dbName);
 	void flush();
 	void drop();
 

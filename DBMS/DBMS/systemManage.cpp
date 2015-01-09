@@ -202,6 +202,19 @@ SysColumn *SysManager::findColumn(TYPE_ID colID){
 	return NULL;
 }
 
+TYPE_OFFSET SysManager::getRecordLength(string tableName){
+	TYPE_OFFSET index = 0;
+	SysObject* table = findTable(tableName);
+	for( UINT i = 0; i < table->vecCols.size(); i++ ){
+		SysColumn* column = findColumn(table->vecCols[i]);
+		if(index < column->index + column->length){
+			index = column->index + column->length;
+		}
+	}
+	index += SIZE_OFFSET;
+	return index;
+}
+
 void SysManager::setName(string dbname){
 	path = "./" + dbname + "/_sysFile";
 }
@@ -212,18 +225,41 @@ void SysManager::print(){
 		return;
 	}
 	cout << "There are " << sysobjMap.size() << " tables in database." << endl;
-	map<TYPE_ID, vector<pair<TYPE_OFFSET,string>> > radix;
-	for( UINT i = 0; i < m_nSyscolumns; i++ ){
-		radix[m_pSyscolumns[i]->id].push_back(pair<TYPE_OFFSET,string>(m_pSyscolumns[i]->index,m_pSyscolumns[i]->name));
-	}
 	int i = 1;
 	for(auto it : sysobjMap){
-		cout << "===============" << i << " table: " << it.first << "===============" << endl;
-		sort(radix[it.second].begin(),radix[it.second].end());
-		for(UINT j = 0; j < radix[it.second].size(); j++){
-			cout << j+1 << " column: " <<  radix[it.second][j].second << endl;
+		cout << "********************* table " << i++ << " *********************" << endl;
+		printTable(it.first);
+	}
+}
+
+void SysManager::printTable(string tableName){
+	SysObject* table = findTable(tableName);
+	if(table == NULL)
+		return;
+	vector<SysColumn*> radix;
+	for(auto col : table->vecCols){
+		radix.push_back(findColumn(col));
+	}
+	cout << "=================== table: " << tableName << " ====================" << endl;
+	int i = 1;
+	for(auto col : radix){
+		string space = "\t";
+		for( UINT j = 3; j > col->name.size()/4; j-- ){
+			space = space + "\t";
 		}
-		i++;
+		if(col->nullable)
+			cout << i++ << " column: " <<  col->name << space << "|Nullable: T|\tType: " << col->xtype << "|\tLength " << col->length << endl;
+		else
+			cout << i++ << " column: " <<  col->name << space << "|Nullable: F|\tType: " << col->xtype << "|\tLength " << col->length << endl;
+	}
+	cout << "============================================================" << endl;
+}
+
+void SysManager::printTables(string dbName){
+	cout << "++++++++++++++++++++ Database: " << dbName << " +++++++++++++++++++++" << endl;
+	int i = 1;
+	for(auto it : sysobjMap){
+		cout << i++ << " table: " << it.first << endl;
 	}
 }
 

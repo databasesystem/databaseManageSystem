@@ -116,7 +116,7 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 }
 
 bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
-	
+	SysObject* table = sysManager.findTable(tableName);
 	return false;
 }
 
@@ -131,8 +131,16 @@ vector<RecordEntry*> findRecord(string tableName,BYTE **Value,string *colName, B
 	return result;
 }
 
-void DBManager::print(){
+void DBManager::printDatabase(){
 	sysManager.print();
+}
+
+void DBManager::printTable(string tableName){
+	sysManager.printTable(tableName);
+}
+
+void DBManager::printTables(){
+	sysManager.printTables(dbName);
 }
 
 string DBManager::getTablePath(string tableName) {
