@@ -28,7 +28,7 @@ int main()
 		testdb.insertRecord(&record, colName,"student");
 	}
 
-	parser testParser;
+	parser testParser("test");
 	testParser.testParse();
 
 	system("pause");

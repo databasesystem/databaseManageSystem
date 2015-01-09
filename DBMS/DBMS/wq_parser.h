@@ -1,6 +1,7 @@
 #ifndef WQPARSER_H
 #define WQPARSER_H
 #include "pageManage.h"
+#include "dbManage.h"
 #include <fstream>
 #include <string.h>
 #include <vector>
@@ -63,8 +64,10 @@ using namespace std;
 #define MOREEQUAL 29
 */
 
-class parser {
+class parser{
 public:
+	parser(string dbname);
+	~parser();
 	void testParse();
 	void BatchSqlInFile(char* filename);
 	void splitStr(char* str, vector<string>* res);
@@ -84,5 +87,8 @@ public:
 	int getType(string s);
 	string getKeyWords(int keyvalue);
 	bool checkKeyWord(string s, int keyvalue);
+private:
+	DBManager* currentDb;
+	
 };
 #endif

@@ -1,7 +1,15 @@
 #include "wq_parser.h"
 #include "pageManage.h"
 #include "globalVariable.h"
+#include "dbManage.h"
 
+
+parser::parser(string dbname) {
+	currentDb = new DBManager(dbname);
+}
+parser::~parser() {
+	delete currentDb;
+}
 void parser::testParse(){
 	char filename[100];
 	while(true) {
@@ -107,7 +115,7 @@ bool parser::parserDelete(vector<string> commands) {
 		return false;
 	if (!checkNameAvaliable(commands[2]))
 		return false;
-	tablename1 = commands[2];
+	
 	return true;
 }
 bool parser::parserDesc(vector<string> commands) {
@@ -132,12 +140,12 @@ bool parser::parserDrop(vector<string> commands) {
 		return false;
 	if (checkKeyWord(commands[1], DATABASE) ) {
 		cout << "drop database " << endl;
-		string databasename = commands[2];
+		(*currentDb).dropDataBase(commands[2]);
 		//?if system file does not have this database, return false.
 		return true;
 	} else if (checkKeyWord(commands[1], TABLE)) {
 		cout << "drop table " << endl;
-		string tablename = commands[2];
+		(*currentDb).dropTable(commands[2]);
 		//?if system file does not have this table, return false.
 		return true;
 	} else
@@ -153,27 +161,7 @@ bool parser::parserInsert(vector<string> commands) {
 			return false;
 		string tablename = commands[2];
 		//according to the tablename,find the table column info
-		tableColumn test(3);
-		test.colNum = 3;
-		test.colInfo[0].name = "id";
-		test.colInfo[0].type = INT;
-		test.colInfo[0].length = 10;
-		test.colInfo[0].null = 0;
-		test.colInfo[0].primaryKey = 1;
-
-		test.colInfo[1].name = "name";
-		test.colInfo[1].type = VARCHAR;
-		test.colInfo[1].length = 100;
-		test.colInfo[1].null = 0;
-		test.colInfo[1].primaryKey = 0;
-
-		test.colInfo[2].name = "nation";
-		test.colInfo[2].type = VARCHAR;
-		test.colInfo[2].length = 3;
-		test.colInfo[2].null = 1;
-		test.colInfo[2].primaryKey = 0;
 		
-
 		int index = 4;
 		vector<string> temp;
 		string s = "";
@@ -280,6 +268,7 @@ bool parser::parserCreate(vector<string> commands) {
 			return false;
 		else {
 			//execute create database;
+			(*currentDb).createDataBase(commands[2]);
 			cout << "***********start parse create database************" << endl;
 		}
 	} else if (checkKeyWord(commands[1], TABLE)) {
@@ -318,10 +307,26 @@ bool parser::parserCreate(vector<string> commands) {
 		}
 		if (columnInfos.size() !=0)
 			parserCreateColumn(columnInfos, &colInfos);
+		//void DBManager::createTable(string tablename, UINT colNum, string colName[], BYTE type[], TYPE_OFFSET length[], bool nullable[]){
+		string* colName = new string[colInfos.colNum];
+		BYTE* type =  new BYTE[colInfos.colNum];
+		TYPE_OFFSET* length = new TYPE_OFFSET[colInfos.colNum];
+		bool*  nullable = new bool[colInfos.colNum];
+
+		
 		for (int i = 0; i < (colInfos).colNum; i++)
 		{
-			(colInfos).colInfo[i].printColumn();
+			colName[i]  = (colInfos).colInfo[i].name;
+			type[i] = (colInfos).colInfo[i].type;
+			length[i] = (colInfos).colInfo[i].length;
+			nullable[i] = (colInfos).colInfo[i].null;
 		}
+		(*currentDb).createTable(commands[2], colInfos.colNum, colName, type, length, nullable);
+		(*currentDb).print();
+		delete[] colName;
+		delete[] type;
+		delete[] length;
+		delete[] nullable;
 	}
 	return true;
 }
@@ -424,6 +429,7 @@ bool parser::parserUse(vector<string> commands) {
 		return false;
 	if (checkNameAvaliable(commands[1])) {
 		//execute use command
+		(*currentDb).switchDataBase(commands[1]);
 	} else
 		return false;
 	return true;
