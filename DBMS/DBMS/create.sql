@@ -1,5 +1,6 @@
 CREATE DATABASE orderDB;
-
+CREATE DATABASE orderDB1;
+DROP DATABASE orderDB1;
 USE orderDB;
 
 CREATE TABLE publisher (
@@ -9,6 +10,7 @@ CREATE TABLE publisher (
   PRIMARY KEY  (id)
 );
 
+DESC publisher;
 CREATE TABLE book (
   id int(10) NOT NULL,
   title varchar(100) NOT NULL,
@@ -17,7 +19,7 @@ CREATE TABLE book (
   copies int(10),
   PRIMARY KEY  (id)
 );
-
+DROP TABLE book;
 CREATE TABLE customer (
   id int(10) NOT NULL,
   name varchar(25) NOT NULL,
@@ -30,3 +32,5 @@ CREATE TABLE orders (
   book_id int(10) NOT NULL,
   quantity int(10) NOT NULL
 );
+DESC orders;
+SHOW TABLES;

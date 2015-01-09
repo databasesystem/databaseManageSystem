@@ -87,8 +87,8 @@ public:
 	int getType(string s);
 	string getKeyWords(int keyvalue);
 	bool checkKeyWord(string s, int keyvalue);
-	bool checkColumnsValue(vector<SysColumn*> sysColumns, vector<string*> datas);
-	bool checkOneColumnValue(SysColumn sysColumn, string* data);
+	bool checkColumnsValue(vector<SysColumn*> sysColumns, vector<string> datas);
+	bool checkOneColumnValue(SysColumn sysColumn, string data);
 private:
 	DBManager* currentDb;
 	
