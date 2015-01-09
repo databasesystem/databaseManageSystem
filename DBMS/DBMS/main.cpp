@@ -23,16 +23,16 @@ int main()
 	BYTE *ritem[] = {item1, item2, item3, item4, item5};
 	record.item = ritem;
 
-	for(int i = 0 ; i < 1 ; i++){
+	/*for(int i = 0 ; i < 1 ; i++){
 		testdb.insertRecord(&record, colName,"student");
 	}
 
 	for(int i = 0; i < 20; i++){
 		testdb.printRecord("student",3,colName,i,0);
-	}
+	}*/
 
-	//parser testParser("test");
-	//testParser.testParse();
+	parser testParser("test");
+	testParser.testParse();
 	
 	//testdb.printDatabase();
 	//testdb.printTables();

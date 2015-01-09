@@ -174,6 +174,7 @@ bool parser::parserInsert(vector<string> commands) {
 			temp.clear();
 			//cout << commands[index].c_str() << endl;
 			for (int i = 0; i < commands[index].size(); i++) {
+
 				if (commands[index][i] == '(' || commands[index][i] == ')') {
 					commands[index].erase(commands[index].begin() +i);
 					i--;
@@ -182,7 +183,7 @@ bool parser::parserInsert(vector<string> commands) {
 					if (s.length() != 0)
 						temp.push_back(s);
 					s="";
-					if (i+1 < commands[index].size() && commands[index][i+1] == '\'') {
+					/*if (i+1 < commands[index].size() && commands[index][i+1] == '\'') {
 						i++;
 						while (i < commands[index].size() && commands[index][i] != '\'') {
 							s += commands[index][i];
@@ -190,14 +191,12 @@ bool parser::parserInsert(vector<string> commands) {
 						}
 						s+='\'';
 						if (s.length() != 0)
-						temp.push_back(s);
+							temp.push_back(s);
 						s="";
-					}
+					}*/
 				} else
 					s+=commands[index][i];
 			}
-			if (s.length() != 0)
-				temp.push_back(s);
 			index++;
 			datas.push_back(temp);
 		}
@@ -211,9 +210,9 @@ bool parser::parserInsert(vector<string> commands) {
 			name[i] = sysColumn[i]->name;
 		}
 		for (int i = 0; i < datas.size(); i++) {
-			/*for (int k = 0; k < datas[i].size(); k++)
+			for (int k = 0; k < datas[i].size(); k++)
 				cout << datas[i][k] << "|";
-			cout <<endl;*/
+			cout <<endl;
 			if (datas[i].size() != sysColumn.size()) {
 				return false;
 			}
@@ -242,6 +241,7 @@ bool parser::parserInsert(vector<string> commands) {
 
 				}
 			}
+			
 			currentDb->insertRecord(&tempRecord, name, commands[2]);
 		}
 	} else
@@ -416,7 +416,7 @@ bool parser::parserCreate(vector<string> commands) {
 
 
 bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos) {
-	cout << "start parse create column*****************" << endl;
+	//cout << "start parse create column*****************" << endl;
 	//for (int i = 0 ; i < columnInfo.size(); i++ )
 	//	cout << columnInfo[i].c_str() << endl;
 
