@@ -28,10 +28,7 @@ public:
 	void combine(vector<RecordEntry*> &result, const vector<RecordEntry*> &A, const vector<RecordEntry*> &B,
 		BYTE colA,BYTE colB,BYTE tarAIndex);
 	//print
-	void printRecord(ofstream &fout,RecordEntry* input,BYTE colnum,
-		string tableName,string *prtCol,BYTE prtNum);
-	void printRecord(ofstream &fout,RecordEntry* input,bool *tablePos,string *tableName,string *colName,
-		BYTE offset,BYTE colnum);
+	void printRecord(string tableName,BYTE colnum,string *colName,TYPE_OFFSET offset,TYPE_ID pageid);
 	void printDatabase();
 	void printTable(string tableName);
 	void printTables();

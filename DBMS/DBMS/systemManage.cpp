@@ -227,9 +227,10 @@ void SysManager::print(){
 	cout << "There are " << sysobjMap.size() << " tables in database." << endl;
 	int i = 1;
 	for(auto it : sysobjMap){
-		cout << "********************* table " << i++ << " *********************" << endl;
+		cout << "************************* table " << i++ << " *************************" << endl;
 		printTable(it.first);
 	}
+	cout << endl;
 }
 vector<SysColumn*> SysManager::getTableAttr(string tableName) {
 	vector<SysColumn*> radix;
@@ -249,17 +250,19 @@ void SysManager::printTable(string tableName){
 	for(auto col : table->vecCols){
 		radix.push_back(findColumn(col));
 	}
-	cout << "=================== table: " << tableName << " ====================" << endl;
+	cout << "===================== table: " << tableName << " ======================" << endl;
 	int i = 1;
 	for(auto col : radix){
-		string space = "\t";
+		string space = "\t", null, type;
 		for( UINT j = 3; j > col->name.size()/4; j-- ){
 			space = space + "\t";
 		}
-		if(col->nullable)
-			cout << i++ << " column: " <<  col->name << space << "|Nullable: T|\tType: " << col->xtype << "|\tLength " << col->length << endl;
-		else
-			cout << i++ << " column: " <<  col->name << space << "|Nullable: F|\tType: " << col->xtype << "|\tLength " << col->length << endl;
+		null = (col->nullable)?"T":"F";
+		if(col->xtype == INT_TYPE)
+			type = "Int";
+		else if(col->xtype == VARCHAR_TYPE)
+			type = "VarChar";
+		cout << i++ << " column: " <<  col->name << space << "|Nullable: " << null << "|\tType: " << type << "|\tLength " << col->length << endl;
 	}
 	cout << "============================================================" << endl;
 }
@@ -270,6 +273,7 @@ void SysManager::printTables(string dbName){
 	for(auto it : sysobjMap){
 		cout << i++ << " table: " << it.first << endl;
 	}
+	cout << endl;
 }
 
 void SysManager::flush(){
