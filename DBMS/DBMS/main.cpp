@@ -10,9 +10,9 @@ int main()
 	TYPE_OFFSET length[] = {20,20,4,20,4};
 	bool nullable[] = {false,false,false,false,false};
 
-	string file = "student";
+	string file = "student2";
 	testdb.createTable(file, 5, colName, type, length, nullable);
-	testdb.print();
+	testdb.printTables();
 	RecordEntry record;
 	BYTE item1[] = "HKUST";
 	BYTE item2[] = "CSE";
@@ -24,12 +24,16 @@ int main()
 	BYTE *ritem[] = {item1, item2, item3, item4, item5};
 	record.item = ritem;
 
-	for(int i = 0 ; i < 1000 ; i++){
-		testdb.insertRecord(&record, colName,"student");
-	}
+	//for(int i = 0 ; i < 1000 ; i++){
+	//	testdb.insertRecord(&record, colName,"student");
+	//}
 
 	parser testParser("test");
 	testParser.testParse();
+
+	testdb.printTable("student2");
+	testdb.printDatabase();
+
 
 	system("pause");
 	return 0;
