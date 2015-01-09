@@ -8,6 +8,7 @@
 
 using namespace std;
 
+
 #define ENDOFCOMMAND 0
 #define ENDOFFILE 1
 #define SELECT 2
