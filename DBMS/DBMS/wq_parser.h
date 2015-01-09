@@ -40,14 +40,22 @@ using namespace std;
 #define NOTNULL 23
 #define NUMBER 24
 #define INSERT 25
-#define ISTINTO 26
+#define ISINTO 26
 #define VALUES 27
 #define SELECT_STAR 28
 
 
-#define INT 30;
-#define VARCHAR 31;
+#define INT 30
+#define VARCHAR 31
 
+#define IS_NOT 32
+#define IS_KEY 33
+#define IS_PRIMARY 34
+#define DESC 35
+#define SHOW 36
+#define USE 37
+#define TABLES 38
+#define DATABASE 39
 /*
 #define LESSEQUAL 28
 #define MOREEQUAL 29
@@ -60,6 +68,9 @@ public:
 	void splitStr(char* str, vector<string>* res);
 	bool parserOneCommand(vector<string> commands);
 	bool parserCreate(vector<string> commands);
+	bool parserDrop(vector<string> commands);
+	bool parserDesc(vector<string> commands);
+	bool parserShowTable(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
 	bool parserInsert(vector<string> commands);
@@ -68,5 +79,7 @@ public:
 	bool isEnglishAlphabet(char c);
 	bool isDig(char c);
 	int getType(string s);
+	string getKeyWords(int keyvalue);
+	bool checkKeyWord(string s, int keyvalue);
 };
 #endif

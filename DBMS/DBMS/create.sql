@@ -1,3 +1,7 @@
+CREATE DATABASE orderDB;
+
+USE orderDB;
+
 CREATE TABLE publisher (
   id int(10) NOT NULL,
   name varchar(100) NOT NULL,
@@ -5,7 +9,24 @@ CREATE TABLE publisher (
   PRIMARY KEY  (id)
 );
 
-INSERT INTO publisher VALUES 
- (100008,'Oxbow Books Limited','PRC'),
- (100010,'Aardwolf Publishing','PRC'),
- (100012,'Miguel Angel Porrua','PRC');
+CREATE TABLE book (
+  id int(10) NOT NULL,
+  title varchar(100) NOT NULL,
+  authors varchar(200),
+  publisher_id int(10) NOT NULL,
+  copies int(10),
+  PRIMARY KEY  (id)
+);
+
+CREATE TABLE customer (
+  id int(10) NOT NULL,
+  name varchar(25) NOT NULL,
+  rank int(10) NOT NULL,
+  PRIMARY KEY  (id)
+);
+
+CREATE TABLE orders (
+  customer_id int(10) NOT NULL,
+  book_id int(10) NOT NULL,
+  quantity int(10) NOT NULL
+);

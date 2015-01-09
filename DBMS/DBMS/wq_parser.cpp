@@ -76,7 +76,7 @@ bool parser::parserOneCommand(vector<string> commands) {
 
 	if (commands.size() == 0)
 		return false;
-	if (strcmp(commands[0].c_str(), "CREATE") == 0) {
+	/*if (strcmp(commands[0].c_str(), "CREATE") == 0) {
 		return parserCreate(commands);
 	}
 	else if (strcmp(commands[0].c_str(), "USE") == 0) {
@@ -85,15 +85,76 @@ bool parser::parserOneCommand(vector<string> commands) {
 	else if (strcmp(commands[0].c_str(), "INSERT") == 0) {
 		return parserInsert(commands);
 	}
+	else if (strcmp(commands[0].c_str(), "DROP") == 0) {
+		return parserDrop(commands);
+	}
+	else if (strcmp(commands[0].c_str(), "SHOW") == 0) {
+		return parserShowTable(commands);
+	} 
+	else if (strcmp(commands[0].c_str(), "DESC") == 0){
+		return parserDesc(commands);
+	}*/
+
+	if (checkKeyWord(commands[0], CREATE)) {
+		return parserCreate(commands);
+	}
+	else if (checkKeyWord(commands[0], USE)) {
+		return parserUse(commands);
+	}
+	else if (checkKeyWord(commands[0], INSERT)) {
+		return parserInsert(commands);
+	}
+	else if (checkKeyWord(commands[0], DROP)) {
+		return parserDrop(commands);
+	}
+	else if (checkKeyWord(commands[0], SHOW)) {
+		return parserShowTable(commands);
+	} 
+	else if (checkKeyWord(commands[0], DESC)){
+		return parserDesc(commands);
+	}
 	return true;
 }
 
+bool parser::parserDesc(vector<string> commands) {
+	if (commands.size() != 2)
+		return false;
+	cout << "desc table info " << endl;
+	//desc table , if without the table, return false
+	return true;
+
+}
+bool parser::parserShowTable(vector<string> commands) {
+	if (commands.size() != 2)
+		return false;
+	if (!checkKeyWord(commands[1], TABLES))
+		return false;
+	//?show tables
+	cout << "show tables" << endl;
+	return true;
+}
+bool parser::parserDrop(vector<string> commands) {
+	if (commands.size() != 3)
+		return false;
+	if (checkKeyWord(commands[1], DATABASE) ) {
+		cout << "drop database " << endl;
+		string databasename = commands[2];
+		//?if system file does not have this database, return false.
+		return true;
+	} else if (checkKeyWord(commands[1], TABLE)) {
+		cout << "drop table " << endl;
+		string tablename = commands[2];
+		//?if system file does not have this table, return false.
+		return true;
+	} else
+		return false;
+}
 bool parser::parserInsert(vector<string> commands) {
 	cout << "***********start parse insert data************" << endl;
 	vector<vector<string>> datas;
 	if (commands.size() <= 4)
 		return false;
-	if (strcmp(commands[1].c_str(), "INTO") == 0 && strcmp(commands[3].c_str(), "VALUES") == 0) {
+	if (checkKeyWord(commands[1], ISINTO) && checkKeyWord(commands[3], VALUES)) {
 		if (!checkNameAvaliable(commands[2]))
 			return false;
 		string tablename = commands[2];
@@ -148,17 +209,74 @@ bool parser::parserInsert(vector<string> commands) {
 	} else
 		return false;
 }
+
+bool parser::checkKeyWord(string s, int keyvalue) {
+	for (int i = 0; i < s.length(); i++) {
+		if (!isEnglishAlphabet(s.at(i)))
+			return false;
+		if (s.at(i) >= 'a' && s.at(i) <= 'z') {
+			s.at(i) = s.at(i) -32;
+		} 
+	}
+	if (s.compare(getKeyWords(keyvalue)) == 0)
+		return true;
+	else
+		return false;
+}
+string parser::getKeyWords(int keyvalue) {
+	switch (keyvalue)
+	{
+	case CREATE:
+		return "CREATE";
+	case INSERT:
+		return "INSERT";
+	case DROP:
+		return "DROP";
+	case ISNULL:
+		return "NULL";
+	case ISINTO:
+		return "INTO";
+	case UPDATE:
+		return "UPDATE";
+	case IS_NOT:
+		return "NOT";
+	case IS_PRIMARY:
+		return "PRIMARY";
+	case IS_KEY:
+		return "KEY";
+	case DESC:
+		return "DESC";
+	case SHOW:
+		return "SHOW";
+	case USE:
+		return "USE";
+	case VALUES:
+		return "VALUES";
+	case TABLES:
+		return "TABLES";
+	case TABLE:
+		return "TABLE";
+	case DATABASE:
+		return "DATABASE";
+	case INT:
+		return "INT";
+	case VARCHAR:
+		return "VARCHAR";
+	default:
+		break;
+	}
+}
 bool parser::parserCreate(vector<string> commands) {
 	if (commands.size() < 3 )
 		return false;
-	if (strcmp(commands[1].c_str(), "DATEBASE") == 0){
+	if (checkKeyWord(commands[1], DATABASE)){
 		if (commands.size() != 3 || !checkNameAvaliable(commands[2]))
 			return false;
 		else {
 			//execute create database;
 			cout << "***********start parse create database************" << endl;
 		}
-	} else if (strcmp(commands[1].c_str(), "TABLE") == 0) {
+	} else if (checkKeyWord(commands[1], TABLE)) {
 		cout << "***********start parse create table************" << endl;
 		if (!checkNameAvaliable(commands[2]))  //tablename
 			return false;
@@ -186,6 +304,7 @@ bool parser::parserCreate(vector<string> commands) {
 				commands[index].erase(commands[index].length()-1);
 				columnInfos.push_back(commands[index]);
 				parserCreateColumn(columnInfos, &colInfos);
+
 				columnInfos.clear();
 			} else 
 			columnInfos.push_back(commands[index]);
@@ -210,10 +329,11 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 	int tempIndex;
 	if (columnInfo.size() < 2 )
 		return false;
-	if (strcmp(columnInfo[0].c_str(), "PRIMARY") == 0) {
+	#pragma region primary key
+	if (checkKeyWord(columnInfo[0], IS_PRIMARY)) {
 		if (columnInfo.size() < 3 || columnInfo.size() > 5)
 			return false;
-		if (strcmp(columnInfo[1].c_str(), "KEY") == 0)
+		if (checkKeyWord(columnInfo[1], IS_KEY))
 		{
 			if (columnInfo.size() == 3) {
 				if (columnInfo[2].at(0) != '(' || columnInfo[2].at(columnInfo[2].length()-1) != ')')
@@ -241,7 +361,10 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 				return false;
 		} else 
 			return false;
-	} else {
+	} 
+	#pragma endregion
+	else {
+		//cout << "add new column" << endl;
 		column newColumn;
 		if (!checkNameAvaliable(columnInfo[0]) || columnInfo.size() < 2 || columnInfo.size() > 4)
 			return false;
@@ -257,7 +380,7 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 				break;
 		}
 		newColumn.type = getType(typeString);
-
+		cout << "tegdsjkagdk" << endl;
 		if (tempIndex < columnInfo[1].size() && columnInfo[1].at(tempIndex) == '(') {
 			//get length
 			tempIndex++;
@@ -268,13 +391,15 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 				break;
 			}
 		}
+		
 		newColumn.length = atoi(lengthString.c_str());
 		if (columnInfo.size() == 4) {
-			if (columnInfo[2].compare("NOT") == 0 && columnInfo[3].compare("NULL") == 0)
+			if (checkKeyWord(columnInfo[2], IS_NOT) && checkKeyWord(columnInfo[3], ISNULL))
 				newColumn.null = 0;
 			else
 				return false;
 		}
+		
 		tableColumn* newTableColumn = new tableColumn((*colInfos).colNum+1);
 		for (int i = 0; i < (*colInfos).colNum; i++)
 		{
@@ -283,6 +408,7 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 		(*newTableColumn).colInfo[(*colInfos).colNum] = newColumn;
 		(*colInfos) = (*newTableColumn);
 		delete[] newTableColumn;
+		//cout << "end add new" << endl;
 	}
 }
 
@@ -319,17 +445,18 @@ bool parser::isDig(char k) {
 }
 
 int parser::getType(string s) {
+	cout << "get type" << endl;
 	for (int i = 0; i < s.length(); i++) {
 		if (!isEnglishAlphabet(s.at(i)))
 			return -1;
-		if (s.at(i) >= 'A' && s.at(i) <= 'Z') {
-			s.at(i) = s.at(i) +32;
+		if (s.at(i) >= 'a' && s.at(i) <= 'z') {
+			s.at(i) = s.at(i) -32;
 		} 
 	}
 
-	if (s.compare("int") == 0)
+	if (checkKeyWord(s, INT))
 		return INT;
-	if (s.compare("varchar") == 0)
+	if (checkKeyWord(s, VARCHAR))
 		return VARCHAR;
 	return -1;
 
