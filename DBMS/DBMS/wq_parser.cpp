@@ -259,7 +259,6 @@ bool parser::checkColumnsValue(vector<SysColumn*> sysColumns, vector<string> dat
 	return true;
 }
 
-
 bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 	//? null
 	//BYTE xtype;		// data type

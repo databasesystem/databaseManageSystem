@@ -29,12 +29,12 @@ typedef unsigned char	BYTE;
 #define SYSFILE_MAX_SIZE 383401
 #define EXIST_INDEX  65535
 
-#define INT_TYPE	 0
+#define INT_TYPE	 30
 #define DOUBLE_TYPE	 1
 #define FLOAT_TYPE	 2
 #define CHAR_TYPE	 3
 #define STRING_TYPE	 4
-#define VARCHAR_TYPE 5
+#define VARCHAR_TYPE 31
 #define BOOLEAN_TYPE 6
 
 
