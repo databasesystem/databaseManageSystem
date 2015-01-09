@@ -32,7 +32,9 @@ public:
 		string tableName,string *prtCol,BYTE prtNum);
 	void printRecord(ofstream &fout,RecordEntry* input,bool *tablePos,string *tableName,string *colName,
 		BYTE offset,BYTE colnum);
-	void print();
+	void printDatabase();
+	void printTable(string tableName);
+	void printTables();
 	
 private:
 	string dbName;
