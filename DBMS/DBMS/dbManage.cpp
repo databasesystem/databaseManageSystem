@@ -88,6 +88,8 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 	memset(record, MEMSET_NUM, PAGE_SIZE);
 	int index = 0;
 	SysObject* table = sysManager.findTable(tableName);
+	if(table == NULL)
+		return false;
 	for( UINT i = 0; i < table->vecCols.size(); i++ ){
 		SysColumn* column = sysManager.findColumn(colName[i], tableName);
 		if( input->item[i] != NULL ){//!isNull
@@ -130,6 +132,37 @@ vector<RecordEntry*> findRecord(string tableName,BYTE **Value,string *colName, B
 	vector<RecordEntry*> result;
 	return result;
 }
+
+void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OFFSET offset, TYPE_ID pageid){
+	SysObject* table = sysManager.findTable(tableName);
+	if(table == NULL)
+		return;
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	if( offset > PAGE_SIZE / recordLength){
+		return;
+	}
+	vector<SysColumn*> column;
+	for(BYTE i = 0 ; i < colnum; i++){
+		column.push_back(sysManager.findColumn(colName[i], tableName));
+	}
+	Node* dataPage = readPage(table->id, pageid);
+
+	cout << "------- Record " << offset+1 << " in Page " << pageid << " -------" << endl;
+	int i = 1;
+	for(auto col : column){
+		cout << i << " column \"" << col->name << "\" : ";
+		if(col->xtype == INT_TYPE){
+			int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
+			cout << data << endl;
+		}
+		else if(col->xtype == VARCHAR_TYPE){
+			string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+			cout << data << endl;
+		}
+		i++;
+	}
+}
+
 
 void DBManager::printDatabase(){
 	sysManager.print();
