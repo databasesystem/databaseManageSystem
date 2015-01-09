@@ -1,6 +1,9 @@
 #ifndef _GLOBALVARIABLE_H
 #define _GLOBALVARIABLE_H
 
+#include <iostream>
+#include <cstring>
+using namespace std;
 typedef unsigned int	UINT;
 typedef unsigned short	USRT;
 typedef unsigned char	BYTE;
@@ -35,6 +38,5 @@ typedef unsigned char	BYTE;
 #define BOOLEAN_TYPE 6
 
 
-string tablename1;
-string tablename2;
+
 #endif

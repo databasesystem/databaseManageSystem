@@ -1,7 +1,15 @@
 #include "wq_parser.h"
 #include "pageManage.h"
 #include "globalVariable.h"
+#include "dbManage.h"
 
+
+parser::parser(string dbname) {
+	currentDb = new DBManager(dbname);
+}
+parser::~parser() {
+	delete currentDb;
+}
 void parser::testParse(){
 	char filename[100];
 	while(true) {
@@ -107,7 +115,7 @@ bool parser::parserDelete(vector<string> commands) {
 		return false;
 	if (!checkNameAvaliable(commands[2]))
 		return false;
-	tablename1 = commands[2];
+	
 	return true;
 }
 bool parser::parserDesc(vector<string> commands) {
@@ -132,12 +140,12 @@ bool parser::parserDrop(vector<string> commands) {
 		return false;
 	if (checkKeyWord(commands[1], DATABASE) ) {
 		cout << "drop database " << endl;
-		string databasename = commands[2];
+		(*currentDb).dropDataBase(commands[2]);
 		//?if system file does not have this database, return false.
 		return true;
 	} else if (checkKeyWord(commands[1], TABLE)) {
 		cout << "drop table " << endl;
-		string tablename = commands[2];
+		(*currentDb).dropTable(commands[2]);
 		//?if system file does not have this table, return false.
 		return true;
 	} else
@@ -145,7 +153,7 @@ bool parser::parserDrop(vector<string> commands) {
 }
 bool parser::parserInsert(vector<string> commands) {
 	cout << "***********start parse insert data************" << endl;
-	vector<vector<string>> datas;
+	vector<vector<string*>> datas;
 	if (commands.size() <= 4)
 		return false;
 	if (checkKeyWord(commands[1], ISINTO) && checkKeyWord(commands[3], VALUES)) {
@@ -153,29 +161,9 @@ bool parser::parserInsert(vector<string> commands) {
 			return false;
 		string tablename = commands[2];
 		//according to the tablename,find the table column info
-		tableColumn test(3);
-		test.colNum = 3;
-		test.colInfo[0].name = "id";
-		test.colInfo[0].type = INT;
-		test.colInfo[0].length = 10;
-		test.colInfo[0].null = 0;
-		test.colInfo[0].primaryKey = 1;
-
-		test.colInfo[1].name = "name";
-		test.colInfo[1].type = VARCHAR;
-		test.colInfo[1].length = 100;
-		test.colInfo[1].null = 0;
-		test.colInfo[1].primaryKey = 0;
-
-		test.colInfo[2].name = "nation";
-		test.colInfo[2].type = VARCHAR;
-		test.colInfo[2].length = 3;
-		test.colInfo[2].null = 1;
-		test.colInfo[2].primaryKey = 0;
 		
-
 		int index = 4;
-		vector<string> temp;
+		vector<string*> temp;
 		string s = "";
 		commands[commands.size()-1]+=',';
 		while (index < commands.size()) {
@@ -186,7 +174,7 @@ bool parser::parserInsert(vector<string> commands) {
 					i--;
 				}
 				else if (commands[index][i] == ',') {
-					temp.push_back(s);
+					temp.push_back(&s);
 					s="";
 				} else
 					s+=commands[index][i];
@@ -194,16 +182,57 @@ bool parser::parserInsert(vector<string> commands) {
 			index++;
 			datas.push_back(temp);
 		}
+		vector<SysColumn*> sysColumn = (*currentDb).getTableAttr(commands[2]);
+		string* name = new string[sysColumn.size()];
+
 		for (int i = 0; i < datas.size(); i++) {
-			for (int j = 0; j < datas[i].size(); j++)
-				cout << datas[i][j].c_str() << " ";
-			cout << endl;
+			if (!checkColumnsValue(sysColumn, (datas[i])))
+				return false;
+			RecordEntry tempRecord;
+			for(int j = 0; j < datas[i].size(); j++) {
+				name[j] = sysColumn[j]->name;
+				if ((*sysColumn[j]).xtype == INT)
+				tempRecord.length[j] = 4;
+				else if ((*sysColumn[j]).xtype == VARCHAR)
+					tempRecord.length[j] = (*(datas[i][j])).length();
+				dataUtility::string_fill_char((char*)tempRecord.item[j], (*(datas[i][j])), 0, sysColumn[j]->length);
+			}
+			currentDb->insertRecord(&tempRecord, name, commands[2]);
 		}
 		
 	} else
 		return false;
 }
 
+bool parser::checkColumnsValue(vector<SysColumn*> sysColumns, vector<string*> datas) {
+	if (datas.size() != sysColumns.size())
+		return false;
+	for (int i = 0; i < datas.size(); i++) {
+		if (!checkOneColumnValue((*sysColumns[i]), datas[i]))
+			return false;
+	}
+	return true;
+}
+bool parser::checkOneColumnValue(SysColumn syscolumn, string* data) {
+	//? null
+	//BYTE xtype;		// data type
+	//TYPE_OFFSET length;	// the max length of this type
+	if (syscolumn.xtype == VARCHAR) {
+		if ((*data).length() > 0 && (*data).at(0)=='\'')
+			(*data).erase((*data).begin());
+		if ((*data).length() > 0 && (*data).at((*data).length()-1)=='\'')
+			(*data).erase((*data).end()-1);
+	}
+	if ((*data).length() > syscolumn.length)
+		return false;
+	if (syscolumn.xtype == INT) {
+		for (int i = 0; i < (*data).length(); i++) {
+			if (!isDig((*data)[i]))
+				return false;
+		}
+	}
+	return true;
+}
 bool parser::checkKeyWord(string s, int keyvalue) {
 	for (int i = 0; i < s.length(); i++) {
 		if (!isEnglishAlphabet(s.at(i)))
@@ -280,6 +309,7 @@ bool parser::parserCreate(vector<string> commands) {
 			return false;
 		else {
 			//execute create database;
+			(*currentDb).createDataBase(commands[2]);
 			cout << "***********start parse create database************" << endl;
 		}
 	} else if (checkKeyWord(commands[1], TABLE)) {
@@ -318,10 +348,26 @@ bool parser::parserCreate(vector<string> commands) {
 		}
 		if (columnInfos.size() !=0)
 			parserCreateColumn(columnInfos, &colInfos);
+		//void DBManager::createTable(string tablename, UINT colNum, string colName[], BYTE type[], TYPE_OFFSET length[], bool nullable[]){
+		string* colName = new string[colInfos.colNum];
+		BYTE* type =  new BYTE[colInfos.colNum];
+		TYPE_OFFSET* length = new TYPE_OFFSET[colInfos.colNum];
+		bool*  nullable = new bool[colInfos.colNum];
+
+		
 		for (int i = 0; i < (colInfos).colNum; i++)
 		{
-			(colInfos).colInfo[i].printColumn();
+			colName[i]  = (colInfos).colInfo[i].name;
+			type[i] = (colInfos).colInfo[i].type;
+			length[i] = (colInfos).colInfo[i].length;
+			nullable[i] = (colInfos).colInfo[i].null;
 		}
+		(*currentDb).createTable(commands[2], colInfos.colNum, colName, type, length, nullable);
+	
+		delete[] colName;
+		delete[] type;
+		delete[] length;
+		delete[] nullable;
 	}
 	return true;
 }
@@ -424,6 +470,7 @@ bool parser::parserUse(vector<string> commands) {
 		return false;
 	if (checkNameAvaliable(commands[1])) {
 		//execute use command
+		(*currentDb).switchDataBase(commands[1]);
 	} else
 		return false;
 	return true;

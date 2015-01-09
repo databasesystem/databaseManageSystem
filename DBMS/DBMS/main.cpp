@@ -28,11 +28,12 @@ int main()
 	//	testdb.insertRecord(&record, colName,"student");
 	//}
 
+	parser testParser("test");
+	testParser.testParse();
+
 	testdb.printTable("student2");
 	testdb.printDatabase();
 
-	//parser testParser;
-	//testParser.testParse();
 
 	system("pause");
 	return 0;

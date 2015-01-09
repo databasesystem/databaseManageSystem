@@ -231,7 +231,16 @@ void SysManager::print(){
 		printTable(it.first);
 	}
 }
-
+vector<SysColumn*> SysManager::getTableAttr(string tableName) {
+	vector<SysColumn*> radix;
+	SysObject* table = findTable(tableName);
+	if(table == NULL)
+		return radix;
+	for(auto col : table->vecCols){
+		radix.push_back(findColumn(col));
+	}
+	return radix;
+}
 void SysManager::printTable(string tableName){
 	SysObject* table = findTable(tableName);
 	if(table == NULL)
