@@ -34,4 +34,7 @@ typedef unsigned char	BYTE;
 #define VARCHAR_TYPE 5
 #define BOOLEAN_TYPE 6
 
+
+string tablename1;
+string tablename2;
 #endif

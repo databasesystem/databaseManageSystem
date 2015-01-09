@@ -57,6 +57,7 @@ using namespace std;
 #define USE 37
 #define TABLES 38
 #define DATABASE 39
+#define IS 40
 /*
 #define LESSEQUAL 28
 #define MOREEQUAL 29
@@ -71,6 +72,7 @@ public:
 	bool parserCreate(vector<string> commands);
 	bool parserDrop(vector<string> commands);
 	bool parserDesc(vector<string> commands);
+	bool parserDelete(vector<string> commands);
 	bool parserShowTable(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);

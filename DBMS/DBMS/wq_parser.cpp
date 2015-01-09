@@ -1,5 +1,6 @@
 #include "wq_parser.h"
 #include "pageManage.h"
+#include "globalVariable.h"
 
 void parser::testParse(){
 	char filename[100];
@@ -76,25 +77,6 @@ bool parser::parserOneCommand(vector<string> commands) {
 
 	if (commands.size() == 0)
 		return false;
-	/*if (strcmp(commands[0].c_str(), "CREATE") == 0) {
-		return parserCreate(commands);
-	}
-	else if (strcmp(commands[0].c_str(), "USE") == 0) {
-		return parserUse(commands);
-	}
-	else if (strcmp(commands[0].c_str(), "INSERT") == 0) {
-		return parserInsert(commands);
-	}
-	else if (strcmp(commands[0].c_str(), "DROP") == 0) {
-		return parserDrop(commands);
-	}
-	else if (strcmp(commands[0].c_str(), "SHOW") == 0) {
-		return parserShowTable(commands);
-	} 
-	else if (strcmp(commands[0].c_str(), "DESC") == 0){
-		return parserDesc(commands);
-	}*/
-
 	if (checkKeyWord(commands[0], CREATE)) {
 		return parserCreate(commands);
 	}
@@ -113,9 +95,21 @@ bool parser::parserOneCommand(vector<string> commands) {
 	else if (checkKeyWord(commands[0], DESC)){
 		return parserDesc(commands);
 	}
+	else if (checkKeyWord(commands[0], DELETE)) {
+		return parserDelete(commands); 
+	}
 	return true;
 }
-
+bool parser::parserDelete(vector<string> commands) {
+	if (commands.size() < 4)
+		return false;
+	if (!checkKeyWord(commands[1], FROM) || !checkKeyWord(commands[3], WHERE))
+		return false;
+	if (!checkNameAvaliable(commands[2]))
+		return false;
+	tablename1 = commands[2];
+	return true;
+}
 bool parser::parserDesc(vector<string> commands) {
 	if (commands.size() != 2)
 		return false;
@@ -262,6 +256,18 @@ string parser::getKeyWords(int keyvalue) {
 		return "INT";
 	case VARCHAR:
 		return "VARCHAR";
+	case DELETE:
+		return "DELETE";
+	case FROM:
+		return "FROM";
+	case WHERE:
+		return "WHERE";
+	case SELECT:
+		return "SELECT";
+	case SET:
+		return "SET";
+	case IS:
+		return "IS";
 	default:
 		break;
 	}
