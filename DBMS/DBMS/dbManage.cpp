@@ -143,6 +143,10 @@ void DBManager::printTables(){
 	sysManager.printTables(dbName);
 }
 
+vector<SysColumn*> DBManager::getTableAttr(string tableName) {
+	return sysManager.getTableAttr(tableName);
+}
+
 string DBManager::getTablePath(string tableName) {
 	return dbName + "/" + tableName;
 }

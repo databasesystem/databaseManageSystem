@@ -75,7 +75,8 @@ public:
 	vector<string> getAllTable();
 	void print();
 	void printTable(string tableName);
-	void printTables(string dbName);
+	void printTables(string dbName);	
+	vector<SysColumn*> getTableAttr(string tablename);
 	void flush();
 	void drop();
 
