@@ -250,7 +250,8 @@ void SysManager::printTable(string tableName){
 		if(col->nullable)
 			cout << i++ << " column: " <<  col->name << space << "|Nullable: T|\tType: " << col->xtype << "|\tLength " << col->length << endl;
 		else
-			cout << i++ << " column: " <<  col->name << space << "|Nullable: F|\tType: " << col->xtype << "|\tLength " << col->length << endl;
+			cout << i++ << " column: " <<  col->name << space << "|Nullable: F|\tType: " << //parser::getKeyWords(col->xtype) << 
+			"|\tLength " << col->length << endl;
 	}
 	cout << "============================================================" << endl;
 }
