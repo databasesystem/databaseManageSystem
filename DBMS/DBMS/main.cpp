@@ -1,6 +1,10 @@
 #include "dbManage.h"
 #include "wq_parser.h"
 
+
+string table1;
+string table2;
+
 int main()
 {
 	// test buffer

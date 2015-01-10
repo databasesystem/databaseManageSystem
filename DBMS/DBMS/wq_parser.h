@@ -15,14 +15,14 @@ using namespace std;
 #define SELECT 2
 #define FROM 3
 #define WHERE 4
-/*
+
 #define OP_AND 5
 #define OP_OR 6
 #define EQUAL 7
 #define LESS 8
 #define MORE 9
 #define NOTEQUAL 10
-*/
+
 #define UPDATE 11
 #define SET 12
 #define DROP 13
@@ -46,6 +46,8 @@ using namespace std;
 #define VALUES 27
 #define SELECT_STAR 28
 
+#define LESSEQUAL 28
+#define MOREEQUAL 29
 
 #define INT 30
 #define VARCHAR 31
@@ -59,10 +61,9 @@ using namespace std;
 #define TABLES 38
 #define DATABASE 39
 #define IS 40
-/*
-#define LESSEQUAL 28
-#define MOREEQUAL 29
-*/
+
+
+
 
 class parser{
 public:
@@ -80,17 +81,25 @@ public:
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
 	bool parserInsert(vector<string> commands);
+	bool parserWhere(vector<string> commands, string tablename);
 	bool checkNameAvaliable(string s);
 	bool isCmp(char c);
 	bool isEnglishAlphabet(char c);
+	bool isOpt(string s);
 	bool isDig(char c);
 	int getType(string s);
+	bool checkStingIsInt(string s);
 	string getKeyWords(int keyvalue);
 	bool checkKeyWord(string s, int keyvalue);
 	bool checkColumnsValue(vector<SysColumn*> sysColumns, vector<string> datas);
 	bool checkOneColumnValue(SysColumn sysColumn, string data);
 private:
 	DBManager* currentDb;
+	BYTE **Value;
+	string *colName;
+	BYTE *type;
+	BYTE *len;
+	BYTE *op;
 	
 };
 #endif

@@ -180,6 +180,23 @@ vector<SysColumn*> DBManager::getTableAttr(string tableName) {
 	return sysManager.getTableAttr(tableName);
 }
 
+bool DBManager::checkTableColumn(string tableName, string columnName) {
+	vector<SysColumn*> sysColumns = getTableAttr(tableName);
+	for (int i = 0; i < sysColumns.size(); i++) {
+		if (sysColumns[i]->name == columnName)
+			return true;
+	}
+	return false;
+}
+SysColumn* DBManager::getTableColumn(string tableName, string columnName) {
+	vector<SysColumn*> sysColumns = getTableAttr(tableName);
+	if (checkTableColumn(tableName, columnName)) {
+		for (int i = 0; i < sysColumns.size(); i++) {
+		if (sysColumns[i]->name == columnName)
+			return sysColumns[i];
+		}
+	}
+}
 string DBManager::getTablePath(string tableName) {
 	return dbName + "/" + tableName;
 }

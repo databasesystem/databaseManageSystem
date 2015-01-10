@@ -113,9 +113,42 @@ bool parser::parserDelete(vector<string> commands) {
 		return false;
 	if (!checkKeyWord(commands[1], FROM) || !checkKeyWord(commands[3], WHERE))
 		return false;
-	if (!checkNameAvaliable(commands[2]))
+	vector<SysColumn*> sysColumns = currentDb->getTableAttr(commands[2]);
+	if (sysColumns.size() == 0)   // without this table
 		return false;
-	
+	//bool deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt);
+	vector<string> whereCommands;
+	for(int i = 4; i < commands.size(); i++){
+		whereCommands.push_back(commands[i]);
+	}
+	if (!parserWhere(whereCommands, commands[2]))
+		return false;
+
+	return true;
+}
+bool parser::parserWhere(vector<string> commands, string tablename) {
+	for (int i = 0; i < commands.size(); i++) {
+		if (isOpt(commands[i])){
+			if (i-1 < 0)
+				return false;
+			if (i+1 >= commands.size())
+				return false;
+			if (!currentDb->checkTableColumn(tablename, commands[i-1]))
+				return false;
+			SysColumn t = *(currentDb->getTableColumn(tablename, commands[i-1]));
+			if (t.xtype == INT) {
+				if (!checkStingIsInt(commands[i+1]))
+					return false;
+				else {
+				}
+			} else if (t.xtype == VARCHAR) {
+				if (commands[i+1].length() > t.length)
+					return false;
+				else {
+				}
+			}
+		}
+	}
 	return true;
 }
 bool parser::parserDesc(vector<string> commands) {
@@ -339,6 +372,18 @@ string parser::getKeyWords(int keyvalue) {
 		return "SET";
 	case IS:
 		return "IS";
+	case EQUAL:
+		return "=";
+	case NOTEQUAL:
+		return "!=";
+	case MORE:
+		return ">";
+	case LESS:
+		return "<";
+	case MOREEQUAL:
+		return ">=";
+	case LESSEQUAL:
+		return "<=";
 	default:
 		break;
 	}
@@ -555,4 +600,22 @@ int parser::getType(string s) {
 		return VARCHAR;
 	return -1;
 
+}
+
+bool parser::isOpt(string s) {
+	if (s.compare(getKeyWords(EQUAL))==0 || s.compare(getKeyWords(NOTEQUAL))==0 ||
+		s.compare(getKeyWords(MORE))==0 || s.compare(getKeyWords(MOREEQUAL))==0 ||
+		s.compare(getKeyWords(LESS))==0 || s.compare(getKeyWords(LESSEQUAL))==0)
+		return true;
+	else
+		return false;
+}
+
+bool parser::checkStingIsInt(string s){
+	for (int i = 0; i < s.length(); i++)
+	{
+		if (!isDig(s.at(i)))
+			return false;
+	}
+	return true;
 }
