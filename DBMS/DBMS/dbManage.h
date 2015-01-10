@@ -33,6 +33,8 @@ public:
 	void printTable(string tableName);
 	void printTables();
 	vector<SysColumn*> getTableAttr(string tableName);
+	SysColumn* getTableColumn(string tableName, string columnName);
+	bool checkTableColumn(string tableName, string columnName);
 	
 private:
 	string dbName;

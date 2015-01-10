@@ -242,6 +242,8 @@ vector<SysColumn*> SysManager::getTableAttr(string tableName) {
 	}
 	return radix;
 }
+
+
 void SysManager::printTable(string tableName){
 	SysObject* table = findTable(tableName);
 	if(table == NULL)
