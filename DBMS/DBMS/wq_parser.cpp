@@ -179,11 +179,7 @@ bool parser::parserInsert(vector<string> commands) {
 					commands[index].erase(commands[index].begin() +i);
 					i--;
 				}
-				else if (commands[index][i] == ',') {
-					if (s.length() != 0)
-						temp.push_back(s);
-					s="";
-					/*if (i+1 < commands[index].size() && commands[index][i+1] == '\'') {
+				else if (commands[index][i] == '\'') {
 						i++;
 						while (i < commands[index].size() && commands[index][i] != '\'') {
 							s += commands[index][i];
@@ -193,7 +189,11 @@ bool parser::parserInsert(vector<string> commands) {
 						if (s.length() != 0)
 							temp.push_back(s);
 						s="";
-					}*/
+				}
+				else if (commands[index][i] == ',') {
+					if (s.length() != 0)
+						temp.push_back(s);
+						s="";
 				} else
 					s+=commands[index][i];
 			}
@@ -210,9 +210,9 @@ bool parser::parserInsert(vector<string> commands) {
 			name[i] = sysColumn[i]->name;
 		}
 		for (int i = 0; i < datas.size(); i++) {
-			for (int k = 0; k < datas[i].size(); k++)
+			/*for (int k = 0; k < datas[i].size(); k++)
 				cout << datas[i][k] << "|";
-			cout <<endl;
+			cout <<endl;*/
 			if (datas[i].size() != sysColumn.size()) {
 				return false;
 			}
@@ -225,7 +225,7 @@ bool parser::parserInsert(vector<string> commands) {
 				}
 			}
 			if (!checkColumnsValue(sysColumn, datas[i])) {
-				cout << "column error----------------------" << i<< endl;
+				cout << "column error----------------------"<< endl;
 				return false;
 			}
 			for(int j = 0; j < datas[i].size(); j++) {
