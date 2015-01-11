@@ -33,17 +33,19 @@ void parser::BatchSqlInFile(char* filename) {
 	vector<string> res;
 	while(true) {
 		fgets(command, 1000,fin);
-		if (feof(fin))
-			break;
+		cout  << command << endl;
+		
 		splitStr(command, &res);
 		//semicolon has deleted
-			if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
+		if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
 			//This is one command;
 			res[res.size()-1].erase(res[res.size()-1].length()-1);
 			if (!parserOneCommand(res))
 				cout << "This command is wrong." << endl;
 			res.clear();
 		}
+		if (feof(fin))
+			break;
 	}
 }
 
@@ -60,8 +62,6 @@ void parser::splitStr(char* str, vector<string>* res){
 	}
 	//from the first index is not ' ', all examples is '
 	while (str[index] != ' ') {
-		temp += str[index];
-		index++;
 		if (str[index] == '\'') {
 			temp += str[index];
 			index++;
@@ -70,7 +70,9 @@ void parser::splitStr(char* str, vector<string>* res){
 				index++;
 			}
 		}
-		if (str[index] == ' ' && temp.length()!=0) {
+		temp += str[index];
+		index++;
+		if (index < strlen(str) && str[index] == ' ' && temp.length()!=0) {
 			(*res).push_back(temp);
 			temp ="";
 		}
@@ -118,7 +120,7 @@ bool parser::parserUpdate(vector<string> commands) {
 	//without condition, update all
 	if (commands.size() < 6 )
 		return false;
-	if (!checkKeyWord(commands[2], SET) || !checkKeyWord(commands[4], EQUAL))
+	if (!checkKeyWord(commands[2], SET) || commands[4].compare("=")!=0)
 		return false;
 	vector<SysColumn*> sysColumns = currentDb->getTableAttr(commands[1]);
 	if (sysColumns.size() == 0)   // without this table
@@ -129,8 +131,8 @@ bool parser::parserUpdate(vector<string> commands) {
 	for (index = 3 ; index < commands.size(); index ++){
 		if (!checkKeyWord(commands[index], WHERE)){
 			setCommands.push_back(commands[index]);
+		} else
 			break;
-		}
 	}
 	for(index++;index < commands.size(); index++){
 		whereCommands.push_back(commands[index]);
@@ -211,7 +213,7 @@ bool parser::parserSet(vector<string> commands, string tablename) {
 			return false;
 		SysColumn t = *(currentDb->getTableColumn(tablename, colNameTemp));
 		i++;
-		if (i >= commands.size() || !checkKeyWord(commands[i], EQUAL))
+		if (i >= commands.size() || commands[i].compare("=")!=0)
 			return false;
 		i++;
 		if (i >= commands.size())
