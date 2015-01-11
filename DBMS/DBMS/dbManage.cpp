@@ -162,7 +162,7 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 			}
 		}
 		pageid++;
-		readPage(table->id, pageid);
+		dataPage = readPage(table->id, pageid);
 	}
 	return true;
 }
@@ -269,6 +269,7 @@ Node* DBManager::findPage(TYPE_ID FileID, TYPE_ID PageID){
 }
 
 Node* DBManager::readPage(TYPE_ID FileID, TYPE_ID PageID){
+	cout << "read page" << FileID << " " << PageID << endl;
 	Node* pageNode = findPage(FileID, PageID);
 	if( pageNode )
 		return pageNode;
