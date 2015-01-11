@@ -1,0 +1,17 @@
+CREATE DATABASE orderDB;
+USE orderDB;
+
+CREATE TABLE publisher (
+  id int(10) NOT NULL,
+  name varchar(100) NOT NULL,
+  nation varchar(3),
+  PRIMARY KEY  (id)
+);
+
+INSERT INTO publisher VALUES 
+ (100008,'Oxbow Books Limited','USA');
+ INSERT INTO publisher VALUES 
+ (100009,'Oxbow Books Limited','USA');
+DELETE FROM publisher WHERE id = 100008;
+UPDATE publisher SET nation = 'CNA' , name = 'wangqing' WHERE id = 100009;
+

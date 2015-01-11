@@ -115,6 +115,9 @@ bool parser::parserOneCommand(vector<string> commands) {
 	}
 	return true;
 }
+bool parser::parserSelect(vector<string> commands){
+	return true;
+}
 bool parser::parserUpdate(vector<string> commands) {
 	cout<< "********************start parser update*************************" << endl;
 	//without condition, update all
