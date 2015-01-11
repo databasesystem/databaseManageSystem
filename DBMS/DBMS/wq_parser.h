@@ -11,7 +11,16 @@
 using namespace std;
 
 
-
+struct tableJoinRequire {
+	string table1ColumnName;
+	string table2ColumnName;
+	BYTE op;
+	tableJoinRequire(string a, string b, BYTE op_v) {
+		table1ColumnName = a;
+		table2ColumnName = b;
+		op = op_v;
+	}
+};
 struct columnRequire {
 	string value;
 	string colName;
@@ -41,6 +50,8 @@ public:
 	bool parserDelete(vector<string> commands);
 	bool parserUpdate(vector<string> commands);
 	bool parserSelect(vector<string> commands);
+	bool parserOneTableSelect(vector<string> commands);
+	bool parserTwoTableSelect(vector<string> commands);
 	bool parserShowTable(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
@@ -64,5 +75,10 @@ private:
 	DBManager* currentDb;
 	vector<columnRequire> table1Require;
 	vector<columnRequire> table2Require;
+	vector<tableJoinRequire> twoTableJoinRequire;
+	vector<string> table1ShowColumn;
+	vector<string> table2ShowColumn;
+	string table1Name;
+	string table2Name;
 };
 #endif
