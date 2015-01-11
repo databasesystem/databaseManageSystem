@@ -35,5 +35,7 @@ public:
 		static void string_to_char (char* dst, string ori, int index, int stringLength, int dstLength);
 		static char* getbyte(char* src, int start, int length);
 		static void bytefillbyte(char* dst, BYTE* src, int start, BYTE length);   //some characters in src are replaced by in dst.
+		static bool stringOptstring(string leftstr, int opt, string rightstr);
+		static bool intOptint(int leftvalue, int opt, int rightvalue);
 };
 #endif /* DATA_UTILITY_H_ */

@@ -38,3 +38,72 @@ char* dataUtility::getbyte(char* src, int start, int length) {
 	data[length] = 0;
 	return data;
 }
+
+bool dataUtility::intOptint(int a, int opt, int b){
+	if (opt == EQUAL) { 
+		if (a==b)
+			return true;
+		else
+			return false;
+	} else if (opt == NOTEQUAL) {
+		if (a!=b)
+			return true;
+		else 
+			return false;
+	}else if (opt == MORE) {
+		if (a>b)
+			return true;
+		else 
+			return false;
+	}else if (opt == MOREEQUAL) {
+		if (a>=b)
+			return true;
+		else 
+			return false;
+	}else if (opt == LESS) {
+		if (a<b)
+			return true;
+		else 
+			return false;
+	}else if (opt == LESSEQUAL) {
+		if (a<=b)
+			return true;
+		else 
+			return false;
+	}
+	return false;
+}
+bool dataUtility::stringOptstring(string leftstr, int opt, string rightstr){
+	if (opt == EQUAL) { 
+		if (leftstr.compare(rightstr)==0)
+			return true;
+		else
+			return false;
+	} else if (opt == NOTEQUAL) {
+		if (leftstr.compare(rightstr) != 0)
+			return true;
+		else 
+			return false;
+	}else if (opt == MORE) {
+		if (leftstr.compare(rightstr) > 0)
+			return true;
+		else 
+			return false;
+	}else if (opt == MOREEQUAL) {
+		if (leftstr.compare(rightstr) >= 0)
+			return true;
+		else 
+			return false;
+	}else if (opt == LESS) {
+		if (leftstr.compare(rightstr) < 0)
+			return true;
+		else 
+			return false;
+	}else if (opt == LESSEQUAL) {
+		if (leftstr.compare(rightstr) <= 0)
+			return true;
+		else 
+			return false;
+	}
+	return false;
+}

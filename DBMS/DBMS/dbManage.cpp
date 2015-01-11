@@ -119,7 +119,52 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 
 bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
 	SysObject* table = sysManager.findTable(tableName);
-	return false;
+	if (table == NULL)
+		return true;
+	TYPE_ID pageid = 0; 
+	Node* dataPage = readPage(table->id, pageid); 
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	bool deleteFlag = true;
+	SysColumn* col;
+	while (dataPage != NULL && pageid < TABLE_MAX_FILE_SIZE) {
+		cout << "pageid: " << pageid << endl;
+		int t = PAGE_SIZE;
+		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
+			cout << "offset " << offset << endl;
+			deleteFlag = true;
+			for (int i = 0; i < condCnt; i++) {
+				if (!checkTableColumn(tableName,colName[i])) {
+					deleteFlag = false;
+					break;
+				}
+				col = getTableColumn(tableName, colName[i]);
+				if(col->xtype == INT_TYPE){
+					int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
+					int comdata = dataUtility::char_to_data<int>((char*)Value[i]);
+					if (!dataUtility::intOptint(data, op[i], comdata)){
+						deleteFlag = false;
+						break;
+					}
+				}
+				else if(col->xtype == VARCHAR_TYPE){
+					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
+					if (!dataUtility::stringOptstring(data, op[i], comData)){
+						deleteFlag = false;
+						break;
+					}
+				}
+			}
+			if (deleteFlag == true) {
+				cout << "delete onedata "  << pageid << " " << offset << endl;
+				deleteData(table, pageid, offset, recordLength);
+				cout << "continue" << endl;
+			}
+		}
+		pageid++;
+		readPage(table->id, pageid);
+	}
+	return true;
 }
 
 string *DBManager::getColName(string tableName, USRT &colNum){
@@ -138,7 +183,7 @@ void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OF
 	if(table == NULL)
 		return;
 	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
-	if( offset > PAGE_SIZE / recordLength){
+	if( offset >= PAGE_SIZE / recordLength){
 		return;
 	}
 	vector<SysColumn*> column;
