@@ -189,6 +189,10 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 	SysObject* table = sysManager.findTable(tableName);
 	if (table == NULL)
 		return true;
+	vector<SysColumn*> sysColumns = sysManager.getTableAttr(tableName);
+	string* colNames = new string[sysColumns.size()];
+	for (int i = 0; i < sysColumns.size(); i++)
+		colNames[i] = sysColumns[i]->name;
 	TYPE_ID pageid = 0; 
 	Node* dataPage = readPage(table->id, pageid); 
 	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
@@ -226,6 +230,7 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 			if (deleteFlag == true) {
 				cout << "delete onedata pageid: "  << pageid << "offset: " << offset << endl;
 				deleteData(table, pageid, offset*recordLength, recordLength);
+				printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
 				//cout << "continue" << endl;
 			}
 		}

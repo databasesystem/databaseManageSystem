@@ -40,6 +40,7 @@ public:
 	bool parserDesc(vector<string> commands);
 	bool parserDelete(vector<string> commands);
 	bool parserUpdate(vector<string> commands);
+	bool parserSelect(vector<string> commands);
 	bool parserShowTable(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
