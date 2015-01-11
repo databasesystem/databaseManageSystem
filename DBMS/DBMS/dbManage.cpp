@@ -167,10 +167,11 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)temp, offset*recordLength+col->index, len[i]);
 						delete[] temp;
 					}else {
-						char* temp = new char[col->length-len[i]];
+						//char* temp = new char[col->length-len[i]];
 						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)Value[i], offset*recordLength+col->index, len[i]);
-						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)temp, offset*recordLength+col->index+len[i], col->length-len[i]);
-						delete[] temp;
+						dataPage->page->data[offset*recordLength+col->index+len[i]] = '\0';
+						//dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)temp, offset*recordLength+col->index+len[i], col->length-len[i]);
+						//delete[] temp;
 					}
 					dataPage->dirty = true;
 				}
@@ -259,22 +260,22 @@ void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OF
 	}
 	Node* dataPage = readPage(table->id, pageid);
 
-	TYPE_OFFSET freeOffset = dataPage->page->header.firstFreeOffset;
-	TYPE_OFFSET deletedItem = 0;
-	while(freeOffset < offset*recordLength && freeOffset != EXIST_INDEX){
-		freeOffset = dataUtility::char_to_data<TYPE_OFFSET>(dataPage->page->data+freeOffset+recordLength-SIZE_OFFSET);
-		deletedItem++;
-	}
-	if( freeOffset == EXIST_INDEX ){
-		//Deleted linked list ends before the selected item, check for initialized value
-		TYPE_OFFSET realFreeCount = dataPage->page->header.freeCount - deletedItem * recordLength;
-		if( PAGE_SIZE - realFreeCount <= freeOffset*recordLength ){ //offset is not valid since it is still in default state
-			return;
-		}
-	}
-	else if(freeOffset == offset*recordLength){//item is deleted
-		return;
-	}
+	//TYPE_OFFSET freeOffset = dataPage->page->header.firstFreeOffset;
+	//TYPE_OFFSET deletedItem = 0;
+	//while(freeOffset < offset*recordLength && freeOffset != EXIST_INDEX){
+	//	freeOffset = dataUtility::char_to_data<TYPE_OFFSET>(dataPage->page->data+freeOffset+recordLength-SIZE_OFFSET);
+	//	deletedItem++;
+	//}
+	//if( freeOffset == EXIST_INDEX ){
+	//	//Deleted linked list ends before the selected item, check for initialized value
+	//	TYPE_OFFSET realFreeCount = dataPage->page->header.freeCount - deletedItem * recordLength;
+	//	if( PAGE_SIZE - realFreeCount <= freeOffset*recordLength ){ //offset is not valid since it is still in default state
+	//		return;
+	//	}
+	//}
+	//else if(freeOffset == offset*recordLength){//item is deleted
+	//	return;
+	//}
 
 	cout << "------- Record " << offset+1 << " in Page " << pageid << " -------" << endl;
 	int i = 1;
