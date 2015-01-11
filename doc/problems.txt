@@ -12,3 +12,8 @@ Where没有：condcnt删除所有【我的程序默认有，而且必须是 attr
 
 len是byte，也就是最长的varchar不能超过255
 字符串必须加引号！！不加引号，语句错误。解析之后的字符串带着引号。
+现在只支持int varchar两种操作！！
+deleterecord子函数的偏移量是偏移量，不是数目条数
+
+我也是醉了，调的bug竟然是
+define/short =define 应该int t=define，用t/short[cry]
