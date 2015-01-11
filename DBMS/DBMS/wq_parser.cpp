@@ -31,8 +31,10 @@ void parser::BatchSqlInFile(char* filename) {
 	}
 	char* command = new char[1000];
 	vector<string> res;
-	while(!feof(fin)) {
+	while(true) {
 		fgets(command, 1000,fin);
+		if (feof(fin))
+			break;
 		splitStr(command, &res);
 		//semicolon has deleted
 			if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
@@ -73,7 +75,7 @@ void parser::splitStr(char* str, vector<string>* res){
 			temp ="";
 		}
 		while (str[index] ==  ' ')  index++;
-		if (index >= strlen(str) || str[index] == '\n')
+		if (index >= strlen(str) || str[index] == '\n'|| str[index] == '\r')
 			break;
 	}
 	if (temp.length() !=0 )
@@ -82,7 +84,7 @@ void parser::splitStr(char* str, vector<string>* res){
 
 bool parser::parserOneCommand(vector<string> commands) {
 	// if return false, prove this command is wrong.
-
+	cout << "Parser one command*****************************" << endl;
 	if (commands.size() == 0)
 		return false;
 	if (checkKeyWord(commands[0], CREATE)) {
@@ -109,6 +111,7 @@ bool parser::parserOneCommand(vector<string> commands) {
 	return true;
 }
 bool parser::parserDelete(vector<string> commands) {
+	cout << "*********start parser delete****************" << endl;
 	if (commands.size() < 4)
 		return false;
 	if (!checkKeyWord(commands[1], FROM) || !checkKeyWord(commands[3], WHERE))
