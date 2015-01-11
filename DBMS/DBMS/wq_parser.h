@@ -65,6 +65,22 @@ using namespace std;
 
 
 
+
+struct columnRequire {
+	BYTE *Value;
+	string colName;
+	BYTE type;
+	BYTE len;
+	BYTE op;
+	columnRequire(string value, string colName_v, BYTE type_v, BYTE len_v, BYTE op_v) {
+		cout << "Requirement: " << value << " " << colName_v << " " << (int)type_v << " " << (int)len_v << " " << (int)op_v << endl;
+		Value = (BYTE*)dataUtility::data_to_char<string>(value);
+		len = value.length();
+		colName = colName_v;
+		type = type_v;
+		op = op_v;
+	}
+};
 class parser{
 public:
 	parser(string dbname);
@@ -88,6 +104,7 @@ public:
 	bool isOpt(string s);
 	bool isDig(char c);
 	int getType(string s);
+	int getOpt(string s);
 	bool checkStingIsInt(string s);
 	string getKeyWords(int keyvalue);
 	bool checkKeyWord(string s, int keyvalue);
@@ -95,11 +112,7 @@ public:
 	bool checkOneColumnValue(SysColumn sysColumn, string data);
 private:
 	DBManager* currentDb;
-	BYTE **Value;
-	string *colName;
-	BYTE *type;
-	BYTE *len;
-	BYTE *op;
-	
+	vector<columnRequire> table1Require;
+	vector<columnRequire> table2Require;
 };
 #endif
