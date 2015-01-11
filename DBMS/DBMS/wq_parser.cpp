@@ -123,12 +123,30 @@ bool parser::parserDelete(vector<string> commands) {
 	}
 	if (!parserWhere(whereCommands, commands[2]))
 		return false;
-
+	int Num = table1Require.size();
+	BYTE	**value_v = new BYTE*[Num];
+	string *colName_v = new string[Num];
+	BYTE *type = new BYTE[Num];
+	BYTE *len = new BYTE[Num];
+	BYTE *op = new BYTE[Num];
+	for (int i = 0; i < Num; i++){
+		colName_v[i] = table1Require[i].colName;
+		type[i] = table1Require[i].type;
+		len[i] = table1Require[i].len;
+		op[i] = table1Require[i].op;
+		value_v[i] = new BYTE[len[i]];
+		value_v[i] = table1Require[i].Value;
+	}
+	currentDb->deleteRecord(commands[2], value_v, colName_v, type,len, op,0);  //if condCnt=1,delete all
 	return true;
 }
 bool parser::parserWhere(vector<string> commands, string tablename) {
+	bool flag = true;
+	table1Require.clear();
+	cout << "parser where" << commands.size() <<  endl;
 	for (int i = 0; i < commands.size(); i++) {
-		if (isOpt(commands[i])){
+		cout <<commands[i] << endl;
+		if (isOpt(commands[i]) && flag == true){
 			if (i-1 < 0)
 				return false;
 			if (i+1 >= commands.size())
@@ -139,16 +157,22 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 			if (t.xtype == INT) {
 				if (!checkStingIsInt(commands[i+1]))
 					return false;
-				else {
-				}
 			} else if (t.xtype == VARCHAR) {
+				if (commands[i+1].at(commands[i+1].length()-1)=='\'')
+					commands[i+1].erase(commands[i+1].end()-1);
+				if (commands[i+1].at(0) == '\'')
+					commands[i+1].erase(commands[i+1].begin());
 				if (commands[i+1].length() > t.length)
 					return false;
-				else {
-				}
 			}
-		}
+			table1Require.push_back(columnRequire(commands[i+1],commands[i-1],t.xtype, commands[i+1].length(), getOpt(commands[i])));
+			i++;
+			flag = false;
+		} else if (checkKeyWord(commands[i], OP_AND))
+			flag = true;
 	}
+	if (flag == true)
+		return false;
 	return true;
 }
 bool parser::parserDesc(vector<string> commands) {
@@ -384,6 +408,8 @@ string parser::getKeyWords(int keyvalue) {
 		return ">=";
 	case LESSEQUAL:
 		return "<=";
+	case OP_AND:
+		return "AND";
 	default:
 		break;
 	}
@@ -610,7 +636,21 @@ bool parser::isOpt(string s) {
 	else
 		return false;
 }
-
+int parser::getOpt(string s) {
+	if (s.compare(getKeyWords(EQUAL))==0)
+		return EQUAL;
+	if (s.compare(getKeyWords(NOTEQUAL))==0)
+		return NOTEQUAL;
+	if (s.compare(getKeyWords(MORE))==0)
+		return MORE;
+	if (s.compare(getKeyWords(LESS))==0)
+		return LESS;
+	if (s.compare(getKeyWords(MOREEQUAL)) ==0)
+		return MOREEQUAL;
+	if (s.compare(getKeyWords(LESSEQUAL))==0)
+		return LESSEQUAL;
+	return -1;
+}
 bool parser::checkStingIsInt(string s){
 	for (int i = 0; i < s.length(); i++)
 	{

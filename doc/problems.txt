@@ -6,3 +6,9 @@ delete只能删除一个表，所以后面要求直接写属性
 or的操作直接当成and【输入or认为错误，不能实现】
 
 输入的type是对比的byte还是属性列的byte？我默认为属性列的byte！
+Where没有：condcnt删除所有【我的程序默认有，而且必须是 attr op value and arrt op value格式】
+
+
+
+len是byte，也就是最长的varchar不能超过255
+字符串必须加引号！！不加引号，语句错误。解析之后的字符串带着引号。
