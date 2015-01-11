@@ -83,6 +83,7 @@ void DBManager::dropTable(string tableName){
 }
 
 bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableName){
+	
 	//get full record
 	char record[PAGE_SIZE];
 	memset(record, MEMSET_NUM, PAGE_SIZE);
@@ -109,9 +110,14 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 }
 
 bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
+	//int=123: string:'123';
 	SysObject* table = sysManager.findTable(tableName);
 	if (table == NULL)
 		return true;
+	vector<SysColumn*> sysColumns = sysManager.getTableAttr(tableName);
+	string* colNames = new string[sysColumns.size()];
+	for (int i = 0; i < sysColumns.size(); i++)
+		colNames[i] = sysColumns[i]->name;
 	TYPE_ID pageid = 0; 
 	Node* dataPage = readPage(table->id, pageid); 
 	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
@@ -154,9 +160,21 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 					if (op[i] != SET)
 						continue;
 					col = getTableColumn(tableName, colName[i]);
-					dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)Value[i], offset*recordLength+col->index, len[i]);
+					if (col->xtype == INT_TYPE) {
+						len[i] = 4;
+						char* temp = new char[4];
+						temp = dataUtility::data_to_char<int>(atoi((char*)Value[i]));
+						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)temp, offset*recordLength+col->index, len[i]);
+						delete[] temp;
+					}else {
+						char* temp = new char[col->length-len[i]];
+						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)Value[i], offset*recordLength+col->index, len[i]);
+						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)temp, offset*recordLength+col->index+len[i], col->length-len[i]);
+						delete[] temp;
+					}
 					dataPage->dirty = true;
 				}
+				printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
 			}
 		}
 		pageid++;
@@ -166,6 +184,7 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 }
 
 bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
+	//int=123: string:'123';
 	SysObject* table = sysManager.findTable(tableName);
 	if (table == NULL)
 		return true;
