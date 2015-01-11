@@ -157,7 +157,7 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 			}
 			if (deleteFlag == true) {
 				cout << "delete onedata "  << pageid << " " << offset << endl;
-				deleteData(table, pageid, offset, recordLength);
+				deleteData(table, pageid, offset*recordLength, recordLength);
 				cout << "continue" << endl;
 			}
 		}
@@ -338,7 +338,7 @@ bool DBManager::deleteData(SysObject* table, TYPE_ID pageid, TYPE_OFFSET offset,
 			TYPE_OFFSET linkedOffset;
 			while ( firstOffset < offset && firstOffset != EXIST_INDEX ){
 				linkedOffset = firstOffset;
-				TYPE_OFFSET firstoffset = dataUtility::char_to_data<TYPE_OFFSET>(des->data+firstOffset+recordlength-SIZE_OFFSET);
+				firstOffset = dataUtility::char_to_data<TYPE_OFFSET>(des->data+firstOffset+recordlength-SIZE_OFFSET);
 			}
 			char *offsetChar = dataUtility::data_to_char<TYPE_OFFSET>(offset);
 			dataUtility::bytefillbyte(des->data, (BYTE*)offsetChar, linkedOffset+recordlength-SIZE_OFFSET, SIZE_OFFSET);
