@@ -1,6 +1,6 @@
 #ifndef _DBMANAGE_H
 #define _DBMANAGE_H
-#include "systemManage.h"
+#include "globalVariable.h"
 #include "pageManage.h"
 #include <fstream>
 #include <direct.h>

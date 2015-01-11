@@ -135,9 +135,9 @@ bool parser::parserDelete(vector<string> commands) {
 		len[i] = table1Require[i].len;
 		op[i] = table1Require[i].op;
 		value_v[i] = new BYTE[len[i]];
-		value_v[i] = table1Require[i].Value;
+		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
 	}
-	currentDb->deleteRecord(commands[2], value_v, colName_v, type,len, op,0);  //if condCnt=1,delete all
+	currentDb->deleteRecord(commands[2], value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
 	return true;
 }
 bool parser::parserWhere(vector<string> commands, string tablename) {
@@ -154,10 +154,10 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 			if (!currentDb->checkTableColumn(tablename, commands[i-1]))
 				return false;
 			SysColumn t = *(currentDb->getTableColumn(tablename, commands[i-1]));
-			if (t.xtype == INT) {
+			if (t.xtype == INT_TYPE) {
 				if (!checkStingIsInt(commands[i+1]))
 					return false;
-			} else if (t.xtype == VARCHAR) {
+			} else if (t.xtype == VARCHAR_TYPE) {
 				if (commands[i+1].at(commands[i+1].length()-1)=='\'')
 					commands[i+1].erase(commands[i+1].end()-1);
 				if (commands[i+1].at(0) == '\'')
@@ -274,7 +274,7 @@ bool parser::parserInsert(vector<string> commands) {
 				return false;
 			}
 			for (int j = 0; j < datas[i].size(); j++) {
-				if (sysColumn[j]->xtype == VARCHAR) {
+				if (sysColumn[j]->xtype == VARCHAR_TYPE) {
 					if (datas[i][j].length() > 0 && datas[i][j].at(0)=='\'')
 						datas[i][j].erase(datas[i][j].begin());
 					if (datas[i][j].length() > 0 && datas[i][j].at(datas[i][j].length()-1)=='\'')
@@ -286,12 +286,12 @@ bool parser::parserInsert(vector<string> commands) {
 				return false;
 			}
 			for(int j = 0; j < datas[i].size(); j++) {
-				if ((*sysColumn[j]).xtype == INT) {
+				if ((*sysColumn[j]).xtype == INT_TYPE) {
 					tempRecord.length[j] = 4;
 					tempRecord.item[j] = new BYTE[tempRecord.length[j]];
 					tempRecord.item[j] =(BYTE*) dataUtility::data_to_char<int>(atoi(datas[i][j].c_str()));
 				}
-				else if ((*sysColumn[j]).xtype == VARCHAR) {
+				else if ((*sysColumn[j]).xtype == VARCHAR_TYPE) {
 					tempRecord.length[j] = datas[i][j].length();
 					tempRecord.item[j] = new BYTE[tempRecord.length[j]];
 					dataUtility::string_to_char((char*)tempRecord.item[j], datas[i][j], 0, datas[i][j].length(),sysColumn[j]->length );
@@ -321,12 +321,12 @@ bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 	//BYTE xtype;		// data type
 	//TYPE_OFFSET length;	// the max length of this type
 	
-	if (syscolumn.xtype == INT) {
+	if (syscolumn.xtype == INT_TYPE) {
 		for (int i = 0; i < data.length(); i++) {
 			if (!isDig(data[i]))
 				return false;
 		}
-	} else if (syscolumn.xtype == VARCHAR) {
+	} else if (syscolumn.xtype == VARCHAR_TYPE) {
 		if (data.length() > syscolumn.length)
 		return false;
 	}
@@ -380,9 +380,9 @@ string parser::getKeyWords(int keyvalue) {
 		return "TABLE";
 	case DATABASE:
 		return "DATABASE";
-	case INT:
+	case INT_TYPE:
 		return "INT";
-	case VARCHAR:
+	case VARCHAR_TYPE:
 		return "VARCHAR";
 	case DELETE:
 		return "DELETE";
@@ -555,7 +555,7 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 				break;
 			}
 		}
-		if (newColumn.type == INT)
+		if (newColumn.type == INT_TYPE)
 			newColumn.length = 4;
 		else
 			newColumn.length = atoi(lengthString.c_str());
@@ -620,10 +620,10 @@ int parser::getType(string s) {
 		} 
 	}
 
-	if (checkKeyWord(s, INT))
-		return INT;
-	if (checkKeyWord(s, VARCHAR))
-		return VARCHAR;
+	if (checkKeyWord(s, INT_TYPE))
+		return INT_TYPE;
+	if (checkKeyWord(s, VARCHAR_TYPE))
+		return VARCHAR_TYPE;
 	return -1;
 
 }
@@ -659,3 +659,5 @@ bool parser::checkStingIsInt(string s){
 	}
 	return true;
 }
+
+

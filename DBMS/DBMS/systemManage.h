@@ -1,7 +1,6 @@
 #ifndef _SYSMANAGER_H_
 #define _SYSMANAGER_H_
 
-#include "globalVariable.h"
 #include "data_utility.h"
 #include <map>
 #include <vector>
