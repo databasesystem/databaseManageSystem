@@ -17,3 +17,6 @@ deleterecord子函数的偏移量是偏移量，不是数目条数
 
 我也是醉了，调的bug竟然是
 define/short =define 应该int t=define，用t/short[cry]
+最后一行的语句执行了两次：
+fopen最后一行读取两次http://blog.163.com/chen_dawn/blog/static/112506320128532755394/
+\t回车符 \n换行符
