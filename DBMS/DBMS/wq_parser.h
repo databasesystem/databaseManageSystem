@@ -11,6 +11,7 @@
 using namespace std;
 
 
+
 struct columnRequire {
 	string value;
 	string colName;
@@ -39,11 +40,13 @@ public:
 	bool parserDrop(vector<string> commands);
 	bool parserDesc(vector<string> commands);
 	bool parserDelete(vector<string> commands);
+	bool parserUpdate(vector<string> commands);
 	bool parserShowTable(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);
 	bool parserInsert(vector<string> commands);
 	bool parserWhere(vector<string> commands, string tablename);
+	bool parserSet(vector<string> commands, string tablename);
 	bool checkNameAvaliable(string s);
 	bool isCmp(char c);
 	bool isEnglishAlphabet(char c);

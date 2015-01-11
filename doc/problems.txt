@@ -6,9 +6,14 @@ delete只能删除一个表，所以后面要求直接写属性
 or的操作直接当成and【输入or认为错误，不能实现】
 
 输入的type是对比的byte还是属性列的byte？我默认为属性列的byte！
-Where没有：condcnt删除所有【我的程序默认有，而且必须是 attr op value and arrt op value格式】
+Where：condcnt删除所有【我的程序默认有，而且必须是 attr op value and arrt op value格式】
 
+突然发现where没有解析null【这个先舍弃，因为还没有想到好方法，只有字符串才可以是null，可以直接加
+一个opt：isNULL(记录里面是写了每个value是不是isnull的!where必须支持这个)
+insert没有处理null和空的区别，如果一个属性值是null，那么需要判断可不可以是null，再insert】
 
+http://www.w3cschool.cn/sql_and_or.html and连接where，set使用，连接
+只有select是两个表，需要链接，其余的都是一个表
 
 len是byte，也就是最长的varchar不能超过255
 字符串必须加引号！！不加引号，语句错误。解析之后的字符串带着引号。
@@ -20,3 +25,8 @@ define/short =define 应该int t=define，用t/short[cry]
 最后一行的语句执行了两次：
 fopen最后一行读取两次http://blog.163.com/chen_dawn/blog/static/112506320128532755394/
 \t回车符 \n换行符
+
+
+-----------------------
+删除数据那里还是有问题，如果你插入很多数据，然后重复删除一个位置的数据，delete small函数会卡死
+【出现这个问题，我把db删掉，没法重现问题】

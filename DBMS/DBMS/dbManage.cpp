@@ -127,10 +127,10 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 	bool deleteFlag = true;
 	SysColumn* col;
 	while (dataPage != NULL && pageid < TABLE_MAX_FILE_SIZE) {
-		cout << "pageid: " << pageid << endl;
+		//cout << "pageid: " << pageid << endl;
 		int t = PAGE_SIZE;
 		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
-			cout << "offset " << offset << endl;
+			//cout << "offset " << offset << endl;
 			deleteFlag = true;
 			for (int i = 0; i < condCnt; i++) {
 				if (!checkTableColumn(tableName,colName[i])) {
@@ -140,7 +140,7 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 				col = getTableColumn(tableName, colName[i]);
 				if(col->xtype == INT_TYPE){
 					int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
-					int comdata = dataUtility::char_to_data<int>((char*)Value[i]);
+					int comdata = atoi((char*)Value[i]);
 					if (!dataUtility::intOptint(data, op[i], comdata)){
 						deleteFlag = false;
 						break;
@@ -156,9 +156,9 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 				}
 			}
 			if (deleteFlag == true) {
-				cout << "delete onedata "  << pageid << " " << offset << endl;
+				cout << "delete onedata pageid: "  << pageid << "offset: " << offset << endl;
 				deleteData(table, pageid, offset*recordLength, recordLength);
-				cout << "continue" << endl;
+				//cout << "continue" << endl;
 			}
 		}
 		pageid++;
@@ -269,7 +269,7 @@ Node* DBManager::findPage(TYPE_ID FileID, TYPE_ID PageID){
 }
 
 Node* DBManager::readPage(TYPE_ID FileID, TYPE_ID PageID){
-	cout << "read page" << FileID << " " << PageID << endl;
+	//cout << "read page" << FileID << " " << PageID << endl;
 	Node* pageNode = findPage(FileID, PageID);
 	if( pageNode )
 		return pageNode;
