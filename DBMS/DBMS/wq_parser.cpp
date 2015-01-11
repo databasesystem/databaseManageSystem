@@ -113,6 +113,9 @@ bool parser::parserOneCommand(vector<string> commands) {
 	else if (checkKeyWord(commands[0], UPDATE)) {
 		return parserUpdate(commands);
 	}
+	else if (checkKeyWord(commands[0], SELECT)) {
+		return parserSelect(commands);
+	}
 	return true;
 }
 bool parser::parserSelect(vector<string> commands){
