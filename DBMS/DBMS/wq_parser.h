@@ -19,13 +19,12 @@ struct columnRequire {
 	BYTE len;
 	BYTE op;
 	columnRequire(string value_v, string colName_v, BYTE type_v, BYTE len_v, BYTE op_v) {
-		cout << "Requirement: " << value << " " << colName_v << " " << (int)type_v << " " << (int)len_v << " " << (int)op_v << endl;
 		value = value_v;
 		len = value.length();
 		colName = colName_v;
 		type = type_v;
 		op = op_v;
-		cout << "Value: " << value << endl;
+		cout << "Requirement: " << value << " " << colName_v << " " << (int)type_v << " " << (int)len_v << " " << (int)op_v << endl;
 	}
 };
 class parser{
