@@ -108,8 +108,56 @@ bool parser::parserOneCommand(vector<string> commands) {
 	else if (checkKeyWord(commands[0], DELETE)) {
 		return parserDelete(commands); 
 	}
+	else if (checkKeyWord(commands[0], UPDATE)) {
+		return parserUpdate(commands);
+	}
 	return true;
 }
+bool parser::parserUpdate(vector<string> commands) {
+	cout<< "********************start parser update*************************" << endl;
+	//without condition, update all
+	if (commands.size() < 6 )
+		return false;
+	if (!checkKeyWord(commands[2], SET) || !checkKeyWord(commands[4], EQUAL))
+		return false;
+	vector<SysColumn*> sysColumns = currentDb->getTableAttr(commands[1]);
+	if (sysColumns.size() == 0)   // without this table
+		return false;
+	vector<string> whereCommands;  //without where
+	vector<string> setCommands;  //without set
+	int index = 3;
+	for (index = 3 ; index < commands.size(); index ++){
+		if (!checkKeyWord(commands[index], WHERE)){
+			setCommands.push_back(commands[index]);
+			break;
+		}
+	}
+	for(index++;index < commands.size(); index++){
+		whereCommands.push_back(commands[index]);
+	}
+	table1Require.clear();
+	parserSet(setCommands,commands[1]);
+	parserWhere(whereCommands,commands[1]);
+	int Num = table1Require.size();
+	BYTE	**value_v = new BYTE*[Num];
+	string *colName_v = new string[Num];
+	BYTE *type = new BYTE[Num];
+	BYTE *len = new BYTE[Num];
+	BYTE *op = new BYTE[Num];
+	for (int i = 0; i < Num; i++){
+		colName_v[i] = table1Require[i].colName;
+		type[i] = table1Require[i].type;
+		len[i] = table1Require[i].len;
+		op[i] = table1Require[i].op;
+		value_v[i] = new BYTE[len[i]];
+		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
+	}
+	currentDb->updateRecord(commands[1], value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
+	return true;
+
+	return true;
+}
+
 bool parser::parserDelete(vector<string> commands) {
 	cout << "*********start parser delete****************" << endl;
 	if (commands.size() < 4)
@@ -124,6 +172,7 @@ bool parser::parserDelete(vector<string> commands) {
 	for(int i = 4; i < commands.size(); i++){
 		whereCommands.push_back(commands[i]);
 	}
+	table1Require.clear();
 	if (!parserWhere(whereCommands, commands[2]))
 		return false;
 	int Num = table1Require.size();
@@ -143,20 +192,78 @@ bool parser::parserDelete(vector<string> commands) {
 	currentDb->deleteRecord(commands[2], value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
 	return true;
 }
+bool parser::parserSet(vector<string> commands, string tablename) {
+	bool flag = true;
+	cout << "parser set" << commands.size() <<  endl;
+	string tableNameTemp;
+	string colNameTemp;
+	int index;
+	for (int i = 0; i < commands.size(); i++) {
+		index = commands[i].find('.');
+		if (index != -1) {
+			tableNameTemp.assign(commands[i], 0, index);
+			colNameTemp.assign(commands[i], index+1, commands[i].length()-index-1);
+			if (tablename.compare(tableNameTemp) != 0)
+				return false;
+		} else
+			colNameTemp.assign(commands[i]);
+		if (!currentDb->checkTableColumn(tablename, colNameTemp))  // without this column
+			return false;
+		SysColumn t = *(currentDb->getTableColumn(tablename, colNameTemp));
+		i++;
+		if (i >= commands.size() || !checkKeyWord(commands[i], EQUAL))
+			return false;
+		i++;
+		if (i >= commands.size())
+			return false;
+		if (t.xtype == INT_TYPE) {
+			if (!checkStingIsInt(commands[i]))
+				return false;
+		} else if (t.xtype == VARCHAR_TYPE) {
+			if (commands[i].at(commands[i].length()-1)=='\'')
+				commands[i].erase(commands[i].end()-1);
+			if (commands[i].at(0) == '\'')
+				commands[i].erase(commands[i].begin());
+			if (commands[i].length() > t.length)
+				return false;
+		}
+		table1Require.push_back(columnRequire(commands[i],colNameTemp,t.xtype, commands[i].length(), SET));
+		i++;
+		if (i < commands.size()) {
+			if (commands[i].compare(",")==0)
+				continue;
+			else
+				return false;
+		}
+	}
+}
 bool parser::parserWhere(vector<string> commands, string tablename) {
 	bool flag = true;
-	table1Require.clear();
 	cout << "parser where" << commands.size() <<  endl;
+	string tableNameTemp;
+	string colNameTemp;
+	int index;
 	for (int i = 0; i < commands.size(); i++) {
-		cout <<commands[i] << endl;
+		tableNameTemp = "";
+		colNameTemp = "";
 		if (isOpt(commands[i]) && flag == true){
 			if (i-1 < 0)
 				return false;
 			if (i+1 >= commands.size())
 				return false;
-			if (!currentDb->checkTableColumn(tablename, commands[i-1]))
+			/***********************/
+			index = commands[i-1].find('.');
+			if (index != -1) {
+				tableNameTemp.assign(commands[i-1], 0, index);
+				colNameTemp.assign(commands[i-1], index+1, commands[i-1].length()-index-1);
+				if (tablename.compare(tableNameTemp) != 0)
+					return false;
+			} else
+				colNameTemp.assign(commands[i-1]);
+			/*******************/
+			if (!currentDb->checkTableColumn(tablename, colNameTemp))
 				return false;
-			SysColumn t = *(currentDb->getTableColumn(tablename, commands[i-1]));
+			SysColumn t = *(currentDb->getTableColumn(tablename, colNameTemp));
 			if (t.xtype == INT_TYPE) {
 				if (!checkStingIsInt(commands[i+1]))
 					return false;
@@ -168,7 +275,7 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 				if (commands[i+1].length() > t.length)
 					return false;
 			}
-			table1Require.push_back(columnRequire(commands[i+1],commands[i-1],t.xtype, commands[i+1].length(), getOpt(commands[i])));
+			table1Require.push_back(columnRequire(commands[i+1],colNameTemp,t.xtype, commands[i+1].length(), getOpt(commands[i])));
 			i++;
 			flag = false;
 		} else if (checkKeyWord(commands[i], OP_AND))
