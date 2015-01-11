@@ -7,7 +7,7 @@
 int main()
 {
 	// test buffer
-	DBManager testdb("studentManage");
+	/*DBManager testdb("studentManage");
 	string colName[] = {"University","Departmant","Year","Name","Student ID"};
 	BYTE type[] = {VARCHAR_TYPE,VARCHAR_TYPE,INT_TYPE,VARCHAR_TYPE,INT_TYPE};
 	TYPE_OFFSET length[] = {20,20,4,20,4};
@@ -33,7 +33,7 @@ int main()
 	for(int i = 0; i < 20; i++){
 		testdb.printRecord("student",5,colName,i,0);
 	}
-	
+	*/
 
 	parser testParser("test");
 	testParser.testParse();
