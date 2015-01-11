@@ -34,7 +34,6 @@ void parser::BatchSqlInFile(char* filename) {
 	while(true) {
 		fgets(command, 1000,fin);
 		cout  << command << endl;
-		
 		splitStr(command, &res);
 		//semicolon has deleted
 		if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
@@ -119,6 +118,48 @@ bool parser::parserOneCommand(vector<string> commands) {
 	return true;
 }
 bool parser::parserSelect(vector<string> commands){
+	vector<string> tables;
+	vector<SysColumn*> sysColumns;
+	bool flag = false;
+	for (int i = 0 ; i < commands.size(); i ++) {
+		if (checkKeyWord(commands[i], WHERE))
+			break;
+		if (flag == true)
+			tables.push_back(commands[i]);	
+		if (checkKeyWord(commands[i], FROM)) {
+			flag = true;		
+		}
+	}
+	if (tables.size() == 1)
+	{
+		sysColumns = currentDb->getTableAttr(tables[0]);
+		if (sysColumns.size() == 0)   // without this table
+				return false;
+		else {
+			table1Name = tables[0];
+			return parserOneTableSelect(commands);
+		}
+	} else if (tables.size() == 3) {
+		if (tables[1].compare(",")!=0)
+			return false;
+		vector<SysColumn*> sysColumns = currentDb->getTableAttr(tables[0]);
+		if (sysColumns.size() == 0)   // without this table
+				return false;
+		sysColumns = currentDb->getTableAttr(tables[2]);
+		if (sysColumns.size() == 0)   // without this table
+				return false;
+		else {
+			table1Name = tables[0];
+			table2Name = tables[2];
+			return parserTwoTableSelect(commands);
+		}
+	} else
+		return true;
+}
+bool parser::parserOneTableSelect(vector<string> commands) {
+	return true;
+}
+bool parser::parserTwoTableSelect(vector<string> commands) {
 	return true;
 }
 bool parser::parserUpdate(vector<string> commands) {
