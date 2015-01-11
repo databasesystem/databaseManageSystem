@@ -110,11 +110,59 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 
 bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
 	SysObject* table = sysManager.findTable(tableName);
-	/*
-	Node* dataPage = readPage(table->id, );
-	dataUtility::bytefillbyte(dataPage->page->data, record.getRecord(), offset, record.length);
-	dataPage->dirty = true;*/
-	return false;
+	if (table == NULL)
+		return true;
+	TYPE_ID pageid = 0; 
+	Node* dataPage = readPage(table->id, pageid); 
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	bool updateFlag = true;
+	SysColumn* col;
+	while (dataPage != NULL && pageid < TABLE_MAX_FILE_SIZE) {
+		//cout << "pageid: " << pageid << endl;
+		int t = PAGE_SIZE;
+		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
+			//cout << "offset " << offset << endl;
+			updateFlag = true;
+			for (int i = 0; i < condCnt; i++) {
+				if (op[i] == SET)
+					continue;
+				if (!checkTableColumn(tableName,colName[i])) {
+					updateFlag = false;
+					break;
+				}
+				col = getTableColumn(tableName, colName[i]);
+				if(col->xtype == INT_TYPE){
+					int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
+					int comdata = atoi((char*)Value[i]);
+					if (!dataUtility::intOptint(data, op[i], comdata)){
+						updateFlag = false;
+						break;
+					}
+				}
+				else if(col->xtype == VARCHAR_TYPE){
+					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
+					if (!dataUtility::stringOptstring(data, op[i], comData)){
+						updateFlag = false;
+						break;
+					}
+				}
+			}
+			if (updateFlag == true) {
+				cout << "update onedata pageid: "  << pageid << "offset: " << offset << endl;
+				for (int i = 0; i < condCnt; i++) {
+					if (op[i] != SET)
+						continue;
+					col = getTableColumn(tableName, colName[i]);
+					dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)Value[i], offset*recordLength+col->index, len[i]);
+					dataPage->dirty = true;
+				}
+			}
+		}
+		pageid++;
+		dataPage = readPage(table->id, pageid);
+	}
+	return true;
 }
 
 bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
