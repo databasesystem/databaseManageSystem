@@ -26,8 +26,11 @@ public:
 	string *getColName(string tableName,USRT &colNum);
 	vector<RecordEntry*> findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt, string *showColName, int showNum);
 	vector<RecordEntry*> getFindRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt);
-	void combine(vector<RecordEntry*> &result, const vector<RecordEntry*> &A, const vector<RecordEntry*> &B,
-		BYTE colA,BYTE colB,BYTE tarAIndex);
+	void combine(const vector<RecordEntry*> &A, const vector<RecordEntry*> &B, string tableAName, string tableBName, 
+		vector<tableJoinRequire> joinReq, string *showAColName, int showANum, string *showBColName, int showBNum);
+	bool checkJoinOk(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName, vector<tableJoinRequire> joinReq);
+	void printJoinRes(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName,string *showAColName, int showANum, 
+		string *showBColName, int showBNum);
 	//print
 	RecordEntry* getRecord(string tableName, TYPE_OFFSET offset, TYPE_ID pageid);
 	bool checkRecordAvaliable(string tableName, TYPE_OFFSET offset, TYPE_ID pageid);

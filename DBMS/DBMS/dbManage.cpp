@@ -186,6 +186,24 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 	return true;
 }
 
+void DBManager::combine(const vector<RecordEntry*> &A, const vector<RecordEntry*> &B, string tableAName, string tableBName, 
+		vector<tableJoinRequire> joinReq, string *showAColName, int showANum, string *showBColName, int showBNum) {
+			for(int i = 0; i < A.size(); i++) {
+				for (int j = 0; j < B.size(); j++) {
+					if (checkJoinOk(A[i], B[j], tableAName, tableBName, joinReq))
+					{
+						printJoinRes(A[i], B[j], tableAName, tableBName, showAColName, showANum, showBColName,showBNum);
+					}
+				}
+			}
+}
+bool DBManager::checkJoinOk(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName, vector<tableJoinRequire> joinReq){
+	return true;
+}
+void DBManager::printJoinRes(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName,
+							 string *showAColName, int showANum, string *showBColName, int showBNum){
+								 cout << "One may result" << endl;
+}
 vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt){
 	vector<RecordEntry*> res;
 	SysObject* table = sysManager.findTable(tableName);

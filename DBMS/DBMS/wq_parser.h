@@ -11,16 +11,7 @@
 using namespace std;
 
 
-struct tableJoinRequire {
-	string table1ColumnName;
-	string table2ColumnName;
-	BYTE op;
-	tableJoinRequire(string a, string b, BYTE op_v) {
-		table1ColumnName = a;
-		table2ColumnName = b;
-		op = op_v;
-	}
-};
+
 struct columnRequire {
 	string value;
 	string colName;
