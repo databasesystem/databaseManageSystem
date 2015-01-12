@@ -796,12 +796,16 @@ bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 	
 	if (syscolumn.xtype == INT_TYPE) {
 		for (int i = 0; i < data.length(); i++) {
-			if (!isDig(data[i]))
+			if (!isDig(data[i])) {
+				cout << "insert error : You should input the integer." << endl;
 				return false;
+			}
 		}
 	} else if (syscolumn.xtype == VARCHAR_TYPE) {
-		if (data.length() > syscolumn.length)
-		return false;
+		if (data.length() > syscolumn.length) {
+			cout << "insert error : You should input the shorter string." << endl;
+			return false;
+		}
 	}
 	return true;
 }

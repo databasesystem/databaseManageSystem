@@ -18,7 +18,7 @@ typedef unsigned char	BYTE;
 #define DB_PGSIZE				8192 // size of page
 #define DB_PGSIZE_USRT			4096 //DB_PGSIZE/(sizeof (USRT))
 #define DB_MAX_BUFFER_SIZE		1000 // the size of maximum buffer page
-#define TABLE_MAX_FILE_SIZE		100
+#define TABLE_MAX_FILE_SIZE		3000
 #define TABLE_NUM_SCALE			100
 #define COLUMN_NUM_SCALE		10000
 #define ID_NUM_SCALE			10200 //(COLUMN_NUM_SCALE+2*TABLE_NUM_SCALE)
