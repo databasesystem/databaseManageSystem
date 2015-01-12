@@ -128,6 +128,8 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 		int t = PAGE_SIZE;
 		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
 			//cout << "offset " << offset << endl;
+			if (!checkRecordAvaliable(tableName, offset, pageid))
+				continue;
 			updateFlag = true;
 			for (int i = 0; i < condCnt; i++) {
 				if (op[i] == SET)
@@ -184,6 +186,54 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 	return true;
 }
 
+vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt){
+	vector<RecordEntry*> res;
+	SysObject* table = sysManager.findTable(tableName);
+	if (table == NULL)
+		return res;
+	TYPE_ID pageid = 0; 
+	Node* dataPage = readPage(table->id, pageid); 
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	bool printFlag = true;
+	SysColumn* col;
+	while (dataPage != NULL && pageid < TABLE_MAX_FILE_SIZE) {
+		int t = PAGE_SIZE;
+		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
+			printFlag = true;
+			for (int i = 0; i < condCnt; i++) {
+				if (!checkTableColumn(tableName,colName[i])) {
+					printFlag = false;
+					break;
+				}
+				col = getTableColumn(tableName, colName[i]);
+				if(col->xtype == INT_TYPE){
+					int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
+					int comdata = atoi((char*)Value[i]);
+					if (!dataUtility::intOptint(data, op[i], comdata)){
+						printFlag = false;
+						break;
+					}
+				}
+				else if(col->xtype == VARCHAR_TYPE){
+					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
+					if (!dataUtility::stringOptstring(data, op[i], comData)){
+						printFlag = false;
+						break;
+					}
+				}
+			}
+			if (printFlag == true) {
+				cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
+				if (checkRecordAvaliable(tableName, offset, pageid))
+					res.push_back(getRecord(tableName, offset, pageid));
+			}
+		}
+		pageid++;
+		dataPage = readPage(table->id, pageid);
+	}
+	return res;
+};
 vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt, string *showColName, int showNum){
 	vector<RecordEntry*> res;
 	SysObject* table = sysManager.findTable(tableName);
@@ -203,6 +253,8 @@ vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string 
 		int t = PAGE_SIZE;
 		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
 			//cout << "offset " << offset << endl;
+			if (!checkRecordAvaliable(tableName, offset, pageid))
+				continue;
 			printFlag = true;
 			for (int i = 0; i < condCnt; i++) {
 				if (!checkTableColumn(tableName,colName[i])) {
@@ -256,6 +308,8 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 		int t = PAGE_SIZE;
 		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
 			//cout << "offset " << offset << endl;
+			if (!checkRecordAvaliable(tableName, offset, pageid))
+				continue;
 			deleteFlag = true;
 			for (int i = 0; i < condCnt; i++) {
 				if (!checkTableColumn(tableName,colName[i])) {
@@ -299,23 +353,41 @@ string *DBManager::getColName(string tableName, USRT &colNum){
 	return &(column->name);
 }
 
-vector<RecordEntry*> findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt){
-	vector<RecordEntry*> result;
-	return result;
-}
 
-void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OFFSET offset, TYPE_ID pageid){
+RecordEntry* DBManager::getRecord(string tableName, TYPE_OFFSET offset, TYPE_ID pageid) {
+	RecordEntry* res = new RecordEntry[1];
+	vector<SysColumn*> syscolumns;
 	SysObject* table = sysManager.findTable(tableName);
 	if(table == NULL)
-		return;
+		return res;
 	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
 	if( offset >= PAGE_SIZE / recordLength){
-		return;
+		return res;
 	}
-	vector<SysColumn*> column;
-	for(BYTE i = 0 ; i < colnum; i++){
-		column.push_back(sysManager.findColumn(colName[i], tableName));
+	Node* dataPage = readPage(table->id, pageid);
+
+	if (checkRecordAvaliable(tableName, offset, pageid)) {
+		syscolumns = sysManager.getTableAttr(tableName);
+		res->length = new BYTE[syscolumns.size()];
+		res->item = new BYTE*[syscolumns.size()];
+		for (int i = 0; i < syscolumns.size(); i++) {
+			//int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
+			res->length[i]=syscolumns[i]->length;
+			res->item[i] = new BYTE[syscolumns[i]->length];
+			dataUtility::bytefillbyte((char*)(res->item[i]), (BYTE*)(dataPage->page->data+offset*recordLength+syscolumns[i]->index), 0, res->length[i]);
+		}
 	}
+	return res;
+}
+bool DBManager::checkRecordAvaliable(string tableName, TYPE_OFFSET offset, TYPE_ID pageid) {
+	SysObject* table = sysManager.findTable(tableName);
+	if(table == NULL)
+		return false;
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	if( offset >= PAGE_SIZE / recordLength){
+		return false;
+	}
+	
 	Node* dataPage = readPage(table->id, pageid);
 
 	TYPE_OFFSET freeOffset = dataPage->page->header.firstFreeOffset;
@@ -328,19 +400,35 @@ void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OF
 		//Deleted linked list ends before the selected item, check for initialized value
 		TYPE_OFFSET realFreeCount = dataPage->page->header.freeCount - deletedItem * recordLength;
 		if( PAGE_SIZE - realFreeCount <= offset*recordLength ){ //offset is not valid since it is still in default state
-			cout << "Record " << offset+1 << " in Page " << pageid << " has not been used." << endl;
-			return;
+			//cout << "Record " << offset+1 << " in Page " << pageid << " has not been used." << endl;
+			return false;
 		}
 	}
 	else if(freeOffset == offset*recordLength){//item is deleted or first free
 		if( PAGE_SIZE - dataPage->page->header.freeCount == freeOffset ){ //offset is not valid since it is still in default state
-			cout << "Record " << offset+1 << " in Page " << pageid << " has not been used." << endl;
-			return;
+			//cout << "Record " << offset+1 << " in Page " << pageid << " has not been used." << endl;
+			return false;
 		}
-		cout << "Record " << offset+1 << " in Page " << pageid << " has been deleted." << endl;
+		//cout << "Record " << offset+1 << " in Page " << pageid << " has been deleted." << endl;
+		return false;
+	}
+	return true;
+}
+void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OFFSET offset, TYPE_ID pageid){
+	if (checkRecordAvaliable(tableName, offset, pageid) == false)
+		return;
+	SysObject* table = sysManager.findTable(tableName);
+	if(table == NULL)
+		return;
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	if( offset >= PAGE_SIZE / recordLength){
 		return;
 	}
-
+	vector<SysColumn*> column;
+	for(BYTE i = 0 ; i < colnum; i++){
+		column.push_back(sysManager.findColumn(colName[i], tableName));
+	}
+	Node* dataPage = readPage(table->id, pageid);
 
 	cout << "------- Record " << offset+1 << " in Page " << pageid << " -------" << endl;
 	int i = 1;
