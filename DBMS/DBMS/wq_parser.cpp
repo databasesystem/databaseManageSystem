@@ -157,6 +157,74 @@ bool parser::parserSelect(vector<string> commands){
 		return true;
 }
 bool parser::parserOneTableSelect(vector<string> commands) {
+	bool columnFlag = true;
+	bool whereFlag = false;
+	vector<string> showColumns;
+	vector<string> whereCommands;
+	vector<SysColumn*> sysColumns = currentDb->getTableAttr(table1Name);
+	string tableNameTemp;
+	string colNameTemp;
+	int index;
+	table1ShowColumn.clear();
+	for(int i = 1; i < commands.size(); i++) {
+		if (checkKeyWord(commands[i], FROM))
+			columnFlag = false;
+		if (columnFlag == true)
+			showColumns.push_back(commands[i]);
+		if (whereFlag == true)
+			whereCommands.push_back(commands[i]);
+		if (checkKeyWord(commands[i], WHERE))
+			whereFlag = true;
+	}
+	if (showColumns.size() <= 0 )
+		return false;
+	if (showColumns[0].compare("*")==0)
+	{
+		if (showColumns.size() != 1)
+			return false;
+		for (int i =0 ;i < sysColumns.size(); i++)
+			table1ShowColumn.push_back(sysColumns[i]->name);
+	} else {
+		for (int i = 0; i < showColumns.size(); i++) {
+			tableNameTemp = "";
+			colNameTemp = "";
+			index = commands[i-1].find('.');
+			if (index != -1) {
+				tableNameTemp.assign(commands[i-1], 0, index);
+				colNameTemp.assign(commands[i-1], index+1, commands[i-1].length()-index-1);
+				if (table1Name.compare(tableNameTemp) != 0)
+					return false;
+			} else
+				colNameTemp.assign(commands[i-1]);
+			if (!currentDb->checkTableColumn(table1Name, colNameTemp))
+				return false;
+			table1ShowColumn.push_back(colNameTemp);
+			i++;
+			if (i < showColumns.size()) {
+				if (showColumns[i].compare(",") == 0)
+					continue;
+				else
+					return false;
+			}
+		}
+	}
+	table1Require.clear();
+	parserWhere(whereCommands, table1Name);
+	int Num = table1Require.size();
+	BYTE	**value_v = new BYTE*[Num];
+	string *colName_v = new string[Num];
+	BYTE *type = new BYTE[Num];
+	BYTE *len = new BYTE[Num];
+	BYTE *op = new BYTE[Num];
+	for (int i = 0; i < Num; i++){
+		colName_v[i] = table1Require[i].colName;
+		type[i] = table1Require[i].type;
+		len[i] = table1Require[i].len;
+		op[i] = table1Require[i].op;
+		value_v[i] = new BYTE[len[i]];
+		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
+	}
+	currentDb->findRecord(table1Name, value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
 	return true;
 }
 bool parser::parserTwoTableSelect(vector<string> commands) {
@@ -202,7 +270,6 @@ bool parser::parserUpdate(vector<string> commands) {
 		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
 	}
 	currentDb->updateRecord(commands[1], value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
-	return true;
 
 	return true;
 }
