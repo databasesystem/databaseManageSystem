@@ -184,6 +184,59 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 	return true;
 }
 
+vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt){
+	vector<RecordEntry*> res;
+	SysObject* table = sysManager.findTable(tableName);
+	if (table == NULL)
+		return res;
+	vector<SysColumn*> sysColumns = sysManager.getTableAttr(tableName);
+	string* colNames = new string[sysColumns.size()];
+	for (int i = 0; i < sysColumns.size(); i++)
+		colNames[i] = sysColumns[i]->name;
+	TYPE_ID pageid = 0; 
+	Node* dataPage = readPage(table->id, pageid); 
+	TYPE_OFFSET recordLength = sysManager.getRecordLength(tableName);
+	bool printFlag = true;
+	SysColumn* col;
+	while (dataPage != NULL && pageid < TABLE_MAX_FILE_SIZE) {
+		//cout << "pageid: " << pageid << endl;
+		int t = PAGE_SIZE;
+		for (TYPE_OFFSET offset = 0 ; offset < (t/recordLength); offset++){
+			//cout << "offset " << offset << endl;
+			printFlag = true;
+			for (int i = 0; i < condCnt; i++) {
+				if (!checkTableColumn(tableName,colName[i])) {
+					printFlag = false;
+					break;
+				}
+				col = getTableColumn(tableName, colName[i]);
+				if(col->xtype == INT_TYPE){
+					int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
+					int comdata = atoi((char*)Value[i]);
+					if (!dataUtility::intOptint(data, op[i], comdata)){
+						printFlag = false;
+						break;
+					}
+				}
+				else if(col->xtype == VARCHAR_TYPE){
+					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
+					if (!dataUtility::stringOptstring(data, op[i], comData)){
+						printFlag = false;
+						break;
+					}
+				}
+			}
+			if (printFlag == true) {
+				cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
+				printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
+			}
+		}
+		pageid++;
+		dataPage = readPage(table->id, pageid);
+	}
+	return res;
+}
 bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
 	//int=123: string:'123';
 	SysObject* table = sysManager.findTable(tableName);
