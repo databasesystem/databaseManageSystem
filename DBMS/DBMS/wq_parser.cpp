@@ -229,6 +229,13 @@ bool parser::parserOneTableSelect(vector<string> commands) {
 		showColumnNames[i] = table1ShowColumn[i];
 	currentDb->findRecord(table1Name, value_v, colName_v, type,len, op,Num,  showColumnNames, table1ShowColumn.size());  //if condCnt=-1,delete all
 	delete[] showColumnNames;
+	delete[] type;
+	delete[] len;
+	delete[] op;
+	delete[] colName_v;
+	for (int i = 0 ; i < Num; i++)
+		delete[] value_v[i];
+	delete[] value_v;
 	return true;
 }
 bool parser::parserTwoTableSelect(vector<string> commands) {
@@ -301,6 +308,52 @@ bool parser::parserTwoTableSelect(vector<string> commands) {
 	table2Require.clear();
 	twoTableJoinRequire.clear();
 	parserTwoTableWhere(commands);
+
+	int Num = table1Require.size();
+	BYTE	**value_v = new BYTE*[Num];
+	string *colName_v = new string[Num];
+	BYTE *type = new BYTE[Num];
+	BYTE *len = new BYTE[Num];
+	BYTE *op = new BYTE[Num];
+	for (int i = 0; i < Num; i++){
+		colName_v[i] = table1Require[i].colName;
+		type[i] = table1Require[i].type;
+		len[i] = table1Require[i].len;
+		op[i] = table1Require[i].op;
+		value_v[i] = new BYTE[len[i]];
+		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
+	}
+	int Num2 = table2Require.size();
+	BYTE **value2 = new BYTE*[Num2];
+	string *colName2 = new string[Num2];
+	BYTE *type2 = new BYTE[Num2];
+	BYTE *len2 = new BYTE[Num2];
+	BYTE *op2 = new BYTE[Num2];
+	for (int i = 0 ; i < Num2; i++) {
+		colName2[i] = table2Require[i].colName;
+		type2[i] = table2Require[i].type;
+		len2[i] = table2Require[i].len;
+		op2[i] = table2Require[i].op;
+		value2[i] = new BYTE[len2[i]];
+		dataUtility::string_to_char((char*)value2[i], table2Require[i].value, 0, len2[i], len2[i]);
+	}
+	vector<RecordEntry*> table1Res = currentDb->getFindRecord(table1Name, value_v, colName_v, type,len, op,Num);
+	vector<RecordEntry*> table2Res = currentDb->getFindRecord(table2Name, value2, colName2, type2, len2, op2, Num2);
+
+	delete[] type;
+	delete[] len;
+	delete[] op;
+	delete[] colName_v;
+	for (int i = 0 ; i < Num; i++)
+		delete[] value_v[i];
+	delete[] value_v;
+	delete[] type2;
+	delete[] len2;
+	delete[] op2;
+	delete[] colName2;
+	for (int i = 0; i < Num2; i++)
+		delete[] value2[i];
+	delete[] value2;
 	//parserWhere(whereCommands, table1Name);
 	//int Num = table1Require.size();
 	//BYTE	**value_v = new BYTE*[Num];
@@ -442,7 +495,13 @@ bool parser::parserUpdate(vector<string> commands) {
 		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
 	}
 	currentDb->updateRecord(commands[1], value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
-
+	delete[] type;
+	delete[] len;
+	delete[] op;
+	delete[] colName_v;
+	for (int i = 0 ; i < Num; i++)
+		delete[] value_v[i];
+	delete[] value_v;
 	return true;
 }
 
@@ -478,6 +537,13 @@ bool parser::parserDelete(vector<string> commands) {
 		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
 	}
 	currentDb->deleteRecord(commands[2], value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
+	delete[] type;
+	delete[] len;
+	delete[] op;
+	delete[] colName_v;
+	for (int i = 0 ; i < Num; i++)
+		delete[] value_v[i];
+	delete[] value_v;
 	return true;
 }
 bool parser::parserSet(vector<string> commands, string tablename) {
