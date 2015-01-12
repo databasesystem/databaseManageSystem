@@ -224,7 +224,7 @@ vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,stri
 				}
 			}
 			if (printFlag == true) {
-				cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
+				//cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
 				if (checkRecordAvaliable(tableName, offset, pageid))
 					res.push_back(getRecord(tableName, offset, pageid));
 			}
