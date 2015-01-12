@@ -316,6 +316,7 @@ bool parser::parserTwoTableSelect(vector<string> commands) {
 	return true;
 }
 bool parser::parserTwoTableWhere(vector<string> commands) {
+
 	bool flag = true;
 	cout << "parser where" << commands.size() <<  endl;
 	string tableNameTemp;
