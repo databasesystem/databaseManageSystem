@@ -1,5 +1,5 @@
 problem:
-插入所有数据：插不完怎么破？
+插入所有数据：插不完怎么破？扩大文件容量，还是要插全部的。
 
 解析模块：要求所有的关键字以空格隔开。
 delete只能删除一个表，所以后面要求直接写属性
@@ -13,7 +13,8 @@ Where：condcnt删除所有【我的程序默认有，而且必须是 attr op va
 insert没有处理null和空的区别，如果一个属性值是null，那么需要判断可不可以是null，再insert】
 
 http://www.w3cschool.cn/sql_and_or.html and连接where，set使用，连接
-只有select是两个表，需要链接，其余的都是一个表
+只有select是两个表，需要链接，其余的都是一个表。
+两个表的连接，where 语句必须写.(链接条件)
 
 len是byte，也就是最长的varchar不能超过255
 字符串必须加引号！！不加引号，语句错误。解析之后的字符串带着引号。
@@ -30,4 +31,9 @@ fopen最后一行读取两次http://blog.163.com/chen_dawn/blog/static/112506320
 -----------------------
 删除数据那里还是有问题，如果你插入很多数据，然后重复删除一个位置的数据，delete small函数会卡死
 【出现这个问题，我把db删掉，没法重现问题】
-突然想到int的存储：atoi需要修改
+突然想到int的存储：atoi需要修改，已经修改
+
+
+where 语句：
+左边是attr，右边是value
+左边是table1，右边是table2
