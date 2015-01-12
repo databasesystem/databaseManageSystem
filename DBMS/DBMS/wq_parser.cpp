@@ -85,7 +85,7 @@ void parser::splitStr(char* str, vector<string>* res){
 
 bool parser::parserOneCommand(vector<string> commands) {
 	// if return false, prove this command is wrong.
-	cout << "Parser one command*****************************" << endl;
+	//cout << "Parser one command*****************************" << endl;
 	if (commands.size() == 0)
 		return false;
 	if (checkKeyWord(commands[0], CREATE)) {
@@ -383,7 +383,7 @@ bool parser::parserTwoTableSelect(vector<string> commands) {
 }
 bool parser::parserTwoTableWhere(vector<string> commands) {
 	bool flag = true;
-	cout << "parser where" << commands.size() <<  endl;
+	//cout << "parser where" << commands.size() <<  endl;
 	string tableNameTemp;
 	string colNameTemp;
 	string tableNameTemp2;
@@ -465,7 +465,7 @@ bool parser::parserTwoTableWhere(vector<string> commands) {
 	return true;
 }
 bool parser::parserUpdate(vector<string> commands) {
-	cout<< "********************start parser update*************************" << endl;
+	//cout<< "********************start parser update*************************" << endl;
 	//without condition, update all
 	if (commands.size() < 6 )
 		return false;
@@ -515,7 +515,7 @@ bool parser::parserUpdate(vector<string> commands) {
 }
 
 bool parser::parserDelete(vector<string> commands) {
-	cout << "*********start parser delete****************" << endl;
+	//cout << "*********start parser delete****************" << endl;
 	if (commands.size() < 4)
 		return false;
 	if (!checkKeyWord(commands[1], FROM) || !checkKeyWord(commands[3], WHERE))
@@ -557,7 +557,7 @@ bool parser::parserDelete(vector<string> commands) {
 }
 bool parser::parserSet(vector<string> commands, string tablename) {
 	bool flag = true;
-	cout << "parser set" << commands.size() <<  endl;
+	//cout << "parser set" << commands.size() <<  endl;
 	string tableNameTemp;
 	string colNameTemp;
 	int index;
@@ -602,7 +602,7 @@ bool parser::parserSet(vector<string> commands, string tablename) {
 }
 bool parser::parserWhere(vector<string> commands, string tablename) {
 	bool flag = true;
-	cout << "parser where" << commands.size() <<  endl;
+	//cout << "parser where" << commands.size() <<  endl;
 	string tableNameTemp;
 	string colNameTemp;
 	int index;
@@ -651,7 +651,7 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 bool parser::parserDesc(vector<string> commands) {
 	if (commands.size() != 2)
 		return false;
-	cout << "desc table info " << endl;
+	//cout << "desc table info " << endl;
 	//desc table , if without the table, return false
 	currentDb->printTable(commands[1]);
 	return true;
@@ -663,7 +663,7 @@ bool parser::parserShowTable(vector<string> commands) {
 	if (!checkKeyWord(commands[1], TABLES))
 		return false;
 	//?show tables
-	cout << "show tables" << endl;
+	//cout << "show tables" << endl;
 	currentDb->printTables();
 	return true;
 }
@@ -671,12 +671,12 @@ bool parser::parserDrop(vector<string> commands) {
 	if (commands.size() != 3)
 		return false;
 	if (checkKeyWord(commands[1], DATABASE) ) {
-		cout << "drop database " << endl;
+		//cout << "drop database " << endl;
 		(*currentDb).dropDataBase(commands[2]);
 		//?if system file does not have this database, return false.
 		return true;
 	} else if (checkKeyWord(commands[1], TABLE)) {
-		cout << "drop table " << endl;
+		//cout << "drop table " << endl;
 		(*currentDb).dropTable(commands[2]);
 		//?if system file does not have this table, return false.
 		return true;
@@ -684,7 +684,7 @@ bool parser::parserDrop(vector<string> commands) {
 		return false;
 }
 bool parser::parserInsert(vector<string> commands) {
-	cout << "***********start parse insert data************" << endl;
+	//cout << "***********start parse insert data************" << endl;
 	vector<vector<string>> datas;
 	if (commands.size() <= 4)
 		return false;
@@ -755,7 +755,7 @@ bool parser::parserInsert(vector<string> commands) {
 				}
 			}
 			if (!checkColumnsValue(sysColumn, datas[i])) {
-				cout << "column error----------------------"<< endl;
+				//cout << "column error----------------------"<< endl;
 				return false;
 			}
 			for(int j = 0; j < datas[i].size(); j++) {
@@ -896,10 +896,10 @@ bool parser::parserCreate(vector<string> commands) {
 		else {
 			//execute create database;
 			(*currentDb).createDataBase(commands[2]);
-			cout << "***********start parse create database************" << endl;
+			//cout << "***********start parse create database************" << endl;
 		}
 	} else if (checkKeyWord(commands[1], TABLE)) {
-		cout << "***********start parse create table************" << endl;
+		//cout << "***********start parse create table************" << endl;
 		if (!checkNameAvaliable(commands[2]))  //tablename
 			return false;
 		
@@ -991,7 +991,7 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 					return false;
 			} else
 				return false;
-			cout << columnInfo[2].c_str() << endl;
+			//cout << columnInfo[2].c_str() << endl;
 			tempIndex = (*colInfos).checkColName(columnInfo[2]);
 			if ( tempIndex != -1)
 				(*colInfos).colInfo[tempIndex].primaryKey = 1;
@@ -1052,7 +1052,7 @@ bool parser::parserCreateColumn(vector<string> columnInfo, tableColumn* colInfos
 }
 
 bool parser::parserUse(vector<string> commands) {
-	cout << "***********start parse use************" << endl;
+	//cout << "***********start parse use************" << endl;
 	if (commands.size() != 2)
 		return false;
 	if (checkNameAvaliable(commands[1])) {

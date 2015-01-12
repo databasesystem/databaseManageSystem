@@ -24,7 +24,7 @@ struct columnRequire {
 		colName = colName_v;
 		type = type_v;
 		op = op_v;
-		cout << "Requirement: " << value << " " << colName_v << " " << (int)type_v << " " << (int)len_v << " " << (int)op_v << endl;
+		//cout << "Requirement: " << value << " " << colName_v << " " << (int)type_v << " " << (int)len_v << " " << (int)op_v << endl;
 	}
 };
 class parser{

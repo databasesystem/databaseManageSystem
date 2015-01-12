@@ -157,7 +157,7 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 				}
 			}
 			if (updateFlag == true) {
-				cout << "update onedata pageid: "  << pageid << "offset: " << offset << endl;
+				//cout << "update onedata pageid: "  << pageid << "offset: " << offset << endl;
 				for (int i = 0; i < condCnt; i++) {
 					if (op[i] != SET)
 						continue;
@@ -177,7 +177,7 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 					}
 					dataPage->dirty = true;
 				}
-				printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
+				//printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
 			}
 		}
 		pageid++;
@@ -188,6 +188,7 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 
 void DBManager::combine(const vector<RecordEntry*> &A, const vector<RecordEntry*> &B, string tableAName, string tableBName, 
 		vector<tableJoinRequire> joinReq, string *showAColName, int showANum, string *showBColName, int showBNum) {
+			cout << "***************select join data show**********************" << endl;
 			for(int i = 0; i < A.size(); i++) {
 				for (int j = 0; j < B.size(); j++) {
 					if (checkJoinOk(A[i], B[j], tableAName, tableBName, joinReq))
@@ -240,7 +241,7 @@ int DBManager::getColumeIndex(string tableName, string columnName) {
 void DBManager::printJoinRes(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName,
 							 string *showAColName, int showANum, string *showBColName, int showBNum){
 								 int colIndex = -1;
-								 cout << "****************select join data****************" << endl;
+								 
 								 for (int i = 0; i < showANum; i++) {
 									 colIndex = getColumeIndex(tableAName, showAColName[i]);
 									 if (colIndex != -1) {
@@ -317,6 +318,7 @@ vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,stri
 	return res;
 };
 vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt, string *showColName, int showNum){
+	cout << "***************select data show**********************" << endl;
 	vector<RecordEntry*> res;
 	SysObject* table = sysManager.findTable(tableName);
 	if (table == NULL)
@@ -362,7 +364,7 @@ vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string 
 				}
 			}
 			if (printFlag == true) {
-				cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
+				//cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
 				printRecord(tableName, showNum , showColName, offset,pageid);
 			}
 		}
@@ -417,7 +419,7 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 				}
 			}
 			if (deleteFlag == true) {
-				cout << "delete onedata pageid: "  << pageid << "offset: " << offset << endl;
+				//cout << "delete onedata pageid: "  << pageid << "offset: " << offset << endl;
 				deleteData(table, pageid, offset*recordLength, recordLength);
 				printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
 				//cout << "continue" << endl;
