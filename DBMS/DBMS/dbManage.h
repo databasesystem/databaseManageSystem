@@ -31,6 +31,7 @@ public:
 	bool checkJoinOk(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName, vector<tableJoinRequire> joinReq);
 	void printJoinRes(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName,string *showAColName, int showANum, 
 		string *showBColName, int showBNum);
+	int getColumeIndex(string tableName, string columnName);
 	//print
 	RecordEntry* getRecord(string tableName, TYPE_OFFSET offset, TYPE_ID pageid);
 	bool checkRecordAvaliable(string tableName, TYPE_OFFSET offset, TYPE_ID pageid);

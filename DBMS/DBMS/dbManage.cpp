@@ -198,11 +198,75 @@ void DBManager::combine(const vector<RecordEntry*> &A, const vector<RecordEntry*
 			}
 }
 bool DBManager::checkJoinOk(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName, vector<tableJoinRequire> joinReq){
+	SysColumn* Acol = new SysColumn[1];
+	SysColumn* Bcol = new SysColumn[1];
+	int AcolIndex = -1;
+	int BcolIndex = -1;
+	for (int i = 0; i < joinReq.size(); i++) {
+		AcolIndex = -1;
+		BcolIndex = -1;
+		if (checkTableColumn(tableAName, joinReq[i].table1ColumnName))
+			Acol = getTableColumn(tableAName, joinReq[i].table1ColumnName);
+		if (checkTableColumn(tableBName, joinReq[i].table2ColumnName))
+			Bcol = getTableColumn(tableBName, joinReq[i].table2ColumnName);
+		if (Acol->xtype != Bcol->xtype) //if type is not same, join wrong
+			return false;
+		AcolIndex = getColumeIndex(tableAName, joinReq[i].table1ColumnName);
+		BcolIndex = getColumeIndex(tableBName, joinReq[i].table2ColumnName);
+		if (AcolIndex == -1 || BcolIndex == -1)
+			return false;
+		if (Acol->xtype == INT_TYPE) {
+			int Adata = dataUtility::char_to_data<int>((char*)(A->item[AcolIndex]));
+			int Bdata = dataUtility::char_to_data<int>((char*)(B->item[BcolIndex]));
+			if (!dataUtility::intOptint(Adata, joinReq[i].op, Bdata))
+				return false;
+		} else if (Acol->xtype == VARCHAR_TYPE) {
+			string Adata(dataUtility::getbyte((char*)(A->item[AcolIndex]), 0, A->length[AcolIndex]));
+			string Bdata(dataUtility::getbyte((char*)(B->item[BcolIndex]), 0, B->length[BcolIndex]));
+			if (!dataUtility::stringOptstring(Adata, joinReq[i].op, Bdata))
+				return false;
+		}
+	}
 	return true;
+}
+int DBManager::getColumeIndex(string tableName, string columnName) {
+	vector<SysColumn*> syscolumns = getTableAttr(tableName);
+	for (int i = 0; i < syscolumns.size(); i++) {
+		if (syscolumns[i]->name.compare(columnName)==0)
+			return i;
+	}
+	return -1;
 }
 void DBManager::printJoinRes(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName,
 							 string *showAColName, int showANum, string *showBColName, int showBNum){
-								 cout << "One may result" << endl;
+								 int colIndex = -1;
+								 cout << "****************select join data****************" << endl;
+								 for (int i = 0; i < showANum; i++) {
+									 colIndex = getColumeIndex(tableAName, showAColName[i]);
+									 if (colIndex != -1) {
+										 cout << i << " " << tableAName.c_str() << "." << showAColName[i] << " :";
+										 if (getTableColumn(tableAName, showAColName[i])->xtype == VARCHAR_TYPE) {
+											 string data(dataUtility::getbyte((char*)(A->item[colIndex]), 0, A->length[colIndex]));
+											 cout << "\"" << data.c_str() << "\"" << endl;
+										 } else if (getTableColumn(tableAName, showAColName[i])->xtype == INT_TYPE) {
+											 int data = dataUtility::char_to_data<int>((char*)(A->item[colIndex]));
+											 cout << data << endl;
+										 }
+									 }
+								 }
+								 for (int i = 0; i < showBNum; i++) {
+									 colIndex = getColumeIndex(tableBName, showBColName[i]);
+									 if (colIndex != -1) {
+										 cout << showANum+i << " " << tableBName.c_str() << "." << showBColName[i] << " :";
+										 if (getTableColumn(tableBName, showBColName[i])->xtype == VARCHAR_TYPE) {
+											 string data(dataUtility::getbyte((char*)(B->item[colIndex]), 0, B->length[colIndex]));
+											 cout << "\"" << data.c_str() << "\"" << endl;
+										 } else if (getTableColumn(tableBName, showBColName[i])->xtype == INT_TYPE) {
+											 int data = dataUtility::char_to_data<int>((char*)(B->item[colIndex]));
+											 cout << data << endl;
+										 }
+									 }
+								 }
 }
 vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt){
 	vector<RecordEntry*> res;

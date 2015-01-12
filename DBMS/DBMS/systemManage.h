@@ -24,6 +24,7 @@ public:
 
 class SysColumn{
 public:
+	SysColumn() {};
 	SysColumn(TYPE_ID id,TYPE_ID colid,string name,	bool n, BYTE xtype,
 		TYPE_OFFSET length,TYPE_OFFSET index):id(id),colid(colid),name(name),
 		xtype(xtype),length(length),nullable(n),index(index){}
