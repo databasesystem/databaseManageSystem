@@ -184,7 +184,7 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 	return true;
 }
 
-vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt){
+vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt, string *showColName, int showNum){
 	vector<RecordEntry*> res;
 	SysObject* table = sysManager.findTable(tableName);
 	if (table == NULL)
@@ -229,7 +229,7 @@ vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string 
 			}
 			if (printFlag == true) {
 				cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
-				printRecord(tableName,sysColumns.size(),colNames, offset,pageid);
+				printRecord(tableName, showNum , showColName, offset,pageid);
 			}
 		}
 		pageid++;
