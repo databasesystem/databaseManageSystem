@@ -52,6 +52,7 @@ public:
 	bool parserSelect(vector<string> commands);
 	bool parserOneTableSelect(vector<string> commands);
 	bool parserTwoTableSelect(vector<string> commands);
+	bool parserTwoTableWhere(vector<string> commands);
 	bool parserShowTable(vector<string> commands);
 	bool parserCreateColumn(vector<string> columnInfo, tableColumn* columnInfos);
 	bool parserUse(vector<string> commands);

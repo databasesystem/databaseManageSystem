@@ -228,6 +228,174 @@ bool parser::parserOneTableSelect(vector<string> commands) {
 	return true;
 }
 bool parser::parserTwoTableSelect(vector<string> commands) {
+	bool columnFlag = true;
+	bool whereFlag = false;
+	vector<string> showColumns;
+	vector<string> whereCommands;
+	vector<SysColumn*> sysColumns1 = currentDb->getTableAttr(table1Name);
+	vector<SysColumn*> sysColumns2 = currentDb->getTableAttr(table2Name);
+	string tableNameTemp;
+	string colNameTemp;
+	int index;
+
+	table1ShowColumn.clear();
+	table2ShowColumn.clear();
+
+	for(int i = 1; i < commands.size(); i++) {
+		if (checkKeyWord(commands[i], FROM))
+			columnFlag = false;
+		if (columnFlag == true)
+			showColumns.push_back(commands[i]);
+		if (whereFlag == true)
+			whereCommands.push_back(commands[i]);
+		if (checkKeyWord(commands[i], WHERE))
+			whereFlag = true;
+	}
+	if (showColumns.size() <= 0 )
+		return false;
+	if (showColumns[0].compare("*")==0)
+	{
+		if (showColumns.size() != 1)
+			return false;
+		for (int i = 0 ;i < sysColumns1.size(); i++)
+			table1ShowColumn.push_back(sysColumns1[i]->name);
+		for (int i = 0; i < sysColumns2.size(); i++)
+			table2ShowColumn.push_back(sysColumns2[i]->name);
+	} else {
+		for (int i = 0; i < showColumns.size(); i++) {
+			tableNameTemp = "";
+			colNameTemp = "";
+			index = showColumns[i].find('.');
+			if (index != -1) {
+				tableNameTemp.assign(showColumns[i], 0, index);
+				colNameTemp.assign(showColumns[i], index+1, showColumns[i].length()-index-1);
+				if (!(table1Name.compare(tableNameTemp) == 0 || table2Name.compare(tableNameTemp) == 0) )
+					return false;
+				if (table1Name.compare(tableNameTemp) == 0)
+					table1ShowColumn.push_back(colNameTemp);
+				else if (table2Name.compare(tableNameTemp) == 0)
+					table2ShowColumn.push_back(colNameTemp);
+			} else {
+				colNameTemp.assign(showColumns[i]);
+				if (!currentDb->checkTableColumn(table1Name, colNameTemp) && !currentDb->checkTableColumn(table2Name,colNameTemp))
+					return false;
+				if (currentDb->checkTableColumn(table1Name, colNameTemp))
+					table1ShowColumn.push_back(colNameTemp);
+				if (currentDb->checkTableColumn(table2Name, colNameTemp))
+					table2ShowColumn.push_back(colNameTemp);
+			}
+			i++;
+			if (i < showColumns.size()) {
+				if (showColumns[i].compare(",") == 0)
+					continue;
+				else
+					return false;
+			}
+		}
+	}
+	table1Require.clear();
+	table2Require.clear();
+	twoTableJoinRequire.clear();
+	parserTwoTableWhere(commands);
+	//parserWhere(whereCommands, table1Name);
+	//int Num = table1Require.size();
+	//BYTE	**value_v = new BYTE*[Num];
+	//string *colName_v = new string[Num];
+	//BYTE *type = new BYTE[Num];
+	//BYTE *len = new BYTE[Num];
+	//BYTE *op = new BYTE[Num];
+	//for (int i = 0; i < Num; i++){
+	//	colName_v[i] = table1Require[i].colName;
+	//	type[i] = table1Require[i].type;
+	//	len[i] = table1Require[i].len;
+	//	op[i] = table1Require[i].op;
+	//	value_v[i] = new BYTE[len[i]];
+	//	dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
+	//}
+	//currentDb->findRecord(table1Name, value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
+	return true;
+}
+bool parser::parserTwoTableWhere(vector<string> commands) {
+	bool flag = true;
+	cout << "parser where" << commands.size() <<  endl;
+	string tableNameTemp;
+	string colNameTemp;
+	string tableNameTemp2;
+	string colNameTemp2;
+	int index;
+	for (int i = 0; i < commands.size(); i++) {
+		tableNameTemp = "";
+		colNameTemp = "";
+		if (isOpt(commands[i]) && flag == true){
+			if (i-1 < 0)
+				return false;
+			if (i+1 >= commands.size())
+				return false;
+			/***********************/
+			index = commands[i-1].find('.');
+			if (index != -1) {
+				tableNameTemp.assign(commands[i-1], 0, index);
+				colNameTemp.assign(commands[i-1], index+1, commands[i-1].length()-index-1);
+				if (!(table1Name.compare(tableNameTemp) == 0 || table2Name.compare(tableNameTemp) == 0) )
+					return false;
+				if (!currentDb->checkTableColumn(tableNameTemp, colNameTemp))
+					return false;
+			} else {
+				colNameTemp.assign(commands[i-1]);
+				if (!currentDb->checkTableColumn(table1Name, colNameTemp) && !currentDb->checkTableColumn(table2Name,colNameTemp))
+					return false;
+				if (currentDb->checkTableColumn(table1Name, colNameTemp))
+					tableNameTemp = table1Name;
+				if (currentDb->checkTableColumn(table2Name, colNameTemp))
+					tableNameTemp = table2Name;
+			}
+			/*******************/
+			index = commands[i+1].find('.');
+			if (index != -1) {
+				tableNameTemp2.assign(commands[i+1], 0, index);
+				colNameTemp2.assign(commands[i+1], index+1, commands[i+1].length()-index-1);
+				if (table1Name.compare(tableNameTemp) == 0) {
+					if (table2Name.compare(tableNameTemp2) != 0)
+						return false;
+					else {
+						if (!currentDb->checkTableColumn(table2Name, colNameTemp2))
+							return false;
+						twoTableJoinRequire.push_back(tableJoinRequire(colNameTemp, colNameTemp2, getOpt(commands[i])));
+					}
+				} else if (table2Name.compare(tableNameTemp) == 0) {
+					if (table1Name.compare(tableNameTemp2) != 0)
+						return false;
+					else {
+						if (!currentDb->checkTableColumn(table1Name, colNameTemp2))
+							return false;
+						twoTableJoinRequire.push_back(tableJoinRequire(colNameTemp2, colNameTemp, getOpt(commands[i])));
+					}
+				}
+			} else {
+				SysColumn t = *(currentDb->getTableColumn(tableNameTemp, colNameTemp));
+				if (t.xtype == INT_TYPE) {
+					if (!checkStingIsInt(commands[i+1]))
+						return false;
+				} else if (t.xtype == VARCHAR_TYPE) {
+					if (commands[i+1].at(commands[i+1].length()-1)=='\'')
+						commands[i+1].erase(commands[i+1].end()-1);
+					if (commands[i+1].at(0) == '\'')
+						commands[i+1].erase(commands[i+1].begin());
+					if (commands[i+1].length() > t.length)
+						return false;
+				}
+				if (tableNameTemp.compare(table1Name) == 0)
+					table1Require.push_back(columnRequire(commands[i+1],colNameTemp,t.xtype, commands[i+1].length(), getOpt(commands[i])));
+				else if (tableNameTemp.compare(table2Name) == 0)
+					table2Require.push_back(columnRequire(commands[i+1],colNameTemp,t.xtype, commands[i+1].length(), getOpt(commands[i])));
+			}
+			i++;
+			flag = false;
+		} else if (checkKeyWord(commands[i], OP_AND))
+			flag = true;
+	}
+	if (flag == true)
+		return false;
 	return true;
 }
 bool parser::parserUpdate(vector<string> commands) {
