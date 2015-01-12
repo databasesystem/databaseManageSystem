@@ -339,6 +339,15 @@ bool parser::parserTwoTableSelect(vector<string> commands) {
 	}
 	vector<RecordEntry*> table1Res = currentDb->getFindRecord(table1Name, value_v, colName_v, type,len, op,Num);
 	vector<RecordEntry*> table2Res = currentDb->getFindRecord(table2Name, value2, colName2, type2, len2, op2, Num2);
+	string* showA = new string[table1ShowColumn.size()];
+	for (int i = 0 ;i < table1ShowColumn.size(); i++)
+		showA[i] = table1ShowColumn[i];
+	string* showB = new string[table2ShowColumn.size()];
+	for (int i = 0; i < table2ShowColumn.size(); i++)
+		showB[i] = table2ShowColumn[i];
+	currentDb->combine(table1Res, table2Res,table1Name,table2Name,twoTableJoinRequire, showA, table1ShowColumn.size(), showB, table2ShowColumn.size());
+	delete[] showA;
+	delete[] showB;
 
 	delete[] type;
 	delete[] len;
