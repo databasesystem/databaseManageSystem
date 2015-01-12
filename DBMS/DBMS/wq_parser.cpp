@@ -33,7 +33,7 @@ void parser::BatchSqlInFile(char* filename) {
 	vector<string> res;
 	while(true) {
 		fgets(command, 1000,fin);
-		cout  << command << endl;
+		//cout  << command << endl;
 		splitStr(command, &res);
 		//semicolon has deleted
 		if (res.size() > 0 && res[res.size()-1].at(res[res.size()-1].length()-1) == ';') {
