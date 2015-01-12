@@ -188,14 +188,14 @@ bool parser::parserOneTableSelect(vector<string> commands) {
 		for (int i = 0; i < showColumns.size(); i++) {
 			tableNameTemp = "";
 			colNameTemp = "";
-			index = commands[i-1].find('.');
+			index = showColumns[i].find('.');
 			if (index != -1) {
-				tableNameTemp.assign(commands[i-1], 0, index);
-				colNameTemp.assign(commands[i-1], index+1, commands[i-1].length()-index-1);
+				tableNameTemp.assign(showColumns[i], 0, index);
+				colNameTemp.assign(showColumns[i], index+1, showColumns[i].length()-index-1);
 				if (table1Name.compare(tableNameTemp) != 0)
 					return false;
 			} else
-				colNameTemp.assign(commands[i-1]);
+				colNameTemp.assign(showColumns[i]);
 			if (!currentDb->checkTableColumn(table1Name, colNameTemp))
 				return false;
 			table1ShowColumn.push_back(colNameTemp);
@@ -224,7 +224,11 @@ bool parser::parserOneTableSelect(vector<string> commands) {
 		value_v[i] = new BYTE[len[i]];
 		dataUtility::string_to_char((char*)value_v[i], table1Require[i].value, 0, len[i],len[i]);
 	}
-	currentDb->findRecord(table1Name, value_v, colName_v, type,len, op,Num);  //if condCnt=-1,delete all
+	string *showColumnNames = new string[table1ShowColumn.size()];
+	for (int i = 0; i < table1ShowColumn.size(); i++)
+		showColumnNames[i] = table1ShowColumn[i];
+	currentDb->findRecord(table1Name, value_v, colName_v, type,len, op,Num,  showColumnNames, table1ShowColumn.size());  //if condCnt=-1,delete all
+	delete[] showColumnNames;
 	return true;
 }
 bool parser::parserTwoTableSelect(vector<string> commands) {
@@ -316,7 +320,6 @@ bool parser::parserTwoTableSelect(vector<string> commands) {
 	return true;
 }
 bool parser::parserTwoTableWhere(vector<string> commands) {
-
 	bool flag = true;
 	cout << "parser where" << commands.size() <<  endl;
 	string tableNameTemp;
