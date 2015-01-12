@@ -38,3 +38,5 @@ fopen最后一行读取两次http://blog.163.com/chen_dawn/blog/static/112506320
 where 语句：
 左边是attr，右边是value
 左边是table1，右边是table2
+------------------------------------
+insert 数据没有判断重复数据【id 唯一没有做到】

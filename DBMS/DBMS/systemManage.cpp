@@ -248,10 +248,8 @@ void SysManager::printTable(string tableName){
 	SysObject* table = findTable(tableName);
 	if(table == NULL)
 		return;
-	vector<SysColumn*> radix;
-	for(auto col : table->vecCols){
-		radix.push_back(findColumn(col));
-	}
+	vector<SysColumn*> radix = getTableAttr(tableName);
+	
 	cout << "===================== table: " << tableName << " ======================" << endl;
 	int i = 1;
 	for(auto col : radix){
