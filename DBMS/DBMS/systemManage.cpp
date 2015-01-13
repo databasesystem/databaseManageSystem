@@ -152,6 +152,7 @@ bool SysManager::dropTable(string name){
 	}
 	//Table deletion
 	delete table;
+	cout << "Table " << name << " has been successfully deleted." << endl;
 	return true;
 }
 

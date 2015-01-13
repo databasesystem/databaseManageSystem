@@ -99,6 +99,7 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 				memset(record+column->index, 0, column->length);
 			}
 			dataUtility::bytefillbyte(record, input->item[i], column->index, input->length[i]);
+			record[column->index+input->length[i]]='\0';
 		}
 		if(index < column->index + column->length){
 			index = column->index + column->length;
