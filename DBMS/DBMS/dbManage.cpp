@@ -152,11 +152,18 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 					}
 				}
 				else if(col->xtype == VARCHAR_TYPE){
-					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
 					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
-					if (!dataUtility::stringOptstring(data, op[i], comData)){
-						updateFlag = false;
-						break;
+					if (dataUtility::toUpper(comData).compare("NULL")==0) {
+						if ((int)((char)dataUtility::getbyte(dataPage->page->data, offset*recordLength+col->index-1, 1)[0]) == 0) {
+							updateFlag = false;
+							break;
+						}
+					} else {
+						string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+						if (!dataUtility::stringOptstring(data, op[i], comData)){
+							updateFlag = false;
+							break;
+						}
 					}
 				}
 			}
@@ -174,8 +181,15 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 						delete[] temp;
 					}else {
 						//char* temp = new char[col->length-len[i]];
-						dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)Value[i], offset*recordLength+col->index, len[i]);
-						dataPage->page->data[offset*recordLength+col->index+len[i]] = '\0';
+						string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
+						if (dataUtility::toUpper(comData).compare("NULL")==0)
+						{
+							memset(dataPage->page->data+offset*recordLength+col->index-1, 1, 1);
+							dataPage->page->data[offset*recordLength+col->index] = '\0';
+						} else {
+							dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)Value[i], offset*recordLength+col->index, len[i]);
+							dataPage->page->data[offset*recordLength+col->index+len[i]] = '\0';
+						}
 						//dataUtility::bytefillbyte(dataPage->page->data, (unsigned char*)temp, offset*recordLength+col->index+len[i], col->length-len[i]);
 						//delete[] temp;
 					}
@@ -420,7 +434,6 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 					}
 				}
 				else if(col->xtype == VARCHAR_TYPE){
-					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
 					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
 					if (dataUtility::toUpper(comData).compare("NULL")==0) {
 						if ((int)((char)dataUtility::getbyte(dataPage->page->data, offset*recordLength+col->index-1, 1)[0]) == 0) {
@@ -428,6 +441,7 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 							break;
 						}
 					} else {
+						string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
 						if (!dataUtility::stringOptstring(data, op[i], comData)){
 							deleteFlag = false;
 							break;
