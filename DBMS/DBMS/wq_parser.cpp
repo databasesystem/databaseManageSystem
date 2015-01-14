@@ -785,10 +785,12 @@ bool parser::parserInsert(vector<string> commands) {
 			}
 			for (int j = 0; j < datas[i].size(); j++) {
 				if (sysColumn[j]->xtype == VARCHAR_TYPE) {
-					if (datas[i][j].length() > 0 && datas[i][j].at(0)=='\'')
-						datas[i][j].erase(datas[i][j].begin());
-					if (datas[i][j].length() > 0 && datas[i][j].at(datas[i][j].length()-1)=='\'')
-						datas[i][j].erase(datas[i][j].end()-1);
+					if (dataUtility::toUpper(datas[i][j]).compare("NULL")!=0) {
+						if (datas[i][j].length() > 0 && datas[i][j].at(0)=='\'')
+							datas[i][j].erase(datas[i][j].begin());
+						if (datas[i][j].length() > 0 && datas[i][j].at(datas[i][j].length()-1)=='\'')
+							datas[i][j].erase(datas[i][j].end()-1);
+					}
 				}
 			}
 			if (!checkColumnsValue(sysColumn, datas[i])) {
@@ -804,7 +806,7 @@ bool parser::parserInsert(vector<string> commands) {
 				else if ((*sysColumn[j]).xtype == VARCHAR_TYPE) {
 					tempRecord.length[j] = datas[i][j].length();
 					tempRecord.item[j] = new BYTE[tempRecord.length[j]];
-					dataUtility::string_to_char((char*)tempRecord.item[j], datas[i][j], 0, datas[i][j].length(),sysColumn[j]->length );
+					dataUtility::string_to_char((char*)tempRecord.item[j], datas[i][j], 0, datas[i][j].length(),datas[i][j].length() );
 
 				}
 			}
@@ -833,14 +835,23 @@ bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 	
 	if (syscolumn.xtype == INT_TYPE) {
 		for (int i = 0; i < data.length(); i++) {
-			if (!isDig(data[i])) {
-				cout << "insert error : You should input the integer." << endl;
+			if (!dataUtility::isDig(data[i])) {
+				cout << "insert error : You should input column " <<syscolumn.name <<" the integer." << endl;
 				return false;
 			}
 		}
 	} else if (syscolumn.xtype == VARCHAR_TYPE) {
+		if (!syscolumn.nullable) {
+			if (checkKeyWord(data, ISNULL)) {
+				cout << "insert error: You should input column " << syscolumn.name << " not null." << endl;
+				return false;
+			} 
+		} else {
+			if (checkKeyWord(data, ISNULL))
+				return true;
+		}
 		if (data.length() > syscolumn.length) {
-			cout << "insert error : You should input the shorter string." << endl;
+			cout << "insert error : You should input column " << syscolumn.name <<" the shorter string." << endl;
 			return false;
 		}
 	}
@@ -848,7 +859,7 @@ bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 }
 bool parser::checkKeyWord(string s, int keyvalue) {
 	for (int i = 0; i < s.length(); i++) {
-		if (!isEnglishAlphabet(s.at(i)))
+		if (!dataUtility::isEnglishAlphabet(s.at(i)))
 			return false;
 		if (s.at(i) >= 'a' && s.at(i) <= 'z') {
 			s.at(i) = s.at(i) -32;
@@ -1109,25 +1120,17 @@ bool parser::checkNameAvaliable(string s){
 	if (s.length() == 0)
 		return false;
 	for (int i = 0; i < s.length(); i++) {
-		if (!(isDig(s.at(i)) || isEnglishAlphabet(s.at(i)) || s.at(i)=='_'))
+		if (!(dataUtility::isDig(s.at(i)) || dataUtility::isEnglishAlphabet(s.at(i)) || s.at(i)=='_'))
 			return false;
 	}
 	return true;
 }
 
-bool parser::isCmp(char k) {
-	return (k == '>' || k == '<' || k == '=');
-}
-bool parser::isEnglishAlphabet(char k) {
-	return (('a' <= k && k <= 'z') || ('A' <= k && k <= 'Z'));
-}
-bool parser::isDig(char k) {
-	return '0' <= k && k <= '9';
-}
+
 
 int parser::getType(string s) {
 	for (int i = 0; i < s.length(); i++) {
-		if (!isEnglishAlphabet(s.at(i)))
+		if (!dataUtility::isEnglishAlphabet(s.at(i)))
 			return -1;
 		if (s.at(i) >= 'a' && s.at(i) <= 'z') {
 			s.at(i) = s.at(i) -32;
@@ -1168,7 +1171,7 @@ int parser::getOpt(string s) {
 bool parser::checkStingIsInt(string s){
 	for (int i = 0; i < s.length(); i++)
 	{
-		if (!isDig(s.at(i)))
+		if (!dataUtility::isDig(s.at(i)))
 			return false;
 	}
 	return true;

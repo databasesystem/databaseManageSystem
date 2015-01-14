@@ -37,5 +37,9 @@ public:
 		static void bytefillbyte(char* dst, BYTE* src, int start, BYTE length);   //some characters in src are replaced by in dst.
 		static bool stringOptstring(string leftstr, int opt, string rightstr);
 		static bool intOptint(int leftvalue, int opt, int rightvalue);
+		static string toUpper(string s);
+		static bool isCmp(char c);
+		static bool isEnglishAlphabet(char c);
+		static bool isDig(char c);
 };
 #endif /* DATA_UTILITY_H_ */

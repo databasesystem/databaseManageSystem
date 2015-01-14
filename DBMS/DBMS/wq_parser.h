@@ -51,10 +51,7 @@ public:
 	bool parserWhere(vector<string> commands, string tablename);
 	bool parserSet(vector<string> commands, string tablename);
 	bool checkNameAvaliable(string s);
-	bool isCmp(char c);
-	bool isEnglishAlphabet(char c);
 	bool isOpt(string s);
-	bool isDig(char c);
 	int getType(string s);
 	int getOpt(string s);
 	bool checkStingIsInt(string s);

@@ -83,7 +83,6 @@ void DBManager::dropTable(string tableName){
 }
 
 bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableName){
-	
 	//get full record
 	char record[PAGE_SIZE];
 	memset(record, MEMSET_NUM, PAGE_SIZE);
@@ -93,13 +92,17 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 		return false;
 	for( UINT i = 0; i < table->vecCols.size(); i++ ){
 		SysColumn* column = sysManager.findColumn(colName[i], tableName);
-		if( input->item[i] != NULL ){//!isNull
+		string temp(dataUtility::getbyte((char*)(input->item[i]),0,input->length[i]));
+		if(dataUtility::toUpper(temp).compare("NULL") !=0 ){//!isNull
 			memset(record+column->index-1, 0, 1);
-			if( column->xtype == 4 ){	//string
+			if( column->xtype == STRING_TYPE ){	//string
 				memset(record+column->index, 0, column->length);
 			}
 			dataUtility::bytefillbyte(record, input->item[i], column->index, input->length[i]);
 			record[column->index+input->length[i]]='\0';
+		} else {
+			memset(record+column->index-1, 1, 1);
+			record[column->index]='\0';
 		}
 		if(index < column->index + column->length){
 			index = column->index + column->length;
@@ -190,14 +193,17 @@ bool DBManager::updateRecord(string tableName,BYTE **Value,string *colName,BYTE 
 void DBManager::combine(const vector<RecordEntry*> &A, const vector<RecordEntry*> &B, string tableAName, string tableBName, 
 		vector<tableJoinRequire> joinReq, string *showAColName, int showANum, string *showBColName, int showBNum) {
 			cout << "***************select join data show**********************" << endl;
+			int count = 0;
 			for(int i = 0; i < A.size(); i++) {
 				for (int j = 0; j < B.size(); j++) {
 					if (checkJoinOk(A[i], B[j], tableAName, tableBName, joinReq))
 					{
+						count++;
 						printJoinRes(A[i], B[j], tableAName, tableBName, showAColName, showANum, showBColName,showBNum);
 					}
 				}
 			}
+			cout << "***************select join num is " << count << "**********************" << endl;
 }
 bool DBManager::checkJoinOk(RecordEntry* A, RecordEntry* B, string tableAName, string tableBName, vector<tableJoinRequire> joinReq){
 	SysColumn* Acol = new SysColumn[1];
@@ -320,6 +326,7 @@ vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,stri
 };
 vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string *colName, BYTE *type, BYTE *len,BYTE *op, BYTE condCnt, string *showColName, int showNum){
 	cout << "***************select data show**********************" << endl;
+	int count = 0;
 	vector<RecordEntry*> res;
 	SysObject* table = sysManager.findTable(tableName);
 	if (table == NULL)
@@ -366,12 +373,14 @@ vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string 
 			}
 			if (printFlag == true) {
 				//cout << "select onedata pageid: "  << pageid << "offset: " << offset << endl;
+				count++;
 				printRecord(tableName, showNum , showColName, offset,pageid);
 			}
 		}
 		pageid++;
 		dataPage = readPage(table->id, pageid);
 	}
+	cout << "***************select num is  "<< count << "*******************" << endl;
 	return res;
 }
 bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE *type,BYTE *len,BYTE *op, BYTE condCnt){
@@ -524,8 +533,12 @@ void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OF
 			cout << data << endl;
 		}
 		else if(col->xtype == VARCHAR_TYPE){
-			string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
-			cout << data << endl;
+			if ((int)((char)dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index-1,1)[0]) == 1)
+				cout << "NULL" << endl;
+			else {
+				string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+				cout << data << endl;
+			}
 		}
 		i++;
 	}
