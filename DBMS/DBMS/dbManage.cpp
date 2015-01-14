@@ -422,9 +422,16 @@ bool DBManager::deleteRecord(string tableName,BYTE **Value,string *colName,BYTE 
 				else if(col->xtype == VARCHAR_TYPE){
 					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
 					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
-					if (!dataUtility::stringOptstring(data, op[i], comData)){
-						deleteFlag = false;
-						break;
+					if (dataUtility::toUpper(comData).compare("NULL")==0) {
+						if ((int)((char)dataUtility::getbyte(dataPage->page->data, offset*recordLength+col->index-1, 1)[0]) == 0) {
+							deleteFlag = false;
+							break;
+						}
+					} else {
+						if (!dataUtility::stringOptstring(data, op[i], comData)){
+							deleteFlag = false;
+							break;
+						}
 					}
 				}
 			}

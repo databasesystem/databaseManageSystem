@@ -620,12 +620,14 @@ bool parser::parserSet(vector<string> commands, string tablename) {
 			if (!checkStingIsInt(commands[i]))
 				return false;
 		} else if (t.xtype == VARCHAR_TYPE) {
-			if (commands[i].at(commands[i].length()-1)=='\'')
-				commands[i].erase(commands[i].end()-1);
-			if (commands[i].at(0) == '\'')
-				commands[i].erase(commands[i].begin());
-			if (commands[i].length() > t.length)
-				return false;
+			if (dataUtility::toUpper(commands[i]).compare("NULL")!=0) {
+				if (commands[i].at(commands[i].length()-1)=='\'')
+					commands[i].erase(commands[i].end()-1);
+				if (commands[i].at(0) == '\'')
+					commands[i].erase(commands[i].begin());
+				if (commands[i].length() > t.length)
+					return false;
+			}
 		}
 		table1Require.push_back(columnRequire(commands[i],colNameTemp,t.xtype, commands[i].length(), SET));
 		i++;
@@ -668,12 +670,14 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 				if (!checkStingIsInt(commands[i+1]))
 					return false;
 			} else if (t.xtype == VARCHAR_TYPE) {
-				if (commands[i+1].at(commands[i+1].length()-1)=='\'')
-					commands[i+1].erase(commands[i+1].end()-1);
-				if (commands[i+1].at(0) == '\'')
-					commands[i+1].erase(commands[i+1].begin());
-				if (commands[i+1].length() > t.length)
-					return false;
+				if (dataUtility::toUpper(commands[i+1]).compare("NULL")!=0) {
+					if (commands[i+1].at(commands[i+1].length()-1)=='\'')
+						commands[i+1].erase(commands[i+1].end()-1);
+					if (commands[i+1].at(0) == '\'')
+						commands[i+1].erase(commands[i+1].begin());
+					if (commands[i+1].length() > t.length)
+						return false;
+				}
 			}
 			table1Require.push_back(columnRequire(commands[i+1],colNameTemp,t.xtype, commands[i+1].length(), getOpt(commands[i])));
 			i++;
