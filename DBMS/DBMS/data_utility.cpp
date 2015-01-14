@@ -107,3 +107,27 @@ bool dataUtility::stringOptstring(string leftstr, int opt, string rightstr){
 	}
 	return false;
 }
+
+string dataUtility::toUpper(string s) {
+	for (int i = 0; i < s.length(); i++) {
+		if (!isEnglishAlphabet(s.at(i)))
+			return "";
+		if (s.at(i) >= 'a' && s.at(i) <= 'z') {
+			s.at(i) = s.at(i) -32;
+		} 
+	}
+	return s;
+}
+
+bool dataUtility::isCmp(char k) {
+	return (k == '>' || k == '<' || k == '=');
+}
+bool dataUtility::isEnglishAlphabet(char k) {
+	return (('a' <= k && k <= 'z') || ('A' <= k && k <= 'Z'));
+}
+bool dataUtility::isDig(char k) {
+	return '0' <= k && k <= '9';
+}
+
+
+
