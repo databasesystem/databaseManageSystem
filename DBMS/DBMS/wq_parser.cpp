@@ -11,18 +11,53 @@ parser::~parser() {
 	delete currentDb;
 }
 void parser::testParse(){
-	char filename[100];
+	char executeInst[1000];
+	vector<string> res;
+	printf("please input the following instruction to get into the different mode. \n");
+	printf("input command, get into the execute mode, one sql command.\n");
+	printf("input file, get into the the execute mode, many commands in file.\n");
+	printf("input quit, get into the quit mode.\n");
+	printf("input other string, start to execute in your choose mode, default one sql command.\n");
+	bool fileFlag = false;
 	while(true) {
-		printf("please input the command filename. If you want to quit, please input quit.\n");
-		scanf("%s", filename);
-		if (strcmp(filename, "quit") == 0)
+		printf(">>\n");
+		scanf("%s",executeInst);
+		if (strcmp(executeInst, "quit") == 0)
 			break;
-		else
-			BatchSqlInFile(filename);
+		else if (strcmp(executeInst, "command") == 0) {
+			fileFlag = false;
+		}
+		else if (strcmp(executeInst, "file") == 0) {
+			fileFlag = true;
+		}
+		else {
+			if (fileFlag == true)
+				BatchSqlInFile(executeInst);
+			else {
+				res.clear();
+				while (strcmp(executeInst, ";") != 0 && (strlen(executeInst)>0 && executeInst[strlen(executeInst)-1] !=';')) {
+					if (strlen(executeInst) > 0)
+						res.push_back(executeInst);
+					scanf("%s", executeInst);
+				}
+				if (strlen(executeInst)>0 && executeInst[strlen(executeInst)-1] ==';')
+				{
+					string temp(executeInst);
+					temp.erase(temp.length()-1);
+					if (temp.length() > 0)
+						res.push_back(temp);
+				}
+				if (!parserOneCommand(res))
+					cout << "*************This command is wrong.*************************" << endl;
+				else
+					cout << "*************This command is executed rightly***************" << endl;
+			}
+		}
 	}
 }
 
-void parser::BatchSqlInFile(char* filename) {
+
+void parser::BatchSqlInFile(const char* filename) {
 	FILE* fin = fopen(filename, "r");
 	if (fin == NULL)
 	{
@@ -40,7 +75,9 @@ void parser::BatchSqlInFile(char* filename) {
 			//This is one command;
 			res[res.size()-1].erase(res[res.size()-1].length()-1);
 			if (!parserOneCommand(res))
-				cout << "This command is wrong." << endl;
+				cout << "*************This command is wrong.*************************" << endl;
+			else
+				cout << "*************This command is executed rightly***************" << endl;
 			res.clear();
 		}
 		if (feof(fin))
@@ -115,7 +152,7 @@ bool parser::parserOneCommand(vector<string> commands) {
 	else if (checkKeyWord(commands[0], SELECT)) {
 		return parserSelect(commands);
 	}
-	return true;
+	return false;
 }
 bool parser::parserSelect(vector<string> commands){
 	vector<string> tables;

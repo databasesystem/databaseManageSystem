@@ -70,7 +70,7 @@ public:
 	int getDbid()	{	return dbid;		}
 	int getColumnNum(){	return columnNum;	}
 	cName getColumnName() {	return colName;	}
-	void setName(char *c) { strcpy(name,c);	}
+	void setName(char *c) { strcpy_s(name,c);	}
 	void setid(int i){		table_id = i;	}
 	void setdbid(int i = -1){dbid = i;		}
 	void setColumnNum(int i){	columnNum = i;	}

@@ -32,7 +32,7 @@ public:
 	parser(string dbname);
 	~parser();
 	void testParse();
-	void BatchSqlInFile(char* filename);
+	void BatchSqlInFile(const char* filename);
 	void splitStr(char* str, vector<string>* res);
 	bool parserOneCommand(vector<string> commands);
 	bool parserCreate(vector<string> commands);
