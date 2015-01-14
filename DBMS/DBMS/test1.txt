@@ -1,0 +1,11 @@
+INSERT INTO publisher VALUES  
+ (100008,'Test2','USA');
+ INSERT INTO publisher VALUES  
+ (100008,'Test3','USA');
+update publisher set nation = 'CNA' where name = 'Test2';
+select * from publisher where name = 'Test2';
+
+join ==== result size
+exe file 
+input choose
+  
