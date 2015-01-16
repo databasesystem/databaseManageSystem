@@ -477,15 +477,24 @@ bool parser::parserTwoTableWhere(vector<string> commands) {
 			} else {
 				SysColumn t = *(currentDb->getTableColumn(tableNameTemp, colNameTemp));
 				if (t.xtype == INT_TYPE) {
-					if (!checkStingIsInt(commands[i+1]))
+					if (!checkStingIsInt(commands[i+1])) {
+						cout << "where part is wrong, because the column " << t.name << " is integer." << endl;
 						return false;
+					}
 				} else if (t.xtype == VARCHAR_TYPE) {
-					if (commands[i+1].at(commands[i+1].length()-1)=='\'')
-						commands[i+1].erase(commands[i+1].end()-1);
-					if (commands[i+1].at(0) == '\'')
-						commands[i+1].erase(commands[i+1].begin());
-					if (commands[i+1].length() > t.length)
-						return false;
+					if (dataUtility::toUpper(commands[i+1]).compare("NULL")!=0) {
+						if (commands[i+1].at(commands[i+1].length()-1)=='\'')
+							commands[i+1].erase(commands[i+1].end()-1);
+						if (commands[i+1].at(0) == '\'')
+							commands[i+1].erase(commands[i+1].begin());
+						if (commands[i+1].length() > t.length)
+							return false;
+					} else {
+						if (t.nullable == false) {
+							cout << "where part is wrong, because the column " << t.name << " is unnullable." << endl;
+							return false;
+						}
+					}
 				}
 				if (tableNameTemp.compare(table1Name) == 0)
 					table1Require.push_back(columnRequire(commands[i+1],colNameTemp,t.xtype, commands[i+1].length(), getOpt(commands[i])));
@@ -617,8 +626,10 @@ bool parser::parserSet(vector<string> commands, string tablename) {
 		if (i >= commands.size())
 			return false;
 		if (t.xtype == INT_TYPE) {
-			if (!checkStingIsInt(commands[i]))
+			if (!checkStingIsInt(commands[i])) {
+				cout << "set part is wrong, because the column " << t.name << " is integer." << endl;
 				return false;
+			}
 		} else if (t.xtype == VARCHAR_TYPE) {
 			if (dataUtility::toUpper(commands[i]).compare("NULL")!=0) {
 				if (commands[i].at(commands[i].length()-1)=='\'')
@@ -627,6 +638,11 @@ bool parser::parserSet(vector<string> commands, string tablename) {
 					commands[i].erase(commands[i].begin());
 				if (commands[i].length() > t.length)
 					return false;
+			}else {
+				if (t.nullable == false) {
+					cout << "set part is wrong, because the column " << t.name << " is unnullable." << endl;
+					return false;
+				}
 			}
 		}
 		table1Require.push_back(columnRequire(commands[i],colNameTemp,t.xtype, commands[i].length(), SET));
@@ -667,8 +683,10 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 				return false;
 			SysColumn t = *(currentDb->getTableColumn(tablename, colNameTemp));
 			if (t.xtype == INT_TYPE) {
-				if (!checkStingIsInt(commands[i+1]))
+				if (!checkStingIsInt(commands[i+1])) {
+					cout << "where part is wrong, because the column " << t.name << " is integer." << endl;
 					return false;
+				}
 			} else if (t.xtype == VARCHAR_TYPE) {
 				if (dataUtility::toUpper(commands[i+1]).compare("NULL")!=0) {
 					if (commands[i+1].at(commands[i+1].length()-1)=='\'')
@@ -677,6 +695,11 @@ bool parser::parserWhere(vector<string> commands, string tablename) {
 						commands[i+1].erase(commands[i+1].begin());
 					if (commands[i+1].length() > t.length)
 						return false;
+				} else {
+					if (t.nullable == false) {
+						cout << "where part is wrong, because the column " << t.name << " is unnullable." << endl;
+						return false;
+					}
 				}
 			}
 			table1Require.push_back(columnRequire(commands[i+1],colNameTemp,t.xtype, commands[i+1].length(), getOpt(commands[i])));

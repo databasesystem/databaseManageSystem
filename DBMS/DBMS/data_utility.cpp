@@ -22,7 +22,7 @@ void dataUtility::string_to_char(char* dst, string ori, int index, int strLen, i
 	}
 	delete data;
 }
-void dataUtility::bytefillbyte(char* dst, BYTE* src, int index, BYTE length) {
+void dataUtility::bytefillbyte(char* dst, BYTE* src, int index, int length) {
 	for (int i = 0; i < length; i++) 
 	{
 		dst[index+i] = src[i];
