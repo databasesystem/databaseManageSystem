@@ -92,18 +92,24 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 		return false;
 	for( UINT i = 0; i < table->vecCols.size(); i++ ){
 		SysColumn* column = sysManager.findColumn(colName[i], tableName);
-		string temp(dataUtility::getbyte((char*)(input->item[i]),0,input->length[i]));
-		if(dataUtility::toUpper(temp).compare("NULL") !=0 ){//!isNull
-			memset(record+column->index-1, 0, 1);
-			if( column->xtype == STRING_TYPE ){	//string
-				memset(record+column->index, 0, column->length);
+		if (column->xtype == VARCHAR_TYPE) {
+			string temp(dataUtility::getbyte((char*)(input->item[i]),0,input->length[i]));
+			if(dataUtility::toUpper(temp).compare("NULL") !=0 ){//!isNull
+				memset(record+column->index-1, 0, 1);
+				dataUtility::bytefillbyte(record, input->item[i], column->index, input->length[i]);
+				if (column->xtype == VARCHAR_TYPE && input->length[i] < column->length)
+					record[column->index+input->length[i]]='\0';
+			} else {
+				if (column->nullable) {
+					record[column->index-1]=(char)1;
+					record[column->index]='\0';
+				}
 			}
+		} else if (column->xtype == INT_TYPE){
+			int comdata = dataUtility::char_to_data<int>((char*)(input->item[i]));
 			dataUtility::bytefillbyte(record, input->item[i], column->index, input->length[i]);
-			record[column->index+input->length[i]]='\0';
-		} else {
-			memset(record+column->index-1, 1, 1);
-			record[column->index]='\0';
 		}
+		
 		if(index < column->index + column->length){
 			index = column->index + column->length;
 		}
@@ -319,11 +325,18 @@ vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,stri
 					}
 				}
 				else if(col->xtype == VARCHAR_TYPE){
-					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
 					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
-					if (!dataUtility::stringOptstring(data, op[i], comData)){
-						printFlag = false;
-						break;
+					if (dataUtility::toUpper(comData).compare("NULL")==0) {
+						if ((int)((char)dataUtility::getbyte(dataPage->page->data, offset*recordLength+col->index-1, 1)[0]) == 0) {
+							printFlag = false;
+							break;
+						}
+					} else {
+						string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+						if (!dataUtility::stringOptstring(data, op[i], comData)){
+							printFlag = false;
+							break;
+						}
 					}
 				}
 			}
@@ -377,11 +390,18 @@ vector<RecordEntry*> DBManager::findRecord(string tableName,BYTE **Value,string 
 					}
 				}
 				else if(col->xtype == VARCHAR_TYPE){
-					string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
 					string comData(dataUtility::getbyte((char*)Value[i], 0, (int)len[i]));
-					if (!dataUtility::stringOptstring(data, op[i], comData)){
-						printFlag = false;
-						break;
+					if (dataUtility::toUpper(comData).compare("NULL")==0) {
+						if ((int)((char)dataUtility::getbyte(dataPage->page->data, offset*recordLength+col->index-1, 1)[0]) == 0) {
+							printFlag = false;
+							break;
+						}
+					} else {
+						string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));
+						if (!dataUtility::stringOptstring(data, op[i], comData)){
+							printFlag = false;
+							break;
+						}
 					}
 				}
 			}
@@ -487,9 +507,21 @@ RecordEntry* DBManager::getRecord(string tableName, TYPE_OFFSET offset, TYPE_ID 
 		res->item = new BYTE*[syscolumns.size()];
 		for (int i = 0; i < syscolumns.size(); i++) {
 			//int data = dataUtility::char_to_data<int>(dataPage->page->data+offset*recordLength+col->index);
-			res->length[i]=syscolumns[i]->length;
-			res->item[i] = new BYTE[syscolumns[i]->length];
-			dataUtility::bytefillbyte((char*)(res->item[i]), (BYTE*)(dataPage->page->data+offset*recordLength+syscolumns[i]->index), 0, res->length[i]);
+			if (syscolumns[i]->nullable == false) {
+				res->length[i]=syscolumns[i]->length;
+				res->item[i] = new BYTE[syscolumns[i]->length];
+				dataUtility::bytefillbyte((char*)(res->item[i]), (BYTE*)(dataPage->page->data+offset*recordLength+syscolumns[i]->index), 0, res->length[i]);
+			} else {
+				if ((int)dataPage->page->data[offset*recordLength+syscolumns[i]->index-1]==1) {
+					res->length[i] = 4;
+					res->item[i] = new BYTE[4];
+					res->item[i] = (BYTE*)"NULL";
+				} else {
+					res->length[i]=syscolumns[i]->length;
+					res->item[i] = new BYTE[syscolumns[i]->length];
+					dataUtility::bytefillbyte((char*)(res->item[i]), (BYTE*)(dataPage->page->data+offset*recordLength+syscolumns[i]->index), 0, res->length[i]);
+				}
+			}
 		}
 	}
 	return res;
@@ -554,7 +586,7 @@ void DBManager::printRecord(string tableName,BYTE colnum,string *colName,TYPE_OF
 			cout << data << endl;
 		}
 		else if(col->xtype == VARCHAR_TYPE){
-			if ((int)((char)dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index-1,1)[0]) == 1)
+			if ((int)(dataPage->page->data[offset*recordLength+col->index-1]) == 1)
 				cout << "NULL" << endl;
 			else {
 				string data(dataUtility::getbyte(dataPage->page->data,offset*recordLength+col->index,col->length));

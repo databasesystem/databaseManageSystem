@@ -34,7 +34,7 @@ public:
 		static void string_fill_char(char* dst, string ori, int index, int size);
 		static void string_to_char (char* dst, string ori, int index, int stringLength, int dstLength);
 		static char* getbyte(char* src, int start, int length);
-		static void bytefillbyte(char* dst, BYTE* src, int start, BYTE length);   //some characters in src are replaced by in dst.
+		static void bytefillbyte(char* dst, BYTE* src, int start, int length);   //some characters in src are replaced by in dst.
 		static bool stringOptstring(string leftstr, int opt, string rightstr);
 		static bool intOptint(int leftvalue, int opt, int rightvalue);
 		static string toUpper(string s);
