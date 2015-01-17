@@ -350,7 +350,7 @@ vector<RecordEntry*> DBManager::getFindRecord(string tableName,BYTE **Value,stri
 				if (checkRecordAvaliable(tableName, offset, pageid)){
 					RecordEntry* source = getRecord(tableName, offset, pageid);
 					res.push_back(source);
-					delete source;
+					//delete source;
 				}
 			}
 		}
