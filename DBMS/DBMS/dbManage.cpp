@@ -90,8 +90,9 @@ bool DBManager::insertRecord(RecordEntry *input, string colName[], string tableN
 	SysObject* table = sysManager.findTable(tableName);
 	if(table == NULL)
 		return false;
+	SysColumn* column;
 	for( UINT i = 0; i < table->vecCols.size(); i++ ){
-		SysColumn* column = sysManager.findColumn(colName[i], tableName);
+		column = sysManager.findColumn(colName[i], tableName);
 		if (column->xtype == VARCHAR_TYPE) {
 			string temp(dataUtility::getbyte((char*)(input->item[i]),0,input->length[i]));
 			if(dataUtility::toUpper(temp).compare("NULL") !=0 ){//!isNull
@@ -617,17 +618,24 @@ vector<SysColumn*> DBManager::getTableAttr(string tableName) {
 bool DBManager::checkTableColumn(string tableName, string columnName) {
 	vector<SysColumn*> sysColumns = getTableAttr(tableName);
 	for (int i = 0; i < sysColumns.size(); i++) {
-		if (sysColumns[i]->name == columnName)
+		if (sysColumns[i]->name == columnName) {
+			sysColumns.clear();
 			return true;
+		}
 	}
+	sysColumns.clear();
 	return false;
 }
 SysColumn* DBManager::getTableColumn(string tableName, string columnName) {
 	vector<SysColumn*> sysColumns = getTableAttr(tableName);
+	SysColumn* res;
 	if (checkTableColumn(tableName, columnName)) {
 		for (int i = 0; i < sysColumns.size(); i++) {
-		if (sysColumns[i]->name == columnName)
-			return sysColumns[i];
+			if (sysColumns[i]->name == columnName) {
+				res = sysColumns[i];
+				sysColumns.clear();
+				return res;
+			}
 		}
 	}
 }
