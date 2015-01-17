@@ -19,6 +19,8 @@ void parser::testParse(){
 	printf("input quit, get into the quit mode.\n");
 	printf("input other string, start to execute in your choose mode, default one sql command.\n");
 	bool fileFlag = false;
+	bool oneStringFlag = false;
+	string oneString="";
 	while(true) {
 		printf(">>\n");
 		scanf("%s",executeInst);
@@ -46,6 +48,28 @@ void parser::testParse(){
 					temp.erase(temp.length()-1);
 					if (temp.length() > 0)
 						res.push_back(temp);
+				}
+				for (int i = 0; i < res.size(); i++) {
+					if (res[i].length() > 0 && res[i].at(0) == '\'' && oneStringFlag == false) {
+							oneString = res[i];
+							oneStringFlag = true;
+							res.erase(res.begin()+i);
+							i--;
+					} else if (res[i].length() > 0 && res[i].at(res[i].length()-1) == '\'' && oneStringFlag == true){
+						oneString += ' ';
+						oneString += res[i];
+						oneStringFlag = false;
+						res.erase(res.begin()+i);
+						res.insert(res.begin()+i, oneString);
+						oneString = "";
+					} else {
+						if (oneStringFlag == true) {
+							oneString += ' ';
+							oneString += res[i];
+							res.erase(res.begin()+i);
+							i--;
+						}
+					}
 				}
 				if (!parserOneCommand(res))
 					cout << "*************This command is wrong.*************************" << endl;
