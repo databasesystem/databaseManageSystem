@@ -24,9 +24,6 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="parser.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="dbManage.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -45,9 +42,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="globalVariable.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="parser.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="dbManage.h">

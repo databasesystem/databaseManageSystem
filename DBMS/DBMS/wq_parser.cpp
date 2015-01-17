@@ -778,7 +778,7 @@ bool parser::parserInsert(vector<string> commands) {
 		return false;
 	if (checkKeyWord(commands[1], ISINTO) && checkKeyWord(commands[3], VALUES)) {
 		if (!checkNameAvaliable(commands[2])) {
-			cout << "table name is unableuse" << endl;
+			cout << "table name is unable to use" << endl;
 			return false;
 		}
 		string tablename = commands[2];
@@ -887,14 +887,14 @@ bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 	if (syscolumn.xtype == INT_TYPE) {
 		for (int i = 0; i < data.length(); i++) {
 			if (!dataUtility::isDig(data[i])) {
-				cout << "insert error : You should input column " <<syscolumn.name <<" the integer." << endl;
+				cout << "insert error : You should input column " <<syscolumn.name <<" with integer." << endl;
 				return false;
 			}
 		}
 	} else if (syscolumn.xtype == VARCHAR_TYPE) {
 		if (!syscolumn.nullable) {
 			if (checkKeyWord(data, ISNULL)) {
-				cout << "insert error: You should input column " << syscolumn.name << " not null." << endl;
+				cout << "insert error: You should input column " << syscolumn.name << " with anything not null." << endl;
 				return false;
 			} 
 		} else {
@@ -902,7 +902,7 @@ bool parser::checkOneColumnValue(SysColumn syscolumn, string data) {
 				return true;
 		}
 		if (data.length() > syscolumn.length) {
-			cout << "insert error : You should input column " << syscolumn.name <<" the shorter string." << endl;
+			cout << "insert error : You should input column " << syscolumn.name <<" a shorter string." << endl;
 			return false;
 		}
 	}
